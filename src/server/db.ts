@@ -1,17 +1,21 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
-import { env } from "@/env";
+import { env } from '@/env';
+import { enhance } from '@zenstackhq/runtime';
 
 const createPrismaClient = () =>
   new PrismaClient({
-    log:
-      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    log: env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 
 const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
-export const db = globalForPrisma.prisma ?? createPrismaClient();
+// purePrisma is a PrismaClient instance without any runtime enhancements
+export const purePrisma = createPrismaClient();
 
-if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+// enhance is a function that wraps the PrismaClient instance with zenstack runtime
+export const db = enhance(globalForPrisma.prisma ?? createPrismaClient());
+
+if (env.NODE_ENV !== 'production') globalForPrisma.prisma = db;

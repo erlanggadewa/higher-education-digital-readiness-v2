@@ -1,14 +1,10 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import {
-  getServerSession,
-  type DefaultSession,
-  type NextAuthOptions,
-} from "next-auth";
-import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth';
+import { type Adapter } from 'next-auth/adapters';
+import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { env } from "@/env";
-import { db } from "@/server/db";
+import { db, purePrisma } from '@/server/db';
+import { HelperClass } from '@/utils/helper-class';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -16,19 +12,29 @@ import { db } from "@/server/db";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+      role: string;
+      roleName: string;
+    } & DefaultSession['user'];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    // ...other properties
+    role: string;
+    roleName: string;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
+  interface JWT {
+    role: string;
+    roleName: string;
+  }
 }
 
 /**
@@ -37,21 +43,29 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: '/signin',
+  },
+  session: { strategy: 'jwt' },
+
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    jwt: async ({ token, user }) => {
+      return { ...token, ...user };
+    },
+    session: async ({ session, token }) => {
+      session.user.id = token.sub!;
+      session.user.email = token.email!;
+      session.user.image = token.picture!;
+      session.user.role = token.role;
+      session.user.roleName = token.roleName;
+
+      return {
+        ...session,
+      };
+    },
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
     /**
      * ...add more providers here.
      *
@@ -61,6 +75,45 @@ export const authOptions: NextAuthOptions = {
      *
      * @see https://next-auth.js.org/providers/github
      */
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. "Sign in with...")
+      name: 'Credentials',
+      // `credentials` is used to generate a form on the sign in page.
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        // Add logic here to look up the user from the credentials supplied
+
+        const user = await purePrisma.user.findUnique({
+          where: { email: credentials?.username },
+          include: {
+            roleUser: { select: { name: true } },
+          },
+        });
+
+        if (!user) {
+          // You can also Reject this callback with an Error or with a URL:
+          throw new Error('Akun tidak ditemukan');
+        }
+
+        const isMatch = await HelperClass.comparePassword(String(credentials?.password), String(user?.password));
+
+        if (!isMatch) {
+          // You can also Reject this callback with an Error or with a URL:
+          throw new Error('Password tidak sesuai');
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...rest } = user;
+
+        // Any object returned will be saved in `user` property of the JWT
+        return { ...rest, roleName: user.roleUser.name };
+      },
+    }),
   ],
 };
 
