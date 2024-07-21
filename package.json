@@ -68,6 +68,7 @@
     "react-sortablejs": "^6.1.4",
     "react-text-mask": "^5.5.0",
     "server-only": "^0.0.1",
+    "sharp": "^0.33.4",
     "sortablejs": "^1.15.2",
     "superjson": "^2.2.1",
     "sweetalert2": "^11.12.3",
