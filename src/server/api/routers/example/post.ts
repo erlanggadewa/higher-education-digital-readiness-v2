@@ -15,6 +15,7 @@ export const postRouter = createTRPCRouter({
 
     return ctx.db.variable.create({
       data: {
+        alias: 'variable',
         name: input.name,
         description: 'This is a variable',
       },

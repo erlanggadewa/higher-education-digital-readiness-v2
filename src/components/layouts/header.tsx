@@ -1,5 +1,5 @@
 'use client';
-import Dropdown from '@/components/dropdown';
+import Dropdown from '@/components/dropdown/dropdown';
 import IconLaptop from '@/components/icon/icon-laptop';
 import IconLogout from '@/components/icon/icon-logout';
 import IconMenu from '@/components/icon/icon-menu';

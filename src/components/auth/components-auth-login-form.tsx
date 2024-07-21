@@ -8,7 +8,7 @@ import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import IconPassword from '../icon/icon-password';
-import LoadingDotComponent from '../loading-dot';
+import LoadingDotComponent from '../loading/loading-dot';
 
 const ComponentsAuthLoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +50,7 @@ const ComponentsAuthLoginForm = () => {
       <div>
         <label htmlFor="Email">Email</label>
         <div className="relative">
-          <input {...register('username', { required: true })} id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
+          <input {...register('username', { required: true })} id="Email" type="email" placeholder="Enter Email" autoComplete="username" className="form-input ps-10 placeholder:text-white-dark" />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
             <IconMail fill={true} className="text-primary" />
           </span>
@@ -60,7 +60,14 @@ const ComponentsAuthLoginForm = () => {
       <div>
         <label htmlFor="Password">Password</label>
         <div className="relative">
-          <input {...register('password', { required: true })} id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
+          <input
+            {...register('password', { required: true })}
+            id="Password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="Enter Password"
+            className="form-input ps-10 placeholder:text-white-dark"
+          />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
             <IconPassword className="text-primary" />
           </span>

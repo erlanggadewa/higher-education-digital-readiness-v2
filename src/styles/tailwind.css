@@ -364,7 +364,7 @@
   .form-textarea,
   .form-select,
   .form-multiselect {
-    @apply w-full rounded-md border border-white-light bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#656565] dark:bg-[#191919] dark:text-white-dark dark:focus:border-primary;
+    @apply w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-dark dark:bg-[#191919] dark:text-white-dark dark:focus:border-primary dark:focus:ring-primary;
   }
 
   .form-input-lg,

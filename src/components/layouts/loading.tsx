@@ -1,4 +1,4 @@
-import LoadingDotComponent from '../loading-dot';
+import LoadingDotComponent from '../loading/loading-dot';
 
 const Loading = () => {
   return (

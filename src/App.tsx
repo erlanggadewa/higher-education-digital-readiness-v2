@@ -27,6 +27,7 @@ function App({ children }: PropsWithChildren) {
 
   return (
     <div
+      suppressHydrationWarning
       className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${
         themeConfig.rtlClass
       } main-section relative font-nunito text-sm font-normal antialiased`}

@@ -1,9 +1,8 @@
 'use client';
 import App from '@/App';
-import Loading from '@/components/layouts/loading';
 import store from '@/store';
 import { SessionProvider } from 'next-auth/react';
-import { type ReactNode, Suspense } from 'react';
+import { type ReactNode } from 'react';
 import { Provider } from 'react-redux';
 
 interface IProps {
@@ -14,9 +13,7 @@ const ProviderComponent = ({ children }: IProps) => {
   return (
     <SessionProvider>
       <Provider store={store}>
-        <Suspense fallback={<Loading />}>
-          <App>{children} </App>
-        </Suspense>
+        <App>{children} </App>
       </Provider>
     </SessionProvider>
   );
