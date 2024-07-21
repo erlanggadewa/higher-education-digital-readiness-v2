@@ -1,6 +1,5 @@
 'use client';
 import DefaultAlertComponent from '@/components/alert/elements-alerts-default';
-import IconLockDots from '@/components/icon/icon-lock-dots';
 import IconMail from '@/components/icon/icon-mail';
 import { z } from '@/utils/id-zod';
 import { ErrorMessage } from '@hookform/error-message';
@@ -8,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import IconPassword from '../icon/icon-password';
 import LoadingDotComponent from '../loading-dot';
 
 const ComponentsAuthLoginForm = () => {
@@ -52,7 +52,7 @@ const ComponentsAuthLoginForm = () => {
         <div className="relative">
           <input {...register('username', { required: true })} id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
-            <IconMail fill={true} />
+            <IconMail fill={true} className="text-primary" />
           </span>
         </div>
       </div>
@@ -62,7 +62,7 @@ const ComponentsAuthLoginForm = () => {
         <div className="relative">
           <input {...register('password', { required: true })} id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
-            <IconLockDots />
+            <IconPassword className="text-primary" />
           </span>
         </div>
       </div>

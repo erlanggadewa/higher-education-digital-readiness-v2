@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const SignIn = () => {
   return (
-    <div className="relative flex h-screen w-full flex-col justify-between overflow-hidden rounded-md bg-white backdrop-blur-lg dark:bg-black/50 lg:flex-row lg:gap-10 xl:gap-0">
+    <div className="relative flex h-screen w-full flex-col justify-between overflow-hidden rounded-md backdrop-blur-lg dark:bg-black/50 lg:flex-row lg:gap-10 xl:gap-0">
       <div className="relative hidden w-full items-center justify-center bg-cover lg:block lg:w-2/3">
         <Image
           src={'/assets/images/auth/login-background.jpg'}
@@ -40,9 +40,9 @@ const SignIn = () => {
           </Link>
         </div>
 
-        <div className="w-full max-w-[440px] lg:mt-16">
+        <div className="w-full max-w-[440px] lg:mt-16 ">
           <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-          <p className="text-base font-bold leading-normal text-white-dark">Masukan email dan password anda untuk login</p>
+          <p className="text-base font-bold leading-normal ">Masukan email dan password anda untuk login</p>
           <br />
           <ComponentsAuthLoginForm />
         </div>

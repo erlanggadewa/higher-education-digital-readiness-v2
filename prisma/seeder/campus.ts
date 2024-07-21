@@ -1,0 +1,96 @@
+export const campuses = [
+  // ! Telkom University
+  {
+    campusId: "clhxgyl750005g4tvhh3y4os7",
+    codePt: "041057",
+    statusPt: true,
+    accreditationPt: "Unggul",
+    standingDate: new Date("2013-07-14"),
+    numberSkPt: "309/E/0/2013",
+    dateSkPt: new Date("2013-07-14"),
+    address: "Jl. Telekomunikasi Terusan Buah Batu, Sukapura Bandung 40257",
+    city: "Bandung",
+    postalCode: "40257",
+    phoneNumber: "(022)7566456",
+    faximile: "62-22-756 4500",
+  },
+  // ! ITB
+  {
+    campusId: "clhxgyl750001g4tv5nsw6b0v",
+    codePt: "12312",
+    statusPt: true,
+    accreditationPt: "Unggul",
+    standingDate: new Date("1959-03-02"),
+    numberSkPt: "300/E/0/2000",
+    dateSkPt: new Date("2000-01-12"),
+    address:
+      "Jl. Ganesa No.10, Lb. Siliwangi, Kecamatan Coblong, Kota Bandung, Jawa Barat 40132",
+    city: "Bandung",
+    postalCode: "40132",
+    phoneNumber: "(022) 2500935",
+    faximile: "022-250 09 35",
+  },
+  // ! UI
+  {
+    campusId: "clhxgyl750002g4tvgz5xhfbo",
+    codePt: "53423",
+    statusPt: true,
+    accreditationPt: "Unggul",
+    standingDate: new Date("1849-01-02"),
+    numberSkPt: "10/UI/0/2003",
+    dateSkPt: new Date("2003-01-12"),
+    address: "Pondok Cina, Kecamatan Beji, Kota Depok, Jawa Barat 16424",
+    city: "Depok",
+    postalCode: "16424",
+    phoneNumber: "(021) 7867222",
+    faximile: "022-443 09 25",
+  },
+  // ! UNPAD
+  {
+    campusId: "clhxgyl750003g4tv40qp7gji",
+    codePt: "12423",
+    statusPt: true,
+    accreditationPt: "Unggul",
+    standingDate: new Date("1957-09-11"),
+    numberSkPt: "10/UNPAD/0/2003",
+    dateSkPt: new Date("2003-01-12"),
+    address:
+      "Jl. Raya Bandung Sumedang KM.21, Hegarmanah, Kec. Jatinangor, Kabupaten Sumedang, Jawa Barat 45363",
+    city: "Sumedang",
+    postalCode: "45363",
+    phoneNumber: "(022) 84288828",
+    faximile: "022-443 09 25",
+  },
+  // ! ITS
+  {
+    campusId: "clhxgyl750004g4tve0dffxo8",
+    codePt: "74722",
+    statusPt: true,
+    accreditationPt: "Unggul",
+    standingDate: new Date("1957-11-10"),
+    numberSkPt: "10/ITS/0/2003",
+    dateSkPt: new Date("2003-01-12"),
+    address:
+      "Jl. Teknik Kimia, Keputih, Kec. Sukolilo, Surabaya, Jawa Timur 60111",
+    city: "Surabaya",
+    postalCode: "60111",
+    phoneNumber: "(031) 5994251",
+    faximile: "022-443 09 25",
+  },
+  // ! UGM
+  {
+    campusId: "clhxgyl750000g4tvgfabd4nf",
+    codePt: "98322",
+    statusPt: true,
+    accreditationPt: "Unggul",
+    standingDate: new Date("1949-12-19"),
+    numberSkPt: "11/UGM/0/2003",
+    dateSkPt: new Date("2003-01-12"),
+    address:
+      "69HG+CXX, Bulaksumur, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281",
+    city: "Yogyakarta",
+    postalCode: "55281",
+    phoneNumber: "(0274) 588688",
+    faximile: "022-443 09 25",
+  },
+];

@@ -262,6 +262,7 @@ model ResultVariable {
 
 model Variable {
   id                    String                  @id @default(cuid())
+  alias                 String                  @unique
   name                  String
   description           String
 
@@ -349,9 +350,7 @@ model RoleOnFormGroup {
 
 model VariableOnFormGroup {
   id              String            @id @default(cuid())
-  variable        Variable          @relation(fields: [variableId], references: [id])
   variableId      String            @map("variable_id") // relation scalar field (used in the `@relation` attribute above)
-  formGroup       FormGroup         @relation(fields: [formGroupId], references: [id])
   formGroupId     String            @map("form_group_id") // relation scalar field (used in the `@relation` attribute above)
 
   createdAt       DateTime?         @default(now()) @map("created_at")
@@ -360,6 +359,8 @@ model VariableOnFormGroup {
   question        Question[]
   campusSurveyLog CampusSurveyLog[]
   publicSurveyLog PublicSurveyLog[]
+  variable        Variable?         @relation(fields: [variableId], references: [id])
+  formGroup       FormGroup?        @relation(fields: [formGroupId], references: [id])
 
   @@unique([formGroupId, variableId])
   @@map("variable_on_form_groups")

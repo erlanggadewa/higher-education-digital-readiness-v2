@@ -230,6 +230,7 @@ model ResultVariable {
 /// @@allow('all', true)
 model Variable {
   id                    String                  @id() @default(cuid())
+  alias                 String                  @unique()
   name                  String
   description           String
   createdAt             DateTime?               @default(now()) @map("created_at")
@@ -302,15 +303,15 @@ model RoleOnFormGroup {
 /// @@allow('all', true)
 model VariableOnFormGroup {
   id              String            @id() @default(cuid())
-  variable        Variable          @relation(fields: [variableId], references: [id])
   variableId      String            @map("variable_id")
-  formGroup       FormGroup         @relation(fields: [formGroupId], references: [id])
   formGroupId     String            @map("form_group_id")
   createdAt       DateTime?         @default(now()) @map("created_at")
   updatedAt       DateTime?         @updatedAt() @map("updated_at")
   question        Question[]
   campusSurveyLog CampusSurveyLog[]
   publicSurveyLog PublicSurveyLog[]
+  variable        Variable?         @relation(fields: [variableId], references: [id])
+  formGroup       FormGroup?        @relation(fields: [formGroupId], references: [id])
 
   @@unique([formGroupId, variableId])
   @@map("variable_on_form_groups")

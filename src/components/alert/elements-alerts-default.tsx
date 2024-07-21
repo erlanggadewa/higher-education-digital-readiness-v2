@@ -16,7 +16,7 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
           <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
             <IconDanger className="h-full w-full" />
           </span>
-          <span className="font-semibold ltr:pr-2 rtl:pl-2">
+          <span className="font-medium ltr:pr-2 rtl:pl-2">
             <strong className="ltr:mr-1 rtl:ml-1">Gagal!</strong>
             {message}.
           </span>
@@ -30,7 +30,7 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
           <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
             <IconChecks className="h-full w-full" />
           </span>
-          <span className="font-semibold ltr:pr-2 rtl:pl-2">
+          <span className="font-medium ltr:pr-2 rtl:pl-2">
             <strong className="ltr:mr-1 rtl:ml-1">Berhasil!</strong>
             {message}
           </span>
@@ -44,7 +44,7 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
           <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
             <IconBell className="h-full w-full" />
           </span>
-          <span className="font-semibold ltr:pr-2 rtl:pl-2">
+          <span className="font-medium ltr:pr-2 rtl:pl-2">
             <strong className="ltr:mr-1 rtl:ml-1">Perhatian!</strong>
             {message}
           </span>
@@ -58,7 +58,7 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
           <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
             <IconInfoCircle className="h-full w-full stroke-[100px]  text-white" />
           </span>
-          <span className="font-semibold ltr:pr-2 rtl:pl-2">
+          <span className="font-medium ltr:pr-2 rtl:pl-2">
             <strong className="ltr:mr-1 rtl:ml-1">Info!</strong>
             {message}
           </span>
