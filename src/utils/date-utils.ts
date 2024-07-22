@@ -8,6 +8,12 @@ export const formatDate = (date: string | Date) => {
   return '';
 };
 
+/**
+ * Akan menghasilkan array tahun dari tahun sekarang hingga tahun yang diinginkan.
+ * Value default tahun dimulai dari 2023.
+ * @param {number} [startYear=2023]
+ * @returns {*}
+ */
 export const generateYearOptions = (startYear = 2023) => {
   const currentYear = new Date().getFullYear();
   return Array.from({ length: currentYear + 1 - startYear }, (_, i) => {
