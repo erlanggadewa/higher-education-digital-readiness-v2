@@ -109,7 +109,7 @@ function Header({ session }: { session: Session | null }) {
                       session?.user.role === 'admin'
                         ? '/assets/images/profile/admin.png'
                         : session?.user.role === 'reviewer'
-                          ? '/assets/images/profile/reviewer.jpg'
+                          ? '/assets/images/profile/reviewer.png'
                           : session?.user.image || '/assets/images/profile/default-user.jpg'
                     }
                     alt="userProfile"
@@ -125,7 +125,7 @@ function Header({ session }: { session: Session | null }) {
                           session?.user.role === 'admin'
                             ? '/assets/images/profile/admin.png'
                             : session?.user.role === 'reviewer'
-                              ? '/assets/images/profile/reviewer.jpg'
+                              ? '/assets/images/profile/reviewer.png'
                               : session?.user.image || '/assets/images/profile/default-user.jpg'
                         }
                         alt="userProfile"

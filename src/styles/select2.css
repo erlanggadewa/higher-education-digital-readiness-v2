@@ -8,7 +8,7 @@
   @apply !pl-4;
 }
 .custom-select .css-b62m3t-container > div {
-  @apply border-[rgb(224,230,237)] bg-white hover:border-inherit dark:border-[#253b5c] dark:bg-[#1b2e4b];
+  @apply border-[rgb(224,230,237)] bg-white hover:border-inherit dark:border-dark dark:bg-dark;
 }
 .custom-select .css-b62m3t-container > div:first-of-type {
   @apply shadow-none;
@@ -19,13 +19,13 @@
 }
 
 .custom-select .css-1nmdiq5-menu > div > div {
-  @apply !z-[999] !bg-transparent hover:!bg-[#f6f6f6] dark:hover:!bg-[#132136];
+  @apply !z-[999] !bg-transparent hover:!bg-[#f6f6f6] dark:hover:!bg-[#181818];
 }
 .custom-select .css-1nmdiq5-menu > div > div[aria-disabled='true'] {
   @apply !z-[999] !bg-transparent !text-[#999];
 }
 .custom-select .css-1nmdiq5-menu > div > .css-tr4s17-option {
-  @apply !z-[999] !bg-[#f6f6f6] !text-black dark:!bg-[#132136] dark:!text-white-dark;
+  @apply !z-[999] !bg-[#f6f6f6] !text-black dark:!bg-[#181818] dark:!text-white-dark;
 }
 .custom-select .css-1xc3v61-indicatorContainer {
   @apply text-[#999] dark:text-white-dark;

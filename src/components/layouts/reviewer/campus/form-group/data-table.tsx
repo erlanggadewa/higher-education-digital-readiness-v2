@@ -16,6 +16,7 @@ function DataTableComponent({ year }: { year: string }) {
     totalVariable: number;
     status: string;
   };
+
   const [rowData] = api.reviewer.campus.getFormGroup.useSuspenseQuery({ year });
 
   const cols: { accessor: keyof TRowData; title: string }[] = [
@@ -68,9 +69,9 @@ function DataTableComponent({ year }: { year: string }) {
   useEffect(() => {
     setInitialRecords(() => {
       return rowData.filter((item) => {
+        // * Ubah untuk pencarian disini
         return (
-          item.id.toString().includes(search.toLowerCase()) ||
-          item.status.toLowerCase().includes(search.toLowerCase()) ||
+          item.totalVariable.toString().toLowerCase().includes(search.toLowerCase()) ||
           item.status.toLowerCase().includes(search.toLowerCase()) ||
           item.formGroupName.toLowerCase().includes(search.toLowerCase())
         );

@@ -1,6 +1,6 @@
 function TableSkeletonComponent() {
   return (
-    <div className="panel relative animate-pulse overflow-x-auto">
+    <div className="relative animate-pulse overflow-x-auto">
       <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
         <thead className="text-xs uppercase text-gray-700 dark:text-gray-400">
           <tr>
