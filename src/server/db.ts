@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
 import { env } from '@/env';
-import { enhance } from '@zenstackhq/runtime';
 
 const createPrismaClient = () =>
   new PrismaClient({
@@ -16,6 +15,6 @@ const globalForPrisma = globalThis as unknown as {
 export const purePrisma = createPrismaClient();
 
 // enhance is a function that wraps the PrismaClient instance with zenstack runtime
-export const db = enhance(globalForPrisma.prisma ?? createPrismaClient());
+export const db = globalForPrisma.prisma ?? createPrismaClient();
 
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = db;

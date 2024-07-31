@@ -719,3 +719,7 @@ img.dark-img {
 .dark img.dark-img {
   @apply !block;
 }
+
+.banner {
+  @apply dark:bg-primary-old -m-6 mb-4 rounded-b-md bg-primary p-6 font-bold;
+}

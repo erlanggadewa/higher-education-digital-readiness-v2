@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 function TabsFormGroupCampus() {
   return (
     <Tab.Group>
-      <Tab.List className="mt-3 flex flex-wrap justify-between space-x-2 rtl:space-x-reverse">
+      <Tab.List className="flex flex-wrap justify-between space-x-2 rtl:space-x-reverse">
         <Tab as={Fragment}>
           {({ selected }) => (
             <div className="flex-auto text-center !outline-none">

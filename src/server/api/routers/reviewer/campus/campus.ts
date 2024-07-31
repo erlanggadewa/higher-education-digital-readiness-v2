@@ -11,6 +11,7 @@ export const reviewerCampusRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const data = await ctx.db.formGroup.findMany({
         where: {
+          isActive: true,
           isPublished: true,
           year: input.year,
           roleOnFormGroup: {
