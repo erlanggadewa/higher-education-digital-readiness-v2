@@ -70,7 +70,7 @@ table tr .mantine-Checkbox-root {
   @apply hidden;
 }
 .mantine-Group-root .mantine-UnstyledButton-root {
-  @apply hover:bg-inherit dark:!border-[#191e3a] dark:text-white-dark;
+  @apply hover:bg-inherit dark:!border-[#222222] dark:text-white-dark;
 }
 
 .mantine-Table-root th.text-right .mantine-Group-root {
@@ -80,7 +80,7 @@ table tr .mantine-Checkbox-root {
   @apply flex-auto justify-end gap-1;
 }
 .mantine-Menu-dropdown {
-  @apply dark:!border-[#191e3a] dark:!bg-[#1a2941] dark:text-white-dark;
+  @apply dark:!border-[#222222] dark:!bg-[#333333] dark:text-white-dark;
 }
 
 .mantine-Checkbox-body {
@@ -109,13 +109,13 @@ table tr .mantine-Checkbox-root {
   @apply text-center font-nunito !text-sm;
 }
 .mantine-Menu-item {
-  @apply hover:bg-primary hover:text-white dark:text-white-dark dark:hover:text-white;
+  @apply hover:bg-blue-400 hover:text-white dark:text-white-dark dark:hover:text-white;
 }
 .mantine-Menu-arrow {
-  @apply dark:!border-[#191e3a];
+  @apply dark:!border-[#222222];
 }
 .mantine-Menu-item:disabled {
-  @apply !text-[#adb5bd];
+  @apply !text-[white];
 }
 .mantine-ScrollArea-viewport > div:first-child > div {
   @apply bg-none;

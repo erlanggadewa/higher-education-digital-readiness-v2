@@ -11,6 +11,7 @@ import Select from 'react-select';
 function ReviewerFormGroupCampusPage() {
   const listYear = generateYearOptions();
   const [year, setYear] = useState(listYear[0]!.value);
+  const [selectedTab, setSelectedTab] = useState<'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua'>('Semua');
 
   return (
     <div>
@@ -30,10 +31,10 @@ function ReviewerFormGroupCampusPage() {
           <span className="badge bg-primary">{year}</span>
         </div>
         <div className="my-3">
-          <TabsFormGroupCampus />
+          <TabsFormGroupCampus setSelectedTab={setSelectedTab} />
         </div>
         <Suspense fallback={<TableSkeletonComponent />}>
-          <DataTableComponent year={year} />
+          <DataTableComponent year={year} selectedTab={selectedTab} />
         </Suspense>
       </div>
     </div>

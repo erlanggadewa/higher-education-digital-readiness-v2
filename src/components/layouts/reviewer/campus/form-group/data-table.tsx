@@ -8,7 +8,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-function DataTableComponent({ year }: { year: string }) {
+function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
   // * Ganti api yg diget saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
   type TRowData = {
     id: string;
@@ -69,15 +69,21 @@ function DataTableComponent({ year }: { year: string }) {
   useEffect(() => {
     setInitialRecords(() => {
       return rowData.filter((item) => {
-        // * Ubah untuk pencarian disini
+        // * Ubah dan custom untuk pencarian disini
         return (
-          item.totalVariable.toString().toLowerCase().includes(search.toLowerCase()) ||
-          item.status.toLowerCase().includes(search.toLowerCase()) ||
-          item.formGroupName.toLowerCase().includes(search.toLowerCase())
+          item.status
+            .toString()
+            .toLowerCase()
+            .includes(selectedTab !== 'Semua' ? selectedTab.toLowerCase() : '') &&
+          (item.totalVariable.toString().toLowerCase().includes(search.toLowerCase()) ||
+            item.status.toLowerCase().includes(search.toLowerCase()) ||
+            item.formGroupName.toLowerCase().includes(search.toLowerCase()))
         );
       });
     });
-  }, [search]);
+
+    // * tambah state yang digunakan untuk search disini
+  }, [search, selectedTab]);
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);

@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { z } from '@/utils/id-zod';
+import { HelperReviewerCampus } from './helper/helper-reviewer-campus';
 
 export const reviewerCampusRouter = createTRPCRouter({
   getFormGroup: protectedProcedure
@@ -30,31 +31,24 @@ export const reviewerCampusRouter = createTRPCRouter({
         include: {
           variableOnFormGroup: {
             include: {
-              campusSurveyLog: true,
+              campusSurveyLog: {},
             },
           },
         },
       });
-      console.log('🚀 -------------------------------------------------------🚀');
-      console.log('🚀 ~ getFormGroup:protectedProcedure.query ~ data:', data);
-      console.log('🚀 -------------------------------------------------------🚀');
 
       const result = data.map((item) => {
         return {
           id: item.id,
           formGroupName: item.name,
           totalVariable: item.variableOnFormGroup.length,
-          status:
-            item.variableOnFormGroup
-              .map((variable) => {
-                const totalReviewed = variable.campusSurveyLog.filter((log) => log.status === 'REVIEWED').length;
-                if (totalReviewed === variable.campusSurveyLog.length) {
-                  return 'REVIEWED';
-                } else {
-                  return 'WAITING';
-                }
-              })
-              .find((status) => status === 'REVIEWED') ?? 'WAITING',
+          status: HelperReviewerCampus.determineStatus(
+            item.variableOnFormGroup.flatMap((variable) => {
+              return variable.campusSurveyLog.flatMap((log) => {
+                return log.status;
+              });
+            }),
+          ),
         };
       });
       return result;
