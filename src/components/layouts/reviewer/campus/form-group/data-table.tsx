@@ -1,12 +1,16 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
+import IconPencil from '@/components/icon/icon-pencil';
 import { IRootState } from '@/store';
 import { api } from '@/trpc/react';
+import { cn } from '@/utils/cn';
+import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import 'tippy.js/dist/tippy.css';
 
 function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
   // * Ganti api yg diget saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
@@ -109,9 +113,10 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
           records={recordsData}
           columns={[
             {
-              accessor: 'id',
+              accessor: 'no',
               title: 'No.',
               sortable: false,
+              textAlignment: 'center',
               hidden: hideCols.includes('id'),
               render(record, index) {
                 return <span>{index + 1}</span>;
@@ -127,6 +132,7 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
               accessor: 'totalVariable',
               title: 'Total Variabel',
               sortable: true,
+              textAlignment: 'center',
               hidden: hideCols.includes('totalVariable'),
             },
             {
@@ -134,6 +140,37 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
               title: 'Status Review',
               sortable: true,
               hidden: hideCols.includes('status'),
+              textAlignment: 'center',
+              render(record, index) {
+                let badgeClass = '';
+                switch (record.status) {
+                  case 'Sedang Direview':
+                    badgeClass = 'bg-warning';
+                    break;
+                  case 'Belum Direview':
+                    badgeClass = 'bg-danger';
+                    break;
+                  case 'Sudah Direview':
+                    badgeClass = 'bg-success';
+                    break;
+                }
+                return <span className={cn('badge', badgeClass)}>{record.status}</span>;
+              },
+            },
+            {
+              accessor: 'aksi',
+              title: 'Aksi',
+              textAlignment: 'center',
+              sortable: false,
+              render(record, index) {
+                return (
+                  <Tippy content={`Detail ${record.formGroupName}`} theme="primary">
+                    <button type="button" className="">
+                      <IconPencil fill={true} className="" />
+                    </button>
+                  </Tippy>
+                );
+              },
             },
           ]}
           highlightOnHover
