@@ -1,9 +1,9 @@
 'use client';
+import DataTableReviewerFormGroupCampusComponent from '@/app/(defaults)/reviewer/campus/form-group/data-table';
 import ElementsBreadcrumbsDefault from '@/components/breadcrumbs/elements-breadcrumbs-default';
 import IconDatabase from '@/components/icon/icon-database';
-import DataTableComponent from '@/components/layouts/reviewer/campus/form-group/data-table';
-import TabsFormGroupCampus from '@/components/layouts/reviewer/campus/form-group/tabs';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
+import TabsFormGroup from '@/components/tabs/tabs-form-group';
 import { generateYearOptions } from '@/utils/date-utils';
 import { Suspense, useState } from 'react';
 import Select from 'react-select';
@@ -31,10 +31,10 @@ function ReviewerFormGroupCampusPage() {
           <span className="badge bg-primary">{year}</span>
         </div>
         <div className="my-3">
-          <TabsFormGroupCampus setSelectedTab={setSelectedTab} />
+          <TabsFormGroup setSelectedTab={setSelectedTab} />
         </div>
         <Suspense fallback={<TableSkeletonComponent />}>
-          <DataTableComponent year={year} selectedTab={selectedTab} />
+          <DataTableReviewerFormGroupCampusComponent year={year} selectedTab={selectedTab} />
         </Suspense>
       </div>
     </div>
