@@ -132,12 +132,12 @@ export const menuReviewer: TMenu = [
       {
         title: 'Kampus',
         icon: IconUniversity,
-        link: '/reviewer/campus',
+        link: '/reviewer/campus/form-group',
       },
       {
         title: 'Publik',
         icon: IconUsersGroup,
-        link: '/reviewer/public',
+        link: '/reviewer/public/form-group',
       },
     ],
   },
