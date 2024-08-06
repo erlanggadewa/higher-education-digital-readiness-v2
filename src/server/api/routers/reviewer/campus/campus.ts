@@ -121,4 +121,30 @@ export const reviewerCampusRouter = createTRPCRouter({
 
       return data;
     }),
+
+  getSelectedCampusReview: protectedProcedure
+    .input(
+      z.object({
+        formGroupId: z.string().min(1).cuid(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const data = await ctx.db.formGroup.findUnique({
+        where: { id: 'clrj8c4u400026kut735s5win', isActive: true, isPublished: true },
+        include: {
+          variableOnFormGroup: {
+            include: {
+              question: {
+                where: { isActive: true, year: '2024' ,},
+                include: {
+
+                }
+              },
+            },
+          },
+        },
+      });
+
+      return [];
+    }),
 });

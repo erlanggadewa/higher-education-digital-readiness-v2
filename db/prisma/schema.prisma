@@ -48,7 +48,7 @@ model User {
 }
 
 /// @@allow('all', true)
-model Answer {
+model CampusAnswer {
   id               String       @id() @default(cuid())
   questionId       String       @map("question_id")
   optionId         String       @map("option_id")
@@ -62,15 +62,15 @@ model Answer {
   updatedAt        DateTime     @updatedAt() @map("updated_at")
   question         Question     @relation(fields: [questionId], references: [id])
   option           Option       @relation("CampusAnswer", fields: [optionId], references: [id])
-  revisionOption   Option       @relation("ReviewerAnswer", fields: [revisionOptionId], references: [id])
+  revisionOption   Option       @relation("ReviewerCampusAnswer", fields: [revisionOptionId], references: [id])
   campus           Campus       @relation(fields: [campusId], references: [campusId])
 
   @@unique([questionId, campusId, year])
-  @@map("answers")
+  @@map("campus_answers")
 }
 
 /// @@allow('all', true)
-model AnswerPublic {
+model PublicAnswer {
   id               String       @id() @default(cuid())
   questionId       String       @map("question_id")
   optionId         String       @map("option_id")
@@ -84,13 +84,13 @@ model AnswerPublic {
   createdAt        DateTime     @default(now()) @map("created_at")
   updatedAt        DateTime     @updatedAt() @map("updated_at")
   question         Question     @relation(fields: [questionId], references: [id])
-  option           Option       @relation("CampusAnswerPublic", fields: [optionId], references: [id])
-  revisionOption   Option       @relation("ReviewerAnswerPublic", fields: [revisionOptionId], references: [id])
+  option           Option       @relation("PublicAnswer", fields: [optionId], references: [id])
+  revisionOption   Option       @relation("ReviewerPublicAnswer", fields: [revisionOptionId], references: [id])
   campus           Campus       @relation(fields: [campusId], references: [campusId])
   userPublic       PublicUser   @relation(fields: [userPublicId], references: [id])
 
   @@unique([questionId, userPublicId, campusId, year])
-  @@map("answers_public")
+  @@map("public_answers")
 }
 
 /// @@deny('read', !statusPt)
@@ -112,9 +112,9 @@ model Campus {
   updatedAt       DateTime          @updatedAt() @map("updated_at")
   user            User              @relation(fields: [campusId], references: [id])
   result          Result[]
-  answer          Answer[]
+  campusAnswer    CampusAnswer[]
   resultVariable  ResultVariable[]
-  answerPublic    AnswerPublic[]
+  publicAnswer    PublicAnswer[]
   campusSurveyLog CampusSurveyLog[]
 
   @@map("campuses")
@@ -136,7 +136,7 @@ model PublicUser {
   updatedAt       DateTime          @updatedAt() @map("updated_at")
   user            User              @relation(fields: [campusId], references: [id])
   roleUser        RoleUser          @relation(fields: [role], references: [role])
-  answerPublic    AnswerPublic[]
+  publicAnswer    PublicAnswer[]
   publicSurveyLog PublicSurveyLog[]
 
   @@map("public_user")
@@ -144,17 +144,17 @@ model PublicUser {
 
 /// @@allow('all', true)
 model Option {
-  id             String         @id() @default(cuid())
-  questionId     String         @map("question_id")
-  value          String
-  point          Float
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt() @map("updated_at")
-  question       Question       @relation(fields: [questionId], references: [id])
-  campusAnswer   Answer[]       @relation("CampusAnswer")
-  reviewerAnswer Answer[]       @relation("ReviewerAnswer")
-  answerPublic   AnswerPublic[] @relation("CampusAnswerPublic")
-  reviewerPublic AnswerPublic[] @relation("ReviewerAnswerPublic")
+  id                   String         @id() @default(cuid())
+  questionId           String         @map("question_id")
+  value                String
+  point                Float
+  createdAt            DateTime       @default(now()) @map("created_at")
+  updatedAt            DateTime       @updatedAt() @map("updated_at")
+  question             Question       @relation(fields: [questionId], references: [id])
+  campusAnswer         CampusAnswer[] @relation("CampusAnswer")
+  reviewerCampusAnswer CampusAnswer[] @relation("ReviewerCampusAnswer")
+  publicAnswer         PublicAnswer[] @relation("PublicAnswer")
+  reviewerPublicAnswer PublicAnswer[] @relation("ReviewerPublicAnswer")
 
   @@map("options")
 }
@@ -170,8 +170,8 @@ model Question {
   createdAt             DateTime            @default(now()) @map("created_at")
   updatedAt             DateTime            @updatedAt() @map("updated_at")
   option                Option[]
-  answer                Answer[]
-  answerPublic          AnswerPublic[]
+  campusAnswer          CampusAnswer[]
+  publicAnswer          PublicAnswer[]
   variableOnForm        VariableOnFormGroup @relation(fields: [variableOnFormGroupId], references: [id])
 
   @@map("questions")

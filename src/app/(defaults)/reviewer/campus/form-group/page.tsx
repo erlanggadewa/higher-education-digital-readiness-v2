@@ -18,7 +18,7 @@ function ReviewerFormGroupCampusPage() {
       <div className="banner flex h-40 flex-wrap justify-between gap-3">
         <div>
           <h1 className="text-xl text-white">Review Survey Campus</h1>
-          <ElementsBreadcrumbsDefault />
+          <ElementsBreadcrumbsDefault data={['Reviewer', 'Campus']} />
         </div>
         <div className="custom-select">
           <Select className="max-w-24" defaultValue={listYear[0]} options={listYear} placeholder="Tahun" isSearchable={false} onChange={(val) => setYear(val!.value)} />

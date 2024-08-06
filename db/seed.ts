@@ -14,7 +14,7 @@ async function main() {
   });
   await purePrisma.question.createMany({ data: seederData.questions });
   await purePrisma.option.createMany({ data: seederData.options });
-  await purePrisma.answer.createMany({ data: seederData.answers });
+  await purePrisma.campusAnswer.createMany({ data: seederData.campusAnswers });
   await purePrisma.levelIndex.createMany({ data: seederData.levelIndices });
   await purePrisma.levelIndexOnVariables.createMany({
     data: seederData.levelIndexOnVariables,
