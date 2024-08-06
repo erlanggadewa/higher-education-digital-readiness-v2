@@ -22,8 +22,8 @@ model User {
   image      String?
   role       String
 
-  createdAt  DateTime?    @default(now()) @map("created_at")
-  updatedAt  DateTime?    @updatedAt @map("updated_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
 
   campus     Campus?
   roleUser   RoleUser     @relation(fields: [role], references: [role])
@@ -65,13 +65,13 @@ model Answer {
   reviewComment    String?      @map("review_comment")
   reviewDate       DateTime?    @map("review_date")
 
-  createdAt        DateTime?    @default(now()) @map("created_at")
-  updatedAt        DateTime?    @updatedAt @map("updated_at")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
 
-  question         Question?    @relation(fields: [questionId], references: [id])
-  option           Option?      @relation("CampusAnswer", fields: [optionId], references: [id])
-  revisionOption   Option?      @relation("ReviewerAnswer", fields: [revisionOptionId], references: [id])
-  campus           Campus?      @relation(fields: [campusId], references: [campusId])
+  question         Question     @relation(fields: [questionId], references: [id])
+  option           Option       @relation("CampusAnswer", fields: [optionId], references: [id])
+  revisionOption   Option       @relation("ReviewerAnswer", fields: [revisionOptionId], references: [id])
+  campus           Campus       @relation(fields: [campusId], references: [campusId])
 
   @@unique([questionId, campusId, year])
   @@map("answers")
@@ -91,14 +91,14 @@ model AnswerPublic {
   reviewComment    String?      @map("review_comment")
   reviewDate       DateTime?    @map("review_date")
 
-  createdAt        DateTime?    @default(now()) @map("created_at")
-  updatedAt        DateTime?    @updatedAt @map("updated_at")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
 
-  question         Question?    @relation(fields: [questionId], references: [id])
-  option           Option?      @relation("CampusAnswerPublic", fields: [optionId], references: [id])
-  revisionOption   Option?      @relation("ReviewerAnswerPublic", fields: [revisionOptionId], references: [id])
-  campus           Campus?      @relation(fields: [campusId], references: [campusId])
-  userPublic       PublicUser?  @relation(fields: [userPublicId], references: [id])
+  question         Question     @relation(fields: [questionId], references: [id])
+  option           Option       @relation("CampusAnswerPublic", fields: [optionId], references: [id])
+  revisionOption   Option       @relation("ReviewerAnswerPublic", fields: [revisionOptionId], references: [id])
+  campus           Campus       @relation(fields: [campusId], references: [campusId])
+  userPublic       PublicUser   @relation(fields: [userPublicId], references: [id])
 
   @@unique([questionId, userPublicId, campusId, year])
   @@map("answers_public")
@@ -120,10 +120,10 @@ model Campus {
   phoneNumber     String            @map("phone_number")
   faximile        String
 
-  createdAt       DateTime?         @default(now()) @map("created_at")
-  updatedAt       DateTime?         @updatedAt @map("updated_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
-  user            User?             @relation(fields: [campusId], references: [id])
+  user            User              @relation(fields: [campusId], references: [id])
   result          Result[]
   answer          Answer[]
   resultVariable  ResultVariable[]
@@ -132,6 +132,7 @@ model Campus {
 
   @@map("campuses")
 
+  @@deny('read', !statusPt)
   @@allow("all", true)
 }
 
@@ -145,11 +146,11 @@ model PublicUser {
   isActive        Boolean           @default(true) @map("is_active")
   year            String
 
-  createdAt       DateTime?         @default(now()) @map("created_at")
-  updatedAt       DateTime?         @updatedAt @map("updated_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
-  user            User?             @relation(fields: [campusId], references: [id])
-  roleUser        RoleUser?         @relation(fields: [role], references: [role])
+  user            User              @relation(fields: [campusId], references: [id])
+  roleUser        RoleUser          @relation(fields: [role], references: [role])
   answerPublic    AnswerPublic[]
   publicSurveyLog PublicSurveyLog[]
 
@@ -165,10 +166,10 @@ model Option {
   value          String
   point          Float
 
-  createdAt      DateTime?      @default(now()) @map("created_at")
-  updatedAt      DateTime?      @updatedAt @map("updated_at")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
 
-  question       Question?      @relation(fields: [questionId], references: [id])
+  question       Question       @relation(fields: [questionId], references: [id])
   campusAnswer   Answer[]       @relation("CampusAnswer")
   reviewerAnswer Answer[]       @relation("ReviewerAnswer")
   answerPublic   AnswerPublic[] @relation("CampusAnswerPublic")
@@ -180,19 +181,19 @@ model Option {
 }
 
 model Question {
-  id                    String               @id @default(cuid())
+  id                    String              @id @default(cuid())
   question              String
   year                  String
-  isActive              Boolean              @default(true) @map("is_active")
-  variableOnFormGroupId String               @map("variable_on_form_group_id")
+  isActive              Boolean             @default(true) @map("is_active")
+  variableOnFormGroupId String              @map("variable_on_form_group_id")
 
-  createdAt             DateTime?            @default(now()) @map("created_at")
-  updatedAt             DateTime?            @updatedAt @map("updated_at")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
 
   option                Option[]
   answer                Answer[]
   answerPublic          AnswerPublic[]
-  variableOnForm        VariableOnFormGroup? @relation(fields: [variableOnFormGroupId], references: [id])
+  variableOnForm        VariableOnFormGroup @relation(fields: [variableOnFormGroupId], references: [id])
 
   @@map("questions")
 
@@ -208,8 +209,8 @@ model FormGroup {
   isPublished         Boolean               @default(false) @map("is_published")
   year                String
 
-  createdAt           DateTime?             @default(now()) @map("created_at")
-  updatedAt           DateTime?             @updatedAt @map("updated_at")
+  createdAt           DateTime              @default(now()) @map("created_at")
+  updatedAt           DateTime              @updatedAt @map("updated_at")
 
   variableOnFormGroup VariableOnFormGroup[]
   roleOnFormGroup     RoleOnFormGroup[]
@@ -222,15 +223,15 @@ model FormGroup {
 
 model Result {
   id             String           @id @default(cuid())
-  campusId       String?          @map("campus_id")
+  campusId       String           @map("campus_id")
   result         String
   year           String
   isApproved     Boolean          @default(false) @map("is_approved")
 
-  createdAt      DateTime?        @default(now()) @map("created_at")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
 
-  campus         Campus?          @relation(fields: [campusId], references: [campusId])
+  campus         Campus           @relation(fields: [campusId], references: [campusId])
   resultVariable ResultVariable[]
 
   @@map("results")
@@ -240,7 +241,7 @@ model Result {
 
 model ResultVariable {
   id           String         @id @default(cuid())
-  resultId     String?        @map("result_id")
+  resultId     String         @map("result_id")
   variableId   String         @map("variable_id")
   score        Float
   campusId     String         @map("campus_id")
@@ -248,12 +249,12 @@ model ResultVariable {
   year         String
   isPublicUser ResultUserType
 
-  result       Result?        @relation(fields: [resultId], references: [id])
-  variable     Variable?      @relation(fields: [variableId], references: [id])
-  campus       Campus?        @relation(fields: [campusId], references: [campusId])
+  result       Result         @relation(fields: [resultId], references: [id])
+  variable     Variable       @relation(fields: [variableId], references: [id])
+  campus       Campus         @relation(fields: [campusId], references: [campusId])
 
-  createdAt    DateTime?      @default(now()) @map("created_at")
-  updatedAt    DateTime?      @updatedAt @map("updated_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
 
   @@map("result_variables")
 
@@ -266,8 +267,8 @@ model Variable {
   name                  String
   description           String
 
-  createdAt             DateTime?               @default(now()) @map("created_at")
-  updatedAt             DateTime?               @updatedAt @map("updated_at")
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
 
   resultVariable        ResultVariable[]
   levelIndexOnVariables LevelIndexOnVariables[]
@@ -279,16 +280,16 @@ model Variable {
 }
 
 model LevelIndexOnVariables {
-  id                       String      @id @default(cuid())
-  variableId               String      @map("variable_id")
-  levelIndexId             String      @map("level_index")
-  descriptionLevelVariable String      @map("description_level_variable")
+  id                       String     @id @default(cuid())
+  variableId               String     @map("variable_id")
+  levelIndexId             String     @map("level_index")
+  descriptionLevelVariable String     @map("description_level_variable")
 
-  createdAt                DateTime?   @default(now()) @map("created_at")
-  updatedAt                DateTime?   @updatedAt @map("updated_at")
+  createdAt                DateTime   @default(now()) @map("created_at")
+  updatedAt                DateTime   @updatedAt @map("updated_at")
 
-  levelIndex               LevelIndex? @relation(fields: [levelIndexId], references: [id])
-  variable                 Variable?   @relation(fields: [variableId], references: [id])
+  levelIndex               LevelIndex @relation(fields: [levelIndexId], references: [id])
+  variable                 Variable   @relation(fields: [variableId], references: [id])
 
   @@map("level_index_on_variables")
 
@@ -302,8 +303,8 @@ model LevelIndex {
   minPoint              Float                   @map("min_point")
   maxPoint              Float                   @map("max_point")
 
-  createdAt             DateTime?               @default(now()) @map("created_at")
-  updatedAt             DateTime?               @updatedAt @map("updated_at")
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
 
   levelIndexOnVariables LevelIndexOnVariables[]
 
@@ -319,8 +320,8 @@ model RoleUser {
   idNumberType    String?           @map("id_number_type")
   isParticipant   Boolean           @default(true) @map("is_participant")
 
-  createdAt       DateTime?         @default(now()) @map("created_at")
-  updatedAt       DateTime?         @updatedAt @map("updated_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
   publicUser      PublicUser[]
   roleOnFormGroup RoleOnFormGroup[]
@@ -332,15 +333,15 @@ model RoleUser {
 }
 
 model RoleOnFormGroup {
-  id          String     @id @default(cuid())
-  formGroupId String     @map("form_group_id") // relation scalar field (used in the `@relation` attribute above)
-  role        String     @map("role") // relation scalar field (used in the `@relation` attribute above)
+  id          String    @id @default(cuid())
+  formGroupId String    @map("form_group_id") // relation scalar field (used in the `@relation` attribute above)
+  role        String    @map("role") // relation scalar field (used in the `@relation` attribute above)
 
-  createdAt   DateTime?  @default(now()) @map("created_at")
-  updatedAt   DateTime?  @updatedAt @map("updated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  formGroup   FormGroup? @relation(fields: [formGroupId], references: [id])
-  roleUser    RoleUser?  @relation(fields: [role], references: [role])
+  formGroup   FormGroup @relation(fields: [formGroupId], references: [id])
+  roleUser    RoleUser  @relation(fields: [role], references: [role])
 
   @@unique([role, formGroupId])
   @@map("role_on_form_groups")
@@ -350,17 +351,17 @@ model RoleOnFormGroup {
 
 model VariableOnFormGroup {
   id              String            @id @default(cuid())
-  variableId      String            @map("variable_id") // relation scalar field (used in the `@relation` attribute above)
-  formGroupId     String            @map("form_group_id") // relation scalar field (used in the `@relation` attribute above)
+  variableId      String            @map("variable_id")
+  formGroupId     String            @map("form_group_id")
 
-  createdAt       DateTime?         @default(now()) @map("created_at")
-  updatedAt       DateTime?         @updatedAt @map("updated_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
   question        Question[]
   campusSurveyLog CampusSurveyLog[]
   publicSurveyLog PublicSurveyLog[]
-  variable        Variable?         @relation(fields: [variableId], references: [id])
-  formGroup       FormGroup?        @relation(fields: [formGroupId], references: [id])
+  variable        Variable          @relation(fields: [variableId], references: [id])
+  formGroup       FormGroup         @relation(fields: [formGroupId], references: [id])
 
   @@unique([formGroupId, variableId])
   @@map("variable_on_form_groups")
@@ -369,16 +370,16 @@ model VariableOnFormGroup {
 }
 
 model CampusSurveyLog {
-  id                    String               @id @default(cuid())
+  id                    String              @id @default(cuid())
 
-  campusId              String               @map("campus_id")
-  variableOnFormGroupId String               @map("variable_on_form_group_id")
+  campusId              String              @map("campus_id")
+  variableOnFormGroupId String              @map("variable_on_form_group_id")
   status                SurveyLogStatus
 
-  campus                Campus?              @relation(fields: [campusId], references: [campusId])
-  variableOnFormGroup   VariableOnFormGroup? @relation(fields: [variableOnFormGroupId], references: [id])
-  createdAt             DateTime?            @default(now()) @map("created_at")
-  updatedAt             DateTime?            @updatedAt @map("updated_at")
+  campus                Campus              @relation(fields: [campusId], references: [campusId])
+  variableOnFormGroup   VariableOnFormGroup @relation(fields: [variableOnFormGroupId], references: [id])
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
 
   @@unique([campusId, variableOnFormGroupId])
   @@map("campus_survey_logs")
@@ -387,16 +388,16 @@ model CampusSurveyLog {
 }
 
 model PublicSurveyLog {
-  id                    String               @id @default(cuid())
+  id                    String              @id @default(cuid())
 
-  publicUserId          String               @map("public_user_id")
-  variableOnFormGroupId String               @map("variable_on_form_group_id")
+  publicUserId          String              @map("public_user_id")
+  variableOnFormGroupId String              @map("variable_on_form_group_id")
   status                SurveyLogStatus
 
-  publicUser            PublicUser?          @relation(fields: [publicUserId], references: [id])
-  variableOnFormGroup   VariableOnFormGroup? @relation(fields: [variableOnFormGroupId], references: [id])
-  createdAt             DateTime?            @default(now()) @map("created_at")
-  updatedAt             DateTime?            @updatedAt @map("updated_at")
+  publicUser            PublicUser          @relation(fields: [publicUserId], references: [id])
+  variableOnFormGroup   VariableOnFormGroup @relation(fields: [variableOnFormGroupId], references: [id])
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
 
   @@unique([publicUserId, variableOnFormGroupId])
   @@map("public_survey_logs")
@@ -405,11 +406,11 @@ model PublicSurveyLog {
 }
 
 model UrlPublicSurvey {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   payload   Json
 
-  createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("url_public_survey")
 
