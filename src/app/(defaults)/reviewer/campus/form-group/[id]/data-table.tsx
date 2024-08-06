@@ -82,8 +82,7 @@ function DataTableReviewerSelectedFormGroupCampusComponent({ rowData }: { rowDat
             .toLowerCase()
             .includes(selectedTab !== 'Semua' ? selectedTab.toLowerCase() : '') &&
           (item.submitTime?.toLocaleString().toLowerCase().includes(search.toLowerCase()) ??
-            item.status.toLowerCase().includes(search.toLowerCase()) ??
-            item.campusName.toLowerCase().includes(search.toLowerCase()))
+            (item.status.toLowerCase().includes(search.toLowerCase()) || item.campusName.toLowerCase().includes(search.toLowerCase())))
         );
       });
     });
