@@ -1,50 +1,48 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
-import { IRootState } from '@/store';
+import IconPencil from '@/components/icon/icon-pencil';
+import { type IRootState } from '@/store';
 import { api } from '@/trpc/react';
+import { cn } from '@/utils/cn';
+import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import 'tippy.js/dist/tippy.css';
 
-function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
-  // * Ganti api yg diget saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
-  type TRowData = {
-    id: string;
-    formGroupName: string;
-    totalVariable: number;
-    status: string;
-  };
+function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
+  // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
-  const [rowData] = api.reviewer.campus.getFormGroup.useSuspenseQuery({ year });
+  const [rowData] = api.reviewer.dashboard.getFormGroup.useSuspenseQuery({ year });
 
-  const cols: { accessor: keyof TRowData; title: string }[] = [
-    { accessor: 'id', title: 'ID' },
+  const cols: { accessor: string; title: string }[] = [
     { accessor: 'formGroupName', title: 'Nama Survei' },
-    { accessor: 'status', title: 'Status Review' },
     { accessor: 'totalVariable', title: 'Total Variabel' },
+    { accessor: 'status', title: 'Status Review' },
   ];
 
-  // * Codingan dibawah ini sudah oke, tidak perlu diganti-ganti
+  // * Codingan di bawah ini sudah oke, tidak perlu diganti-ganti
 
   // show/hide
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(10);
-  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'id'));
+  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'formGroupId'));
   const [recordsData, setRecordsData] = useState(initialRecords);
 
   const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: 'id',
+    columnAccessor: 'formGroupName',
     direction: 'asc',
   });
 
-  const [hideCols, setHideCols] = useState<any>([]);
+  const [hideCols, setHideCols] = useState<string[]>([]);
 
-  const showHideColumns = (col: any, value: any) => {
+  const showHideColumns = (col: string, _value: any) => {
     if (hideCols.includes(col)) {
       setHideCols((col: any) => hideCols.filter((d: any) => d !== col));
     } else {
@@ -53,7 +51,7 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
   };
 
   useEffect(() => {
-    setInitialRecords(sortBy(rowData, 'id'));
+    setInitialRecords(sortBy(rowData, 'formGroupName'));
   }, [rowData]);
 
   useEffect(() => {
@@ -69,7 +67,7 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
   useEffect(() => {
     setInitialRecords(() => {
       return rowData.filter((item) => {
-        // * Ubah dan custom untuk pencarian disini
+        // * Ubah dan custom untuk pencarian di sini
         return (
           item.status
             .toString()
@@ -82,7 +80,7 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
       });
     });
 
-    // * tambah state yang digunakan untuk search disini
+    // * tambah state yang digunakan untuk search di sini
   }, [search, selectedTab]);
 
   useEffect(() => {
@@ -105,21 +103,22 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
       </div>
       <div className="datatables">
         <DataTable
+          idAccessor="formGroupId"
           className="table-hover whitespace-nowrap rounded-md"
           records={recordsData}
           columns={[
             {
-              accessor: 'id',
+              accessor: 'no',
               title: 'No.',
               sortable: false,
-              hidden: hideCols.includes('id'),
+              textAlignment: 'center',
               render(record, index) {
                 return <span>{index + 1}</span>;
               },
             },
             {
               accessor: 'formGroupName',
-              title: 'Nama Form',
+              title: 'Nama Survei',
               sortable: true,
               hidden: hideCols.includes('formGroupName'),
             },
@@ -127,6 +126,7 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
               accessor: 'totalVariable',
               title: 'Total Variabel',
               sortable: true,
+              textAlignment: 'center',
               hidden: hideCols.includes('totalVariable'),
             },
             {
@@ -134,6 +134,39 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
               title: 'Status Review',
               sortable: true,
               hidden: hideCols.includes('status'),
+              textAlignment: 'center',
+              render(record) {
+                let badgeClass = '';
+                switch (record.status) {
+                  case 'Sedang Direview':
+                    badgeClass = 'bg-warning';
+                    break;
+                  case 'Belum Direview':
+                    badgeClass = 'bg-danger';
+                    break;
+                  case 'Sudah Direview':
+                    badgeClass = 'bg-success';
+                    break;
+                }
+                return <span className={cn('badge', badgeClass)}>{record.status}</span>;
+              },
+            },
+            {
+              accessor: 'aksi',
+              title: 'Aksi',
+              textAlignment: 'center',
+              sortable: false,
+              render(record) {
+                return (
+                  <Link href={`form-group/${record.formGroupId}`} className="flex items-center justify-center">
+                    <Tippy content={`Detail ${record.formGroupName}`} theme="primary">
+                      <button type="button" className="">
+                        <IconPencil fill={true} className="" />
+                      </button>
+                    </Tippy>
+                  </Link>
+                );
+              },
             },
           ]}
           highlightOnHover
@@ -153,4 +186,4 @@ function DataTableComponent({ year, selectedTab }: { year: string; selectedTab: 
   );
 }
 
-export default DataTableComponent;
+export default DataTableReviewerFormGroupCampus;

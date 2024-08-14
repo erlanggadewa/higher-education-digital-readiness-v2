@@ -45,6 +45,9 @@
 /* Dot Loading*/
 @import './loading.css';
 
+/* Dot Loading-modal*/
+@import './loading-modal.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -721,5 +724,5 @@ img.dark-img {
 }
 
 .banner {
-  @apply dark:bg-primary-old -m-6 mb-4 rounded-b-md bg-primary p-6 font-bold;
+  @apply -m-6 mb-4 rounded-b-md bg-primary p-6 font-bold dark:bg-primary-old;
 }
