@@ -1,5 +1,5 @@
 'use client';
-import DataTableReviewerFormGroupCampusComponent from '@/app/(defaults)/reviewer/campus/form-group/data-table';
+import DataTableReviewerFormGroupCampus from '@/app/(defaults)/reviewer/campus/form-group/data-table';
 import ElementsBreadcrumbsDefault from '@/components/breadcrumbs/elements-breadcrumbs-default';
 import IconDatabase from '@/components/icon/icon-database';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
@@ -34,7 +34,7 @@ function ReviewerFormGroupCampusPage() {
           <TabsFormGroup setSelectedTab={setSelectedTab} />
         </div>
         <Suspense fallback={<TableSkeletonComponent />}>
-          <DataTableReviewerFormGroupCampusComponent year={year} selectedTab={selectedTab} />
+          <DataTableReviewerFormGroupCampus year={year} selectedTab={selectedTab} />
         </Suspense>
       </div>
     </div>

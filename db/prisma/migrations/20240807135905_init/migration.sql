@@ -8,21 +8,21 @@ CREATE TYPE "ResultUserType" AS ENUM ('PUBLIC', 'CAMPUS');
 CREATE TYPE "SurveyLogStatus" AS ENUM ('WAITING', 'REVIEWED');
 
 -- CreateTable
-CREATE TABLE "users" (
+CREATE TABLE "campus_users" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "image" TEXT,
     "role" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "campus_users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "answers" (
+CREATE TABLE "campus_answers" (
     "id" TEXT NOT NULL,
     "question_id" TEXT NOT NULL,
     "option_id" TEXT NOT NULL,
@@ -32,14 +32,14 @@ CREATE TABLE "answers" (
     "answer_status" "AnswerStatus" NOT NULL DEFAULT 'WAITING',
     "review_comment" TEXT,
     "review_date" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "answers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "campus_answers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "answers_public" (
+CREATE TABLE "public_answers" (
     "id" TEXT NOT NULL,
     "question_id" TEXT NOT NULL,
     "option_id" TEXT NOT NULL,
@@ -50,10 +50,10 @@ CREATE TABLE "answers_public" (
     "answer_status" "AnswerStatus" NOT NULL DEFAULT 'WAITING',
     "review_comment" TEXT,
     "review_date" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "answers_public_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "public_answers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -70,14 +70,14 @@ CREATE TABLE "campuses" (
     "postal_code" TEXT NOT NULL,
     "phone_number" TEXT NOT NULL,
     "faximile" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "campuses_pkey" PRIMARY KEY ("campus_id")
 );
 
 -- CreateTable
-CREATE TABLE "public_user" (
+CREATE TABLE "public_users" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -86,10 +86,10 @@ CREATE TABLE "public_user" (
     "campus_id" TEXT NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "year" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "public_user_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "public_users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -98,8 +98,8 @@ CREATE TABLE "options" (
     "question_id" TEXT NOT NULL,
     "value" TEXT NOT NULL,
     "point" DOUBLE PRECISION NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "options_pkey" PRIMARY KEY ("id")
 );
@@ -111,8 +111,8 @@ CREATE TABLE "questions" (
     "year" TEXT NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "variable_on_form_group_id" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "questions_pkey" PRIMARY KEY ("id")
 );
@@ -125,8 +125,8 @@ CREATE TABLE "form_groups" (
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "is_published" BOOLEAN NOT NULL DEFAULT false,
     "year" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "form_groups_pkey" PRIMARY KEY ("id")
 );
@@ -134,12 +134,12 @@ CREATE TABLE "form_groups" (
 -- CreateTable
 CREATE TABLE "results" (
     "id" TEXT NOT NULL,
-    "campus_id" TEXT,
+    "campus_id" TEXT NOT NULL,
     "result" TEXT NOT NULL,
     "year" TEXT NOT NULL,
     "is_approved" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "results_pkey" PRIMARY KEY ("id")
 );
@@ -147,15 +147,15 @@ CREATE TABLE "results" (
 -- CreateTable
 CREATE TABLE "result_variables" (
     "id" TEXT NOT NULL,
-    "result_id" TEXT,
+    "result_id" TEXT NOT NULL,
     "variable_id" TEXT NOT NULL,
     "score" DOUBLE PRECISION NOT NULL,
     "campus_id" TEXT NOT NULL,
     "is_approved" BOOLEAN NOT NULL DEFAULT false,
     "year" TEXT NOT NULL,
     "isPublicUser" "ResultUserType" NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "result_variables_pkey" PRIMARY KEY ("id")
 );
@@ -166,8 +166,8 @@ CREATE TABLE "variables" (
     "alias" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "variables_pkey" PRIMARY KEY ("id")
 );
@@ -178,8 +178,8 @@ CREATE TABLE "level_index_on_variables" (
     "variable_id" TEXT NOT NULL,
     "level_index" TEXT NOT NULL,
     "description_level_variable" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "level_index_on_variables_pkey" PRIMARY KEY ("id")
 );
@@ -191,8 +191,8 @@ CREATE TABLE "level_indices" (
     "description" TEXT NOT NULL,
     "min_point" DOUBLE PRECISION NOT NULL,
     "max_point" DOUBLE PRECISION NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "level_indices_pkey" PRIMARY KEY ("id")
 );
@@ -204,8 +204,8 @@ CREATE TABLE "role_users" (
     "name" TEXT NOT NULL,
     "id_number_type" TEXT,
     "is_participant" BOOLEAN NOT NULL DEFAULT true,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "role_users_pkey" PRIMARY KEY ("id")
 );
@@ -215,8 +215,8 @@ CREATE TABLE "role_on_form_groups" (
     "id" TEXT NOT NULL,
     "form_group_id" TEXT NOT NULL,
     "role" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "role_on_form_groups_pkey" PRIMARY KEY ("id")
 );
@@ -226,8 +226,8 @@ CREATE TABLE "variable_on_form_groups" (
     "id" TEXT NOT NULL,
     "variable_id" TEXT NOT NULL,
     "form_group_id" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "variable_on_form_groups_pkey" PRIMARY KEY ("id")
 );
@@ -238,8 +238,8 @@ CREATE TABLE "campus_survey_logs" (
     "campus_id" TEXT NOT NULL,
     "variable_on_form_group_id" TEXT NOT NULL,
     "status" "SurveyLogStatus" NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "campus_survey_logs_pkey" PRIMARY KEY ("id")
 );
@@ -250,8 +250,8 @@ CREATE TABLE "public_survey_logs" (
     "public_user_id" TEXT NOT NULL,
     "variable_on_form_group_id" TEXT NOT NULL,
     "status" "SurveyLogStatus" NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "public_survey_logs_pkey" PRIMARY KEY ("id")
 );
@@ -260,20 +260,20 @@ CREATE TABLE "public_survey_logs" (
 CREATE TABLE "url_public_survey" (
     "id" TEXT NOT NULL,
     "payload" JSONB NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "url_public_survey_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+CREATE UNIQUE INDEX "campus_users_email_key" ON "campus_users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "answers_question_id_campus_id_year_key" ON "answers"("question_id", "campus_id", "year");
+CREATE UNIQUE INDEX "campus_answers_question_id_campus_id_year_key" ON "campus_answers"("question_id", "campus_id", "year");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "answers_public_question_id_user_public_id_campus_id_year_key" ON "answers_public"("question_id", "user_public_id", "campus_id", "year");
+CREATE UNIQUE INDEX "public_answers_question_id_user_public_id_campus_id_year_key" ON "public_answers"("question_id", "user_public_id", "campus_id", "year");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "campuses_campus_id_key" ON "campuses"("campus_id");
@@ -300,43 +300,43 @@ CREATE UNIQUE INDEX "campus_survey_logs_campus_id_variable_on_form_group_id_key"
 CREATE UNIQUE INDEX "public_survey_logs_public_user_id_variable_on_form_group_id_key" ON "public_survey_logs"("public_user_id", "variable_on_form_group_id");
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_role_fkey" FOREIGN KEY ("role") REFERENCES "role_users"("role") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campus_users" ADD CONSTRAINT "campus_users_role_fkey" FOREIGN KEY ("role") REFERENCES "role_users"("role") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers" ADD CONSTRAINT "answers_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "questions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campus_answers" ADD CONSTRAINT "campus_answers_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "questions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers" ADD CONSTRAINT "answers_option_id_fkey" FOREIGN KEY ("option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campus_answers" ADD CONSTRAINT "campus_answers_option_id_fkey" FOREIGN KEY ("option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers" ADD CONSTRAINT "answers_revision_option_id_fkey" FOREIGN KEY ("revision_option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campus_answers" ADD CONSTRAINT "campus_answers_revision_option_id_fkey" FOREIGN KEY ("revision_option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers" ADD CONSTRAINT "answers_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campuses"("campus_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campus_answers" ADD CONSTRAINT "campus_answers_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campuses"("campus_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers_public" ADD CONSTRAINT "answers_public_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "questions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_answers" ADD CONSTRAINT "public_answers_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "questions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers_public" ADD CONSTRAINT "answers_public_option_id_fkey" FOREIGN KEY ("option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_answers" ADD CONSTRAINT "public_answers_option_id_fkey" FOREIGN KEY ("option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers_public" ADD CONSTRAINT "answers_public_revision_option_id_fkey" FOREIGN KEY ("revision_option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_answers" ADD CONSTRAINT "public_answers_revision_option_id_fkey" FOREIGN KEY ("revision_option_id") REFERENCES "options"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers_public" ADD CONSTRAINT "answers_public_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campuses"("campus_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_answers" ADD CONSTRAINT "public_answers_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campuses"("campus_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "answers_public" ADD CONSTRAINT "answers_public_user_public_id_fkey" FOREIGN KEY ("user_public_id") REFERENCES "public_user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_answers" ADD CONSTRAINT "public_answers_user_public_id_fkey" FOREIGN KEY ("user_public_id") REFERENCES "public_users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "campuses" ADD CONSTRAINT "campuses_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "campuses" ADD CONSTRAINT "campuses_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campus_users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public_user" ADD CONSTRAINT "public_user_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_users" ADD CONSTRAINT "public_users_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campus_users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public_user" ADD CONSTRAINT "public_user_role_fkey" FOREIGN KEY ("role") REFERENCES "role_users"("role") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_users" ADD CONSTRAINT "public_users_role_fkey" FOREIGN KEY ("role") REFERENCES "role_users"("role") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "options" ADD CONSTRAINT "options_question_id_fkey" FOREIGN KEY ("question_id") REFERENCES "questions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -345,10 +345,10 @@ ALTER TABLE "options" ADD CONSTRAINT "options_question_id_fkey" FOREIGN KEY ("qu
 ALTER TABLE "questions" ADD CONSTRAINT "questions_variable_on_form_group_id_fkey" FOREIGN KEY ("variable_on_form_group_id") REFERENCES "variable_on_form_groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "results" ADD CONSTRAINT "results_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campuses"("campus_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "results" ADD CONSTRAINT "results_campus_id_fkey" FOREIGN KEY ("campus_id") REFERENCES "campuses"("campus_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "result_variables" ADD CONSTRAINT "result_variables_result_id_fkey" FOREIGN KEY ("result_id") REFERENCES "results"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "result_variables" ADD CONSTRAINT "result_variables_result_id_fkey" FOREIGN KEY ("result_id") REFERENCES "results"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "result_variables" ADD CONSTRAINT "result_variables_variable_id_fkey" FOREIGN KEY ("variable_id") REFERENCES "variables"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -381,7 +381,7 @@ ALTER TABLE "campus_survey_logs" ADD CONSTRAINT "campus_survey_logs_campus_id_fk
 ALTER TABLE "campus_survey_logs" ADD CONSTRAINT "campus_survey_logs_variable_on_form_group_id_fkey" FOREIGN KEY ("variable_on_form_group_id") REFERENCES "variable_on_form_groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public_survey_logs" ADD CONSTRAINT "public_survey_logs_public_user_id_fkey" FOREIGN KEY ("public_user_id") REFERENCES "public_user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public_survey_logs" ADD CONSTRAINT "public_survey_logs_public_user_id_fkey" FOREIGN KEY ("public_user_id") REFERENCES "public_users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public_survey_logs" ADD CONSTRAINT "public_survey_logs_variable_on_form_group_id_fkey" FOREIGN KEY ("variable_on_form_group_id") REFERENCES "variable_on_form_groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

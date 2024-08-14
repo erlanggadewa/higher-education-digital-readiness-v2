@@ -9,7 +9,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 enum AnswerStatus {
@@ -29,7 +30,7 @@ enum SurveyLogStatus {
 }
 
 /// @@allow('all', true)
-model User {
+model CampusUser {
   id         String       @id() @default(cuid())
   name       String
   /// @email
@@ -44,7 +45,7 @@ model User {
   roleUser   RoleUser     @relation(fields: [role], references: [role])
   publicUser PublicUser[]
 
-  @@map("users")
+  @@map("campus_users")
 }
 
 /// @@allow('all', true)
@@ -110,7 +111,7 @@ model Campus {
   faximile        String
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt() @map("updated_at")
-  user            User              @relation(fields: [campusId], references: [id])
+  campusUser      CampusUser        @relation(fields: [campusId], references: [id])
   result          Result[]
   campusAnswer    CampusAnswer[]
   resultVariable  ResultVariable[]
@@ -134,12 +135,12 @@ model PublicUser {
   year            String
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt() @map("updated_at")
-  user            User              @relation(fields: [campusId], references: [id])
+  campusUser      CampusUser        @relation(fields: [campusId], references: [id])
   roleUser        RoleUser          @relation(fields: [role], references: [role])
   publicAnswer    PublicAnswer[]
   publicSurveyLog PublicSurveyLog[]
 
-  @@map("public_user")
+  @@map("public_users")
 }
 
 /// @@allow('all', true)
@@ -282,7 +283,7 @@ model RoleUser {
   updatedAt       DateTime          @updatedAt() @map("updated_at")
   publicUser      PublicUser[]
   roleOnFormGroup RoleOnFormGroup[]
-  user            User[]
+  campusUser      CampusUser[]
 
   @@map("role_users")
 }

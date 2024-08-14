@@ -13,19 +13,18 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 
-function DataTableReviewerFormGroupCampusComponent({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
-  // * Ganti api yg diget saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
+function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
+  // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
-  const [rowData] = api.reviewer.campus.getFormGroup.useSuspenseQuery({ year });
-  type TRowData = (typeof rowData)[0];
+  const [rowData] = api.reviewer.dashboard.getFormGroup.useSuspenseQuery({ year });
 
-  const cols: { accessor: keyof TRowData; title: string }[] = [
+  const cols: { accessor: string; title: string }[] = [
     { accessor: 'formGroupName', title: 'Nama Survei' },
     { accessor: 'totalVariable', title: 'Total Variabel' },
     { accessor: 'status', title: 'Status Review' },
   ];
 
-  // * Codingan dibawah ini sudah oke, tidak perlu diganti-ganti
+  // * Codingan di bawah ini sudah oke, tidak perlu diganti-ganti
 
   // show/hide
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
@@ -68,7 +67,7 @@ function DataTableReviewerFormGroupCampusComponent({ year, selectedTab }: { year
   useEffect(() => {
     setInitialRecords(() => {
       return rowData.filter((item) => {
-        // * Ubah dan custom untuk pencarian disini
+        // * Ubah dan custom untuk pencarian di sini
         return (
           item.status
             .toString()
@@ -81,7 +80,7 @@ function DataTableReviewerFormGroupCampusComponent({ year, selectedTab }: { year
       });
     });
 
-    // * tambah state yang digunakan untuk search disini
+    // * tambah state yang digunakan untuk search di sini
   }, [search, selectedTab]);
 
   useEffect(() => {
@@ -187,4 +186,4 @@ function DataTableReviewerFormGroupCampusComponent({ year, selectedTab }: { year
   );
 }
 
-export default DataTableReviewerFormGroupCampusComponent;
+export default DataTableReviewerFormGroupCampus;

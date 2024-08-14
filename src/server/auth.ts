@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
 
-        const user = await purePrisma.user.findUnique({
+        const user = await purePrisma.campusUser.findUnique({
           where: { email: credentials?.username },
           include: {
             roleUser: { select: { name: true } },

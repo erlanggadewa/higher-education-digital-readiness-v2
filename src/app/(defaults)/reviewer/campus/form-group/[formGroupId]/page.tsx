@@ -3,10 +3,10 @@ import IconUniversity from '@/components/icon/icon-university';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
 import { api } from '@/trpc/server';
 import { Suspense } from 'react';
-import DataTableReviewerSelectedFormGroupCampusComponent from './data-table';
+import DataTableReviewerSelectedFormGroupCampus from './data-table';
 
-async function ReviewerSelectedFormGroupCampusPage({ params }: { params: { id: string } }) {
-  const rowData = await api.reviewer.campus.getSelectedFormGroup({ formGroupId: params.id });
+async function ReviewerSelectedFormGroupCampusPage({ params }: { params: { formGroupId: string } }) {
+  const rowData = await api.reviewer.dashboard.getSelectedFormGroup({ formGroupId: params.formGroupId });
 
   return (
     <div>
@@ -25,7 +25,7 @@ async function ReviewerSelectedFormGroupCampusPage({ params }: { params: { id: s
         </div>
 
         <Suspense fallback={<TableSkeletonComponent />}>
-          <DataTableReviewerSelectedFormGroupCampusComponent rowData={rowData.campus} />
+          <DataTableReviewerSelectedFormGroupCampus rowData={rowData.campus} formGroupId={params.formGroupId} />
         </Suspense>
       </div>
     </div>

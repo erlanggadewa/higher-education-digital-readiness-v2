@@ -23,7 +23,7 @@ type TRowData = {
   status: string;
 };
 
-function DataTableReviewerSelectedFormGroupCampusComponent({ rowData }: { rowData: TRowData[] }) {
+function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { rowData: TRowData[]; formGroupId: string }) {
   const [selectedTab, setSelectedTab] = useState<'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua'>('Semua');
 
   const cols: { accessor: keyof TRowData; title: string }[] = [
@@ -75,7 +75,7 @@ function DataTableReviewerSelectedFormGroupCampusComponent({ rowData }: { rowDat
   useEffect(() => {
     setInitialRecords(() => {
       return rowData.filter((item) => {
-        // * Ubah dan custom untuk pencarian disini
+        // * Ubah dan custom untuk pencarian di sini
         return (
           item.status
             .toString()
@@ -171,9 +171,9 @@ function DataTableReviewerSelectedFormGroupCampusComponent({ rowData }: { rowDat
                 title: 'Aksi',
                 textAlignment: 'center',
                 sortable: false,
-                render() {
+                render(record) {
                   return (
-                    <Link href={`/reviewer/campus/`} className="flex items-center justify-center">
+                    <Link href={`/reviewer/campus/${record.campusId}/form-group/${formGroupId}`} className="flex items-center justify-center">
                       <Tippy content={`Detail `} theme="primary">
                         <button type="button" className="">
                           <IconPencil fill={true} className="" />
@@ -202,4 +202,4 @@ function DataTableReviewerSelectedFormGroupCampusComponent({ rowData }: { rowDat
   );
 }
 
-export default DataTableReviewerSelectedFormGroupCampusComponent;
+export default DataTableReviewerSelectedFormGroupCampus;

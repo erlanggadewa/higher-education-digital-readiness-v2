@@ -2,13 +2,13 @@ import { purePrisma } from '@/server/db';
 import * as seederData from './seeder';
 
 async function main() {
-  await purePrisma.roleUser.createMany({ data: seederData.role });
+  await purePrisma.roleUser.createMany({ data: seederData.roles });
 
-  await purePrisma.user.createMany({ data: seederData.users });
+  await purePrisma.campusUser.createMany({ data: seederData.campusUsers });
   await purePrisma.campus.createMany({ data: seederData.campuses });
   await purePrisma.variable.createMany({ data: seederData.variables });
   await purePrisma.formGroup.createMany({ data: seederData.formGroups });
-  await purePrisma.roleOnFormGroup.createMany({ data: seederData.roleOnFormGroup });
+  await purePrisma.roleOnFormGroup.createMany({ data: seederData.roleOnFormGroups });
   await purePrisma.variableOnFormGroup.createMany({
     data: seederData.variableOnFormGroups,
   });
@@ -20,7 +20,7 @@ async function main() {
     data: seederData.levelIndexOnVariables,
   });
   await purePrisma.campusSurveyLog.createMany({
-    data: seederData.campusSurveyLog,
+    data: seederData.campusSurveyLogs,
   });
 }
 
