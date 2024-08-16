@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { z } from '@/utils/id-zod';
+import { AnswerStatus } from '@prisma/client';
 
 export const reviewerCampusRouter = createTRPCRouter({
   getSelectedProfilCampusReview: protectedProcedure
@@ -33,9 +34,7 @@ export const reviewerCampusRouter = createTRPCRouter({
         formGroupDescription: formGroup?.description,
         campus,
       };
-      console.log('🚀 formGroup ~ File: campus.ts');
-      console.dir(data, { depth: null });
-      console.log('🔚 formGroup ~ File: campus.ts');
+
       return data;
     }),
 
@@ -179,7 +178,7 @@ export const reviewerCampusRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const data = await ctx.db.question.findUniqueOrThrow({
+      const result = await ctx.db.question.findUniqueOrThrow({
         where: { id: input.questionId, isActive: true },
         include: {
           option: true,
@@ -198,9 +197,27 @@ export const reviewerCampusRouter = createTRPCRouter({
           },
         },
       });
-      console.log('🚀 formGroup ~ File: campus.ts');
-      console.dir(data, { depth: null });
-      console.log('🔚 formGroup ~ File: campus.ts');
+      const data = { ...result, campusAnswer: { ...result.campusAnswer[0] } };
       return data;
+    }),
+
+  createReviewSurveyCampus: protectedProcedure
+    .input(
+      z.object({
+        questionId: z.string().min(1).cuid(),
+        revisionOptionId: z.string().min(1).cuid(),
+        reviewComment: z.string().optional(),
+        answerStatus: z.nativeEnum(AnswerStatus),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const data = await ctx.db.campusAnswer.update({
+        where: { id: input.questionId },
+        data: {
+          revisionOptionId: input.revisionOptionId,
+          reviewComment: input.reviewComment,
+          answerStatus: input.answerStatus,
+        },
+      });
     }),
 });
