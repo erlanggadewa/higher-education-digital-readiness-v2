@@ -1,13 +1,10 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
-import IconPencil from '@/components/icon/icon-pencil';
-import LoadingModal from '@/components/loading/loading-modal';
 import { type IRootState } from '@/store';
 import { api } from '@/trpc/react';
-import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 import ModalReviewCampus from './model-review';
@@ -22,8 +19,6 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
     { accessor: 'answer.reviewComment', title: 'Keterangan' },
     { accessor: 'answer.reviewStatus', title: 'Status' },
   ];
-  const [payload, setPayload] = useState({ questionId: '', campusUserId: '', formGroupId: '', variableId: '', year: '' });
-  const [showModal, setShowModal] = useState(false);
 
   // show/hide
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
@@ -197,26 +192,16 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
               sortable: false,
               render(record, index) {
                 return (
-                  <>
-                    <Tippy content={`Review`} theme="primary">
-                      <button
-                        type="button"
-                        className=""
-                        onClick={() => {
-                          setShowModal(true);
-                          setPayload({
-                            questionId: record.id,
-                            campusUserId,
-                            formGroupId,
-                            variableId,
-                            year: record.year,
-                          });
-                        }}
-                      >
-                        <IconPencil fill={true} className="" />
-                      </button>
-                    </Tippy>
-                  </>
+                  <ModalReviewCampus
+                    key={index}
+                    payload={{
+                      campusUserId,
+                      formGroupId,
+                      variableId,
+                      questionId: record.id,
+                      year: record.year,
+                    }}
+                  />
                 );
               },
             },
@@ -234,21 +219,6 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
         />
       </div>
-      {showModal && (
-        <Suspense fallback={<LoadingModal />}>
-          <ModalReviewCampus
-            showModal={showModal}
-            setShowModal={setShowModal}
-            payload={{
-              campusUserId: payload.campusUserId,
-              formGroupId: payload.formGroupId,
-              variableId: payload.variableId,
-              questionId: payload.questionId,
-              year: payload.year,
-            }}
-          />
-        </Suspense>
-      )}
     </div>
   );
 }
