@@ -217,9 +217,6 @@ export const reviewerCampusRouter = createTRPCRouter({
           revisionOptionId: input.revisionOptionId,
           reviewComment: input.reviewComment,
           answerStatus: input.answerStatus,
-          question: {
-            connect: {},
-          },
         },
       });
     }),
