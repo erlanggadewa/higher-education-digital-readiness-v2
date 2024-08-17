@@ -21,8 +21,9 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
   const utils = api.useUtils();
 
   const createReview = api.reviewer.campus.createReviewSurveyCampus.useMutation({
-    async onSuccess() {
-      await utils.reviewer.campus.invalidate();
+    onSuccess() {
+      void utils.reviewer.campus.getSelectedSurveyCampusReview.invalidate({ campusUserId, formGroupId, variableId });
+      void utils.reviewer.campus.getModalSelectedSurveyCampusReview.invalidate({ campusUserId, formGroupId, variableId, year, questionId });
     },
   });
 
@@ -30,7 +31,7 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isDirty },
+    formState: { isDirty },
     reset,
   } = useForm({
     values: {
