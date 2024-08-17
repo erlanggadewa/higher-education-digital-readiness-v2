@@ -1,9 +1,12 @@
+import DefaultAlertComponent from '@/components/alert/elements-alerts-default';
 import IconPencil from '@/components/icon/icon-pencil';
 import IconX from '@/components/icon/icon-x';
 import { api } from '@/trpc/react';
+import { cn } from '@/utils/cn';
 import { z } from '@/utils/id-zod';
 import { Dialog, Transition } from '@headlessui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AnswerStatus } from '@prisma/client';
 import Tippy from '@tippyjs/react';
 import { Fragment, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -15,35 +18,42 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
 
   const [data] = api.reviewer.campus.getModalSelectedSurveyCampusReview.useSuspenseQuery({ questionId, campusUserId, formGroupId, variableId, year });
 
+  const utils = api.useUtils();
+
+  const createReview = api.reviewer.campus.createReviewSurveyCampus.useMutation({
+    async onSuccess() {
+      await utils.reviewer.campus.invalidate();
+    },
+  });
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    setValue,
+    formState: { errors, isDirty },
     reset,
   } = useForm({
-    defaultValues: {
-      questionId,
-      campusUserId,
-      year,
+    values: {
       revisionOptionId: data.campusAnswer.revisionOption?.id,
       reviewComment: data.campusAnswer.reviewComment,
+      answerStatus: data.campusAnswer.answerStatus,
     },
     resolver: zodResolver(
       z.object({
-        questionId: z.string().cuid().min(1),
-        campusUserId: z.string().cuid().min(1),
-        year: z.string().min(4).max(4),
         revisionOptionId: z.string().cuid().min(1),
+        reviewComment: z.string().nullable(),
+        answerStatus: z.nativeEnum(AnswerStatus),
       }),
     ),
   });
-  const onSubmit = handleSubmit(async (data) => {
+
+  const onSubmit = handleSubmit(async (payload) => {
     const status = await Swal.fire({
       icon: 'warning',
-      title: 'Yakin Submit Review?',
+      title: data.campusAnswer.answerStatus !== AnswerStatus.APPROVED ? 'Yakin Menyetujui Jawaban ?' : 'Yakin Menolak Jawaban ?',
       text: 'Perhatikan kembali hasil review anda',
       showCancelButton: true,
-      confirmButtonText: 'Submit',
+      confirmButtonText: 'Ya',
       cancelButtonText: 'Batal',
       padding: '2em',
       customClass: { container: 'sweet-alerts' },
@@ -51,7 +61,20 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
 
     if (!status.isConfirmed) return;
 
-    await Swal.fire({ title: 'Deleted!', text: 'Your file has been deleted.', icon: 'success', customClass: { container: 'sweet-alerts' } });
+    await Swal.fire({ title: 'Berhasil!', text: 'Hasil review berhasil disimpan', icon: 'success', customClass: { container: 'sweet-alerts' } });
+
+    createReview.mutate({
+      campusId: data.campusAnswer.campusId ?? '',
+      campusAnswerId: data.campusAnswer.id ?? '',
+      questionId: data.id ?? '',
+      variableOnFormGroupId: data.variableOnFormGroupId ?? '',
+      year: data.year ?? '',
+      payload: {
+        answerStatus: data.campusAnswer.answerStatus !== AnswerStatus.APPROVED ? AnswerStatus.APPROVED : AnswerStatus.REJECTED,
+        reviewComment: payload.reviewComment ?? null,
+        revisionOptionId: payload.revisionOptionId ?? '',
+      },
+    });
   });
 
   return (
@@ -85,8 +108,14 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
                         <IconX />
                       </button>
                     </div>
+
                     <div className="p-5">
-                      <form className="flex flex-col gap-5" onSubmit={onSubmit}>
+                      {isDirty && (
+                        <div className="mb-4">
+                          <DefaultAlertComponent type="info" message="Terjadi perubahan data jawaban" />
+                        </div>
+                      )}
+                      <form onSubmit={onSubmit} className="flex flex-col gap-5">
                         <div>
                           <p className="text-base font-bold">Pertanyaan</p>
                           <div>
@@ -120,25 +149,18 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
                             return (
                               <div key={index} className="flex items-center gap-2">
                                 <span className="badge h-full min-w-16 bg-warning py-2 text-center">{item.point} Poin</span>
-                                <div className="flex w-full">
+                                <label htmlFor={item.id} className="flex w-full">
                                   <div className="flex items-center justify-center border border-white-light bg-[#f1f2f3] px-3 font-semibold dark:border-[#17263c] dark:bg-[#1b2e4b] ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0">
                                     <input
                                       type="radio"
-                                      className="form-radio border-white-light text-blue-500 dark:border-white-dark ltr:mr-0 rtl:ml-0"
-                                      // defaultChecked={data.campusAnswer.revisionOption?.id === item.id}
                                       value={item.id}
+                                      id={item.id}
                                       {...register('revisionOptionId', { required: true })}
+                                      className="form-radio border-white-light text-blue-500 dark:border-white-dark ltr:mr-0 rtl:ml-0"
                                     />
                                   </div>
-                                  <input
-                                    id="radioLeft"
-                                    type="text"
-                                    placeholder="Radio"
-                                    className="form-input disabled:pointer-events-none ltr:rounded-l-none rtl:rounded-r-none"
-                                    readOnly
-                                    value={item.value}
-                                  />
-                                </div>
+                                  <input type="text" placeholder="Radio" className="form-input disabled:pointer-events-none ltr:rounded-l-none rtl:rounded-r-none" readOnly value={item.value} />
+                                </label>
                               </div>
                             );
                           })}
@@ -149,23 +171,24 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
                           <label htmlFor="ctnTextarea" className="text-base font-bold">
                             Keterangan
                           </label>
-                          <textarea
-                            id="ctnTextarea"
-                            rows={3}
-                            className="form-textarea"
-                            placeholder="Enter Address"
-                            value={data.campusAnswer.reviewComment ?? undefined}
-                            {...register('reviewComment', { required: false, value: data.campusAnswer.reviewComment })}
-                          ></textarea>
+                          <textarea id="ctnTextarea" rows={3} className="form-textarea" placeholder="Enter Address" {...register('reviewComment', { required: false })}></textarea>
                         </div>
 
                         <div className="mt-8 flex items-center justify-end">
-                          <button type="reset" className="btn btn-outline-danger">
+                          <button type="button" onClick={() => reset()} className="btn btn-warning">
                             Reset
                           </button>
-                          <button type="submit" className="btn btn-primary ltr:ml-4 rtl:mr-4">
-                            Simpan
-                          </button>
+
+                          {data.campusAnswer.answerStatus === 'APPROVED' && (
+                            <button type="submit" onClick={() => setValue('answerStatus', AnswerStatus.REJECTED)} className={cn('btn ltr:ml-4 rtl:mr-4', 'btn-danger')}>
+                              Tolak
+                            </button>
+                          )}
+                          {(data.campusAnswer.answerStatus !== 'APPROVED' || isDirty) && (
+                            <button type="submit" onClick={() => setValue('answerStatus', AnswerStatus.APPROVED)} className={cn('btn ltr:ml-4 rtl:mr-4', 'btn-primary')}>
+                              Setujui
+                            </button>
+                          )}
                         </div>
                       </form>
                     </div>
