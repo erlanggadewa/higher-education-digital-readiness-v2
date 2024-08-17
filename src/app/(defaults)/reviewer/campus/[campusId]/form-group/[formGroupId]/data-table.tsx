@@ -145,13 +145,6 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
                         </div>
                       );
                     })}
-                    {/* {record.option.map((item, index) => (
-                      <div key={index} className="flex gap-2">
-                        <span>{item.point}</span>
-                        <span>{item.campusAnswer.length > 0 && 'jawaban user'}</span>
-                        <span>{item.reviewerCampusAnswer.length > 0 && 'jawaban user'}</span>
-                      </div>
-                    ))} */}
                   </div>
                 );
               },
@@ -173,15 +166,19 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
               hidden: hideCols.includes('reviewStatus'),
               render(record, _index) {
                 let badgeColor = '';
+                let value = '';
                 if (record.answer.reviewStatus === 'APPROVED') {
                   badgeColor = 'bg-success';
+                  value = 'Disetujui';
                 } else if (record.answer.reviewStatus === 'REJECTED') {
                   badgeColor = 'bg-danger';
+                  value = 'Ditolak';
                 } else if (record.answer.reviewStatus === 'WAITING') {
                   badgeColor = 'bg-warning';
+                  value = 'Menunggu';
                 }
 
-                return <span className={`badge ${badgeColor}`}>{record.answer.reviewStatus}</span>;
+                return <span className={`badge ${badgeColor}`}>{value}</span>;
               },
             },
 
