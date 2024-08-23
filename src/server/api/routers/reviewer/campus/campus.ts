@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { z } from '@/utils/id-zod';
-import { AnswerStatus } from '@prisma/client';
+import { AnswerStatus, SurveyLogStatus } from '@prisma/client';
 
 export const reviewerCampusRouter = createTRPCRouter({
   getSelectedProfilCampusReview: protectedProcedure
@@ -189,8 +189,10 @@ export const reviewerCampusRouter = createTRPCRouter({
               year: input.year,
             },
             select: {
+              campusId: true,
               id: true,
               reviewComment: true,
+              answerStatus: true,
               option: { select: { id: true, value: true, point: true } },
               revisionOption: { select: { id: true, value: true, point: true } },
             },
@@ -204,20 +206,73 @@ export const reviewerCampusRouter = createTRPCRouter({
   createReviewSurveyCampus: protectedProcedure
     .input(
       z.object({
+        payload: z.object({
+          revisionOptionId: z.string().min(1).cuid(),
+          reviewComment: z.string().nullable(),
+          answerStatus: z.nativeEnum(AnswerStatus),
+        }),
+        variableOnFormGroupId: z.string().min(1).cuid(),
+        campusId: z.string().min(1).cuid(),
+        campusAnswerId: z.string().min(1).cuid(),
         questionId: z.string().min(1).cuid(),
-        revisionOptionId: z.string().min(1).cuid(),
-        reviewComment: z.string().optional(),
-        answerStatus: z.nativeEnum(AnswerStatus),
+        year: z.string().min(1).max(4),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const data = await ctx.db.campusAnswer.update({
-        where: { id: input.questionId },
-        data: {
-          revisionOptionId: input.revisionOptionId,
-          reviewComment: input.reviewComment,
-          answerStatus: input.answerStatus,
-        },
+      const data = await ctx.db.$transaction(async (tx) => {
+        const [, totalQuestionEachVariable] = await Promise.all([
+          tx.campusAnswer.update({
+            where: { id: input.campusAnswerId },
+            data: {
+              revisionOptionId: input.payload.revisionOptionId,
+              reviewComment: input.payload.reviewComment,
+              answerStatus: input.payload.answerStatus,
+            },
+          }),
+          tx.question.count({
+            where: { variableOnFormGroupId: input.variableOnFormGroupId },
+          }),
+        ]);
+
+        const campusAnswer = await tx.campusAnswer.findMany({
+          where: {
+            campusId: input.campusId,
+            year: input.year,
+            question: {
+              isActive: true,
+              year: input.year,
+              variableOnForm: {
+                id: input.variableOnFormGroupId,
+                formGroup: { isActive: true, isPublished: true, year: input.year },
+              },
+            },
+          },
+        });
+
+        const totalApproved = campusAnswer.filter((a) => a.answerStatus === AnswerStatus.APPROVED).length;
+
+        let status: SurveyLogStatus;
+        if (totalApproved === totalQuestionEachVariable) status = SurveyLogStatus.REVIEWED;
+        else status = SurveyLogStatus.WAITING;
+
+        const campusSurveyLog = await tx.campusSurveyLog.upsert({
+          where: {
+            campusId_variableOnFormGroupId: {
+              campusId: input.campusId,
+              variableOnFormGroupId: input.variableOnFormGroupId,
+            },
+          },
+          create: {
+            campusId: input.campusId,
+            variableOnFormGroupId: input.variableOnFormGroupId,
+            status,
+          },
+          update: {
+            status,
+          },
+        });
+        return 'success';
       });
+      return data;
     }),
 });
