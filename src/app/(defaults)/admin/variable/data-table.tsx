@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Tippy from '@tippyjs/react';
 import IconPencil from '@/components/icon/icon-pencil';
+import IconTrash from '@/components/icon/icon-trash';
+import IconEye from '@/components/icon/icon-eye';
 import Link from 'next/link';
 import 'tippy.js/dist/tippy.css';
 
@@ -109,7 +111,7 @@ function DataTableAdminVariable() {
               sortable: true,
               hidden: hideCols.includes('alias'),
               render(record, index) {
-                return <span className="badge badge-outline-success">{record.alias}</span>;
+                return <span className="badge badge-outline-success rounded-full">{record.alias}</span>;
               },
             },
             {
@@ -131,13 +133,27 @@ function DataTableAdminVariable() {
               sortable: false,
               render(record) {
                 return (
-                  <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
-                    <Tippy content={`Detail ${record.name}`} theme="primary">
+                  <div className="flex gap-2">
+                    <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
+                      <Tippy content={`Edit ${record.name}`} theme="primary">
+                        <button type="button" className="">
+                          <IconPencil />
+                        </button>
+                      </Tippy>
+                    </Link>
+                    <Tippy content={`Remove ${record.name}`} theme="primary">
                       <button type="button" className="">
-                        <IconPencil fill={true} className="" />
+                        <IconTrash />
                       </button>
                     </Tippy>
-                  </Link>
+                    <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
+                      <Tippy content={`Detail ${record.name}`} theme="primary">
+                        <button type="button" className="">
+                          <IconEye />
+                        </button>
+                      </Tippy>
+                    </Link>
+                  </div>
                 );
               },
             },
