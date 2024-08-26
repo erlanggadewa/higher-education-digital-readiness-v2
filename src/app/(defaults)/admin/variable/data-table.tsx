@@ -15,7 +15,7 @@ import Link from 'next/link';
 import 'tippy.js/dist/tippy.css';
 
 function DataTableAdminVariable() {
-  const [data] = api.admin.variable.getListVariables.useSuspenseQuery();
+  const [data] = api.admin.variable.getListVariable.useSuspenseQuery();
   const rowData = data;
 
   const cols: { accessor: string; title: string }[] = [

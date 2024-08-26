@@ -2,7 +2,7 @@
 
 import BreadCrumb from '@/components/elements/breadcrumb';
 import { Suspense } from 'react';
-import DataTableVariable from './data-table';
+import DataTableAdminVariable from './data-table';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
 import IconPlus from '@/components/icon/icon-plus';
 import IconFlag from '@/components/icon/icon-flag';
@@ -28,7 +28,7 @@ const VariablePage = () => {
           Daftar Variabel
         </h3>
         <Suspense fallback={<TableSkeletonComponent />}>
-          <DataTableVariable />
+          <DataTableAdminVariable />
         </Suspense>
       </div>
     </>
