@@ -4,9 +4,7 @@ export const adminCampusRouter = createTRPCRouter({
   getListCampus: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.campusUser.findMany({
       where: {
-        NOT: {
-          email: 'admin@email.com',
-        },
+        role: 'campus',
       },
     });
   }),
