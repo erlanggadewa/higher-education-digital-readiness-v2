@@ -2,7 +2,7 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { z } from '@/utils/id-zod';
 import { HelperDashboardAdmin } from './helper/helper-dashboard-admin';
 
-export const dashboardRouter = createTRPCRouter({
+export const adminDashboardRouter = createTRPCRouter({
   getFormGroup: protectedProcedure
     .input(
       z.object({

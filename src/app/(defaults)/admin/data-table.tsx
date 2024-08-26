@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 
-function DataTableReviewerSelectedCampus({ year }: { year: number }) {
+function DataTableAdminDashboard({ year }: { year: number }) {
   const [data] = api.admin.dashboard.getFormGroup.useSuspenseQuery({ year: '' + year });
   console.log(data);
   // const rowData = data.question;
@@ -199,4 +199,4 @@ function DataTableReviewerSelectedCampus({ year }: { year: number }) {
   );
 }
 
-export default DataTableReviewerSelectedCampus;
+export default DataTableAdminDashboard;

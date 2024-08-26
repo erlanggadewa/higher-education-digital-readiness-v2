@@ -1,6 +1,8 @@
 import { createTRPCRouter } from '../../trpc';
-import { dashboardRouter } from './dashboard';
+import { adminDashboardRouter } from './dashboard';
+import { adminVariableRouter } from './variable/variable';
 
 export const adminRoot = createTRPCRouter({
-  dashboard: dashboardRouter,
+  dashboard: adminDashboardRouter,
+  variable: adminVariableRouter,
 });

@@ -23,7 +23,7 @@ const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('');
   console.log(selectedTab);
   return (
-    <div>
+    <>
       <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary" />
       <div className="flex justify-between">
         <div>
@@ -37,7 +37,7 @@ const AdminPage = () => {
         </div>
       </div>
       <div className="mb-5 w-full rounded-md border border-white-light bg-white p-5 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-        <h5 className="text-xl font-semibold text-[#3b3f5c] dark:text-white-light">Selamat datang, Admin</h5>
+        <h3 className="text-xl font-semibold text-[#3b3f5c] dark:text-white-light">Selamat datang, Admin</h3>
       </div>
       <div className="mb-5 flex gap-3">
         <CardDashboard color="bg-primary" count={6} label="Telah Mengisi" />
@@ -47,13 +47,13 @@ const AdminPage = () => {
         <CardDashboard color="bg-danger" count={6} label="Belum Direview" />
       </div>
       <div className="w-full rounded-md border border-white-light bg-white p-5 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-        <h5 className="text-xl font-semibold text-[#3b3f5c] dark:text-white-light">Daftar Skor Kampus</h5>
+        <h3 className="text-xl font-semibold text-[#3b3f5c] dark:text-white-light">Daftar Skor Kampus</h3>
         <Tab setSelectedTab={setSelectedTab} />
         <Suspense fallback={<TableSkeletonComponent />}>
           <DataTableDashboard year={2024} />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 };
 
