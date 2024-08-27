@@ -25,7 +25,7 @@ function TabsFormGroup({ setSelectedTab }: { setSelectedTab: (value: 'Sedang Dir
             {({ selected }) => (
               <div className="flex-auto text-center !outline-none">
                 <button
-                  className={`${selected ? 'bg-primary text-white !outline-none' : 'bg-slate-100 ring ring-slate-200 dark:bg-dark dark:ring-dark-dark-light'} -mb-[1px] block w-full rounded p-3.5 py-2 font-medium transition duration-150 ease-in-out before:inline-block hover:bg-teal-700 hover:text-white hover:duration-100 dark:hover:bg-teal-700`}
+                  className={`${selected ? 'bg-primary text-white !outline-none' : 'bg-slate-100 ring ring-slate-200 dark:bg-dark dark:ring-slate-400'} -mb-[1px] block w-full rounded p-3.5 py-2 font-medium transition duration-150 ease-in-out before:inline-block hover:bg-teal-700 hover:text-white hover:duration-100 dark:hover:bg-teal-700`}
                   onClick={() => setSelectedTab(tab.value as 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua')}
                 >
                   {tab.value}

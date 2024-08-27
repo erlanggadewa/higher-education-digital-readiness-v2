@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
+import { campusRoot } from './routers/campus/root';
 import { reviewerRoot } from './routers/reviewer/root';
 
 /**
@@ -8,6 +9,7 @@ import { reviewerRoot } from './routers/reviewer/root';
  */
 export const appRouter = createTRPCRouter({
   reviewer: reviewerRoot,
+  campus: campusRoot,
 });
 
 // export type definition of API
