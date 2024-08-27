@@ -28,7 +28,7 @@ function ReviewerSelectedCampus({ params }: { params: { campusId: string; formGr
         </div>
       </div>
 
-      <div className="panel -my-20">
+      <div className="panel -mt-14">
         <div className="flex items-center gap-3 text-lg font-bold">
           <IconDatabase />
           <h1>{data.formGroupName}</h1>
