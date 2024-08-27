@@ -24,7 +24,7 @@ function ReviewerFormGroupCampusPage() {
           <Select className="max-w-24" defaultValue={listYear[0]} options={listYear} placeholder="Tahun" isSearchable={false} onChange={(val) => setYear(val!.value)} />
         </div>
       </div>
-      <div className="panel -my-20">
+      <div className="panel -mt-14">
         <div className="flex items-center gap-3 text-lg font-bold">
           <IconDatabase />
           <h1>Daftar Survey HEDR</h1>

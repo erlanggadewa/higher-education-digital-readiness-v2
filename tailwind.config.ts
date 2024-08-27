@@ -52,7 +52,7 @@ module.exports = {
           'dark-light': 'rgba(33,150,243,.15)',
         },
         dark: {
-          DEFAULT: '#333333',
+          DEFAULT: '#171717',
           light: '#eaeaec',
           'dark-light': 'rgba(59,63,92,.15)',
         },

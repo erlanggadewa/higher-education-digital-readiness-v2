@@ -5,7 +5,7 @@ import IconSettings from '@/components/icon/icon-settings';
 import IconSun from '@/components/icon/icon-sun';
 import IconX from '@/components/icon/icon-x';
 import { type IRootState } from '@/store';
-import { resetToggleSidebar, toggleAnimation, toggleLayout, toggleMenu, toggleNavbar, toggleRTL, toggleSemidark, toggleTheme } from '@/store/themeConfigSlice';
+import { resetToggleSidebar, toggleAnimation, toggleLayout, toggleMenu, toggleNavbar, toggleSemidark, toggleTheme } from '@/store/themeConfigSlice';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -41,7 +41,6 @@ const Setting = () => {
             <h4 className="mb-1 dark:text-white">TEMPLATE CUSTOMIZER</h4>
             <p className="dark:text-white">Set preferences that will be cookied for your live preview demonstration.</p>
           </div>
-
           <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
             <h5 className="mb-1 text-base leading-none dark:text-white">Color Scheme</h5>
             <p className="text-xs dark:text-white">Overall light or dark presentation.</p>
@@ -62,7 +61,6 @@ const Setting = () => {
               </button>
             </div>
           </div>
-
           <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
             <h5 className="mb-1 text-base leading-none dark:text-white">Navigation Position</h5>
             <p className="text-xs dark:text-white">Select the primary navigation paradigm for your app.</p>
@@ -107,7 +105,6 @@ const Setting = () => {
               </label>
             </div>
           </div>
-
           <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
             <h5 className="mb-1 text-base leading-none dark:text-white">Layout Style</h5>
             <p className="text-xs dark:text-white">Select the primary layout style for your app.</p>
@@ -121,8 +118,8 @@ const Setting = () => {
               </button>
             </div>
           </div>
-
-          <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
+          {/*  Disable RTL */}
+          {/* <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
             <h5 className="mb-1 text-base leading-none dark:text-white">Direction</h5>
             <p className="text-xs dark:text-white">Select the direction for your app.</p>
             <div className="mt-3 flex gap-2">
@@ -134,8 +131,7 @@ const Setting = () => {
                 RTL
               </button>
             </div>
-          </div>
-
+          </div> */}
           <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
             <h5 className="mb-1 text-base leading-none dark:text-white">Navbar Type</h5>
             <p className="text-xs dark:text-white">Sticky or Floating.</p>
@@ -154,7 +150,6 @@ const Setting = () => {
               </label>
             </div>
           </div>
-
           <div className="mb-3 rounded-md border border-dashed border-white-light p-3 dark:border-[#1b2e4b]">
             <h5 className="mb-1 text-base leading-none dark:text-white">Router Transition</h5>
             <p className="text-xs dark:text-white">Animation of main content.</p>
