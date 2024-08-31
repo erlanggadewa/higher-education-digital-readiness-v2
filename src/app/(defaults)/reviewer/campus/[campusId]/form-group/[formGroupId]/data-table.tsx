@@ -90,7 +90,7 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
         <div className="text-right xl:min-w-96">
-          <input type="text" className="form-input" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
           <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
@@ -130,14 +130,14 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
                         <div key={index} className="flex flex-col gap-2">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="badge bg-warning">{item.option.point} Poin</span>
+                              <span className="badge bg-warning dark:bg-warning-old">{item.option.point} Poin</span>
                               <span className="badge badge-outline-info">Jawaban Responden</span>
                             </div>
                             <p className="">{item.option.value}</p>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="badge bg-warning">{item.revisionOption.point} Poin</span>
+                              <span className="badge bg-warning dark:bg-warning-old">{item.revisionOption.point} Poin</span>
                               <span className="badge badge-outline-success">Jawaban Reviewer</span>
                             </div>
                             <p className="">{item.revisionOption.value}</p>
@@ -168,13 +168,13 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
                 let badgeColor = '';
                 let value = '';
                 if (record.answer.reviewStatus === 'APPROVED') {
-                  badgeColor = 'bg-success';
+                  badgeColor = 'bg-success dark:bg-success-old';
                   value = 'Disetujui';
                 } else if (record.answer.reviewStatus === 'REJECTED') {
-                  badgeColor = 'bg-danger';
+                  badgeColor = 'bg-danger dark:bg-danger-old';
                   value = 'Ditolak';
                 } else if (record.answer.reviewStatus === 'WAITING') {
-                  badgeColor = 'bg-warning';
+                  badgeColor = 'bg-warning dark:bg-warning-old';
                   value = 'Menunggu';
                 }
 

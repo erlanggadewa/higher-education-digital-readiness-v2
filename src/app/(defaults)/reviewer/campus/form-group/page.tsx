@@ -25,7 +25,7 @@ function ReviewerFormGroupCampusPage() {
         </div>
       </div>
       <div className="panel -mt-14">
-        <div className="flex items-center gap-3 text-lg font-bold">
+        <div className="mb-3 flex items-center gap-3 text-lg font-bold">
           <IconDatabase />
           <h1>Daftar Survey HEDR</h1>
           <span className="badge bg-primary">{year}</span>

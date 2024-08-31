@@ -151,7 +151,7 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
                       <div>
                         <p className="text-base font-bold">Jawaban Responden</p>
                         <div className="flex items-center gap-2">
-                          <span className="badge h-full min-w-16 bg-warning py-2 text-center">{data.campusAnswer.option?.point} Poin</span>
+                          <span className="badge dark:bg-warning-old h-full min-w-16 bg-warning py-2 text-center">{data.campusAnswer.option?.point} Poin</span>
                           <div className="flex w-full">
                             <div className="flex items-center justify-center border border-white-light bg-[#f1f2f3] px-3 font-semibold dark:border-[#17263c] dark:bg-[#1b2e4b] ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0">
                               <input type="radio" className="form-radio border-white-light text-blue-500 dark:border-white-dark ltr:mr-0 rtl:ml-0" defaultChecked />
@@ -173,7 +173,7 @@ function ModalReviewCampus({ payload }: { payload: { questionId: string; campusU
                         {data.option.map((item, index) => {
                           return (
                             <div key={index} className="flex items-center gap-2">
-                              <span className="badge h-full min-w-16 bg-warning py-2 text-center">{item.point} Poin</span>
+                              <span className="badge dark:bg-warning-old h-full min-w-16 bg-warning py-2 text-center">{item.point} Poin</span>
                               <div className="flex w-full">
                                 <div className="flex items-center justify-center border border-white-light bg-[#f1f2f3] px-3 font-semibold dark:border-[#17263c] dark:bg-[#1b2e4b] ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0">
                                   <input

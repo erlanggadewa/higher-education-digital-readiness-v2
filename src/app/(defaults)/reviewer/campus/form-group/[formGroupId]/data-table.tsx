@@ -109,7 +109,7 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
           <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
             <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
             <div className="text-right xl:min-w-96">
-              <input type="text" className="form-input" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </div>
         </div>
@@ -154,13 +154,13 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                   let badgeClass = '';
                   switch (record.status) {
                     case 'Sedang Direview':
-                      badgeClass = 'bg-warning';
+                      badgeClass = 'dark:bg-info-old dark:bg-info-old-old bg-info dark:bg-info-old';
                       break;
                     case 'Belum Direview':
-                      badgeClass = 'bg-danger';
+                      badgeClass = 'dark:bg-danger dark:bg-danger-old-old bg-danger dark:bg-danger-old';
                       break;
                     case 'Sudah Direview':
-                      badgeClass = 'bg-success';
+                      badgeClass = 'dark:bg-success-old dark:bg-success-old-old bg-success dark:bg-success-old';
                       break;
                   }
                   return <span className={cn('badge', badgeClass)}>{record.status}</span>;
