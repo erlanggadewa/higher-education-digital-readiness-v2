@@ -2,7 +2,7 @@ import IconHome from '@/components/icon/icon-home';
 
 const ElementsBreadcrumbsDefault = ({ data }: { data: string[] }) => {
   return (
-    <div className="my-1">
+    <>
       <ol className="flex font-semibold text-white dark:text-white-dark">
         <li>
           <button className="cursor-default">
@@ -15,7 +15,7 @@ const ElementsBreadcrumbsDefault = ({ data }: { data: string[] }) => {
           </li>
         ))}
       </ol>
-    </div>
+    </>
   );
 };
 

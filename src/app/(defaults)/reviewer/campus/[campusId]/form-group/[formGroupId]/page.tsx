@@ -18,7 +18,7 @@ function ReviewerSelectedCampus({ params }: { params: { campusId: string; formGr
       <div className="banner flex h-40 flex-wrap justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
-            <img className="h-11 w-11 overflow-hidden rounded-full bg-white object-cover" src={data.campus?.campusUser.image ?? ''} alt="img" />
+            <img className="w-12 overflow-hidden rounded-full bg-white object-cover" src={data.campus?.campusUser.image ?? ''} alt="img" />
             <div>
               <h1 className="text-xl text-white">{data.campus?.campusUser.name}</h1>
               <p className="text-white">{data.campus?.campusUser.email}</p>
@@ -29,7 +29,7 @@ function ReviewerSelectedCampus({ params }: { params: { campusId: string; formGr
       </div>
 
       <div className="panel -mt-14">
-        <div className="flex items-center gap-3 text-lg font-bold">
+        <div className="mb-3 flex items-center gap-3 text-lg font-bold">
           <IconDatabase />
           <h1>{data.formGroupName}</h1>
           <span className="badge bg-primary">Kampus</span>
