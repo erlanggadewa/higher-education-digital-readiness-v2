@@ -5,6 +5,7 @@ import IconPencil from '@/components/icon/icon-pencil';
 import { type IRootState } from '@/store';
 import { api } from '@/trpc/react';
 import { cn } from '@/utils/cn';
+import { Highlight } from '@mantine/core';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
@@ -121,6 +122,9 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               title: 'Nama Survei',
               sortable: true,
               hidden: hideCols.includes('formGroupName'),
+              render(record) {
+                return <Highlight highlight={search}>{record.formGroupName}</Highlight>;
+              },
             },
             {
               accessor: 'totalVariable',
@@ -128,6 +132,9 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               sortable: true,
               textAlignment: 'center',
               hidden: hideCols.includes('totalVariable'),
+              render(record) {
+                return <Highlight highlight={search}>{record.totalVariable.toString()}</Highlight>;
+              },
             },
             {
               accessor: 'status',
