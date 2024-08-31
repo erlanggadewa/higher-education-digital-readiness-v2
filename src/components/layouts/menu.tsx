@@ -84,12 +84,12 @@ export const menuCampus: TMenu = [
       {
         title: 'Survei Kampus',
         icon: IconForm,
-        link: '/campus/survei',
+        link: '/campus/survey',
       },
       {
         title: 'Survei Publik',
         icon: IconFormPublic,
-        link: '/campus/survei/public',
+        link: '/campus/survey/public',
       },
     ],
   },
