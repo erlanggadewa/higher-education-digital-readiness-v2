@@ -1,17 +1,17 @@
 'use client';
 
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
-import { type IRootState } from '@/store';
-import { api } from '@/trpc/react';
-import sortBy from 'lodash/sortBy';
-import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import Tippy from '@tippyjs/react';
+import IconEye from '@/components/icon/icon-eye';
 import IconPencil from '@/components/icon/icon-pencil';
 import IconTrash from '@/components/icon/icon-trash';
-import IconEye from '@/components/icon/icon-eye';
+import { type IRootState } from '@/store';
+import { api } from '@/trpc/react';
+import Tippy from '@tippyjs/react';
+import sortBy from 'lodash/sortBy';
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 
 function DataTableAdminVariable() {
@@ -84,7 +84,7 @@ function DataTableAdminVariable() {
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
         <div className="text-right xl:min-w-96">
-          <input type="text" className="form-input" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
           <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />

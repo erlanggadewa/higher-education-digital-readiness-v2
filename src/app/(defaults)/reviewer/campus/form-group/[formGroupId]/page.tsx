@@ -18,7 +18,7 @@ async function ReviewerSelectedFormGroupCampusPage({ params }: { params: { formG
       </div>
 
       <div className="panel -mt-14">
-        <div className="flex items-center gap-3 text-lg font-bold">
+        <div className="mb-3 flex items-center gap-3 text-lg font-bold">
           <IconUniversity />
           <h1>{`Daftar Responden Survei ${rowData.formGroup.formGroupName}`}</h1>
           <span className="badge bg-primary">Kampus</span>

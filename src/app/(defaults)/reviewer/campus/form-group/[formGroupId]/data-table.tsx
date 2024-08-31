@@ -5,6 +5,7 @@ import IconPencil from '@/components/icon/icon-pencil';
 import TabsFormGroup from '@/components/tabs/tabs-form-group';
 import { type IRootState } from '@/store';
 import { cn } from '@/utils/cn';
+import { Highlight } from '@mantine/core';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
@@ -12,7 +13,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
-
 // * Ganti api yg diget saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 type TRowData = {
   campusId: string;
@@ -81,8 +81,9 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
             .toString()
             .toLowerCase()
             .includes(selectedTab !== 'Semua' ? selectedTab.toLowerCase() : '') &&
-          (item.submitTime?.toLocaleString().toLowerCase().includes(search.toLowerCase()) ??
-            (item.status.toLowerCase().includes(search.toLowerCase()) || item.campusName.toLowerCase().includes(search.toLowerCase())))
+          (item.status.toLowerCase().includes(search.toLowerCase()) ||
+            item.campusName.toLowerCase().includes(search.toLowerCase()) ||
+            item.submitTime?.toLocaleString().toLowerCase().includes(search.toLowerCase()))
         );
       });
     });
@@ -109,7 +110,7 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
           <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
             <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
             <div className="text-right xl:min-w-96">
-              <input type="text" className="form-input" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </div>
         </div>
@@ -133,6 +134,9 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 title: 'Nama Kampus',
                 sortable: true,
                 hidden: hideCols.includes('campusName'),
+                render(record) {
+                  return <Highlight highlight={search}>{record.campusName}</Highlight>;
+                },
               },
               {
                 accessor: 'submitTime',
@@ -141,7 +145,7 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 textAlignment: 'center',
                 hidden: hideCols.includes('submitTime'),
                 render(record) {
-                  return <span>{record.submitTime ? new Date(record.submitTime).toLocaleString() : '-'}</span>;
+                  return <Highlight highlight={search}>{record.submitTime ? record.submitTime.toLocaleString() : '-'}</Highlight>;
                 },
               },
               {
@@ -154,13 +158,13 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                   let badgeClass = '';
                   switch (record.status) {
                     case 'Sedang Direview':
-                      badgeClass = 'bg-warning';
+                      badgeClass = 'dark:bg-info-old dark:bg-info-old-old bg-info dark:bg-info-old';
                       break;
                     case 'Belum Direview':
-                      badgeClass = 'bg-danger';
+                      badgeClass = 'dark:bg-danger dark:bg-danger-old-old bg-danger dark:bg-danger-old';
                       break;
                     case 'Sudah Direview':
-                      badgeClass = 'bg-success';
+                      badgeClass = 'dark:bg-success-old dark:bg-success-old-old bg-success dark:bg-success-old';
                       break;
                   }
                   return <span className={cn('badge', badgeClass)}>{record.status}</span>;

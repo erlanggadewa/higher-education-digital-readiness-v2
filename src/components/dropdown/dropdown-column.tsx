@@ -19,7 +19,7 @@ function DropdownHideColumn({
       <div className="dropdown">
         <Dropdown
           placement={`${isRtl ? 'bottom-end' : 'bottom-start'}`}
-          btnClassName="!flex items-center border font-semibold border-white-light dark:border-dark rounded-md px-4 py-2 text-sm dark:bg-dark dark:text-white-dark"
+          btnClassName="!flex items-center border font-semibold border-white-light ring dark:ring-gray-400 dark:border-dark rounded-md px-4 py-2 text-sm dark:bg-dark dark:text-white-dark"
           button={
             <>
               <span className="ltr:mr-1 rtl:ml-1">Columns</span>
