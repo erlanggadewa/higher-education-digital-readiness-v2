@@ -130,6 +130,5 @@
     "sharp",
     "swiper",
     "zenstack"
-  ],
-  "packageManager": "yarn@4.4.1"
+  ]
 }
