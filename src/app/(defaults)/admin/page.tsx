@@ -31,7 +31,7 @@ const AdminPage = () => {
           <BreadCrumb routes={[{ label: 'Dashboard' }]} />
         </div>
         <div>
-          <button type="button" className="btn bg-white dark:text-[#3b3f5c]">
+          <button type="button" className="btn bg-white dark:bg-[#191e3a] dark:border-[#1b2e4b] dark:shadow-none">
             Respon Pertanyaan
           </button>
         </div>

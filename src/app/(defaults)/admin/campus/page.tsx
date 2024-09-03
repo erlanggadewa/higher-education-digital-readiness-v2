@@ -17,7 +17,7 @@ const CampusPage = () => {
           <BreadCrumb routes={[{ label: 'Kampus' }]} />
         </div>
         <div>
-          <button type="button" className="btn bg-white dark:text-[#3b3f5c]">
+          <button type="button" className="btn bg-white dark:text-white-light dark:bg-[#191e3a] dark:border-[#1b2e4b] dark:shadow-none">
             <IconPlus /> Tambah Kampus
           </button>
         </div>
