@@ -1,12 +1,11 @@
 'use client';
 
 import BreadCrumb from '@/components/elements/breadcrumb';
-import { cn } from '@/utils/cn';
-import { useState } from 'react';
-import Tab from '@/components/tabs/tabs-admin-form-group';
-import { Suspense } from 'react';
-import DataTableDashboard from './data-table';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
+import Tab from '@/components/tabs/tabs-admin-form-group';
+import { cn } from '@/utils/cn';
+import { Suspense, useState } from 'react';
+import DataTableDashboard from './data-table';
 
 const CardDashboard = ({ count, label, color }: { count: number; label: string; color: string }) => {
   return (
@@ -41,10 +40,10 @@ const AdminPage = () => {
       </div>
       <div className="mb-5 flex gap-3">
         <CardDashboard color="bg-primary" count={6} label="Telah Mengisi" />
-        <CardDashboard color="bg-warning" count={6} label="Belum Mengisi" />
-        <CardDashboard color="bg-info" count={6} label="Telah Direview" />
-        <CardDashboard color="bg-success" count={6} label="Sedang Direview" />
-        <CardDashboard color="bg-danger" count={6} label="Belum Direview" />
+        <CardDashboard color="bg-warning dark:bg-warning-old" count={6} label="Belum Mengisi" />
+        <CardDashboard color="bg-info dark:bg-info-old" count={6} label="Telah Direview" />
+        <CardDashboard color="bg-success dark:bg-success-old" count={6} label="Sedang Direview" />
+        <CardDashboard color="bg-danger dark:bg-danger-old" count={6} label="Belum Direview" />
       </div>
       <div className="w-full rounded-md border border-white-light bg-white p-5 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
         <h3 className="text-xl font-semibold text-[#3b3f5c] dark:text-white-light">Daftar Skor Kampus</h3>

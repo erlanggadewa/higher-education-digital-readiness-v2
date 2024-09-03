@@ -3,7 +3,6 @@ import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
 import IconPencil from '@/components/icon/icon-pencil';
 import { type IRootState } from '@/store';
-import { api } from '@/trpc/react';
 import { cn } from '@/utils/cn';
 import { Highlight } from '@mantine/core';
 import Tippy from '@tippyjs/react';
@@ -14,15 +13,33 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 
-function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
+function DataTableCampusFormGroup({
+  data,
+}: {
+  data: {
+    formGroupId: string;
+    formGroupName: string;
+    totalVariable: number;
+    year: string;
+    description: string;
+    status: {
+      reviewStatus: string;
+      surveyStatus: string;
+    };
+    takeTime: Date | undefined;
+  }[];
+}) {
   // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
-  const [rowData] = api.reviewer.dashboard.getFormGroup.useSuspenseQuery({ year });
+  const rowData = data;
 
   const cols: { accessor: string; title: string }[] = [
     { accessor: 'formGroupName', title: 'Nama Survei' },
     { accessor: 'totalVariable', title: 'Total Variabel' },
-    { accessor: 'status', title: 'Status Review' },
+    { accessor: 'year', title: 'Tahun' },
+    { accessor: 'takeTime', title: 'Waktu Pengerjaan' },
+    { accessor: 'status.surveyStatus', title: 'Status Survei' },
+    { accessor: 'status.reviewStatus', title: 'Status Review' },
   ];
 
   // * Codingan di bawah ini sudah oke, tidak perlu diganti-ganti
@@ -32,7 +49,7 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(10);
-  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'formGroupId'));
+  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
 
   const [search, setSearch] = useState('');
@@ -70,19 +87,19 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
       return rowData.filter((item) => {
         // * Ubah dan custom untuk pencarian di sini
         return (
-          item.status
-            .toString()
-            .toLowerCase()
-            .includes(selectedTab !== 'Semua' ? selectedTab.toLowerCase() : '') &&
-          (item.totalVariable.toString().toLowerCase().includes(search.toLowerCase()) ||
-            item.status.toLowerCase().includes(search.toLowerCase()) ||
-            item.formGroupName.toLowerCase().includes(search.toLowerCase()))
+          item.description.toLowerCase().includes(search.toLowerCase()) ||
+          item.formGroupName.toLowerCase().includes(search.toLowerCase()) ||
+          item.year.toLowerCase().includes(search.toLowerCase()) ||
+          item.status.surveyStatus.toLowerCase().includes(search.toLowerCase()) ||
+          item.status.reviewStatus.toLowerCase().includes(search.toLowerCase()) ||
+          item.totalVariable.toString().toLowerCase().includes(search.toLowerCase()) ||
+          item.takeTime?.toLocaleString().toLowerCase().includes(search.toLowerCase())
         );
       });
     });
 
     // * tambah state yang digunakan untuk search di sini
-  }, [search, selectedTab]);
+  }, [search]);
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
@@ -122,8 +139,37 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               title: 'Nama Survei',
               sortable: true,
               hidden: hideCols.includes('formGroupName'),
+              render(record, _index) {
+                return (
+                  <>
+                    <Highlight className="mb-2 font-bold" highlight={search}>
+                      {record.formGroupName}
+                    </Highlight>
+                    <Highlight className="mb-2 font-bold" highlight={search}>
+                      {record.description}
+                    </Highlight>
+                  </>
+                );
+              },
+            },
+            {
+              accessor: 'year',
+              title: 'Tahun',
+              sortable: true,
+              textAlignment: 'center',
+              hidden: hideCols.includes('year'),
               render(record) {
-                return <Highlight highlight={search}>{record.formGroupName}</Highlight>;
+                return <Highlight highlight={search}>{record.year}</Highlight>;
+              },
+            },
+            {
+              accessor: 'takeTime',
+              title: 'Waktu Pengerjaan',
+              sortable: true,
+              textAlignment: 'center',
+              hidden: hideCols.includes('takeTime'),
+              render(record) {
+                return <Highlight highlight={search}>{record.takeTime ? record.takeTime.toLocaleString() : '-'}</Highlight>;
               },
             },
             {
@@ -137,25 +183,50 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               },
             },
             {
-              accessor: 'status',
-              title: 'Status Review',
+              accessor: 'status.surveyStatus',
+              title: 'Status Survei',
               sortable: true,
-              hidden: hideCols.includes('status'),
+              hidden: hideCols.includes('status.surveyStatus'),
               textAlignment: 'center',
               render(record) {
                 let badgeClass = '';
-                switch (record.status) {
-                  case 'Sedang Direview':
-                    badgeClass = 'dark:bg-info-old dark:bg-info-old-old bg-info dark:bg-info-old';
+                switch (record.status.surveyStatus) {
+                  case 'Perlu Dikerjakan':
+                    badgeClass = 'bg-danger dark:bg-danger-old';
                     break;
-                  case 'Belum Direview':
-                    badgeClass = 'dark:bg-danger dark:bg-danger-old-old bg-danger dark:bg-danger-old';
+                  case 'Sedang Dikerjakan':
+                    badgeClass = 'bg-warning dark:bg-warning-old';
                     break;
-                  case 'Sudah Direview':
-                    badgeClass = 'dark:bg-success-old dark:bg-success-old-old bg-success dark:bg-success-old';
+                  case 'Selesai Dikerjakan':
+                    badgeClass = 'dark:bg-success-old bg-success';
                     break;
                 }
-                return <span className={cn('badge', badgeClass)}>{record.status}</span>;
+                return <span className={cn('badge', badgeClass)}>{record.status.surveyStatus}</span>;
+              },
+            },
+            {
+              accessor: 'status.reviewStatus',
+              title: 'Status Review',
+              sortable: true,
+              hidden: hideCols.includes('status.reviewStatus'),
+              textAlignment: 'center',
+              render(record) {
+                let badgeClass = '';
+                switch (record.status.reviewStatus) {
+                  case 'Sedang Direview':
+                    badgeClass = 'dark:bg-info-old bg-info';
+                    break;
+                  case 'Belum Direview':
+                    badgeClass = 'dark:bg-warning-old bg-warning';
+                    break;
+                  case 'Sudah Direview':
+                    badgeClass = 'dark:bg-success-old bg-success';
+                    break;
+                  case 'Menunggu Dikerjakan':
+                    badgeClass = 'dark:bg-danger-old bg-danger';
+                    break;
+                }
+                return <span className={cn('badge', badgeClass)}>{record.status.reviewStatus}</span>;
               },
             },
             {
@@ -193,4 +264,4 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
   );
 }
 
-export default DataTableReviewerFormGroupCampus;
+export default DataTableCampusFormGroup;
