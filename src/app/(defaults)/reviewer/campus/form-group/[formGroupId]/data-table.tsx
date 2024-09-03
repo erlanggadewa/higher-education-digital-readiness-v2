@@ -135,7 +135,11 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 sortable: true,
                 hidden: hideCols.includes('campusName'),
                 render(record) {
-                  return <Highlight highlight={search}>{record.campusName}</Highlight>;
+                  return (
+                    <Highlight highlightColor="teal" highlight={search}>
+                      {record.campusName}
+                    </Highlight>
+                  );
                 },
               },
               {
@@ -145,7 +149,11 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 textAlignment: 'center',
                 hidden: hideCols.includes('submitTime'),
                 render(record) {
-                  return <Highlight highlight={search}>{record.submitTime ? record.submitTime.toLocaleString() : '-'}</Highlight>;
+                  return (
+                    <Highlight highlightColor="teal" highlight={search}>
+                      {record.submitTime ? record.submitTime.toLocaleString() : '-'}
+                    </Highlight>
+                  );
                 },
               },
               {

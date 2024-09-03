@@ -142,10 +142,10 @@ function DataTableCampusFormGroup({
               render(record, _index) {
                 return (
                   <>
-                    <Highlight className="mb-2 font-bold" highlight={search}>
+                    <Highlight highlightColor="teal" className="mb-2 font-bold" highlight={search}>
                       {record.formGroupName}
                     </Highlight>
-                    <Highlight className="mb-2 font-bold" highlight={search}>
+                    <Highlight highlightColor="teal" className="mb-2 font-bold" highlight={search}>
                       {record.description}
                     </Highlight>
                   </>
@@ -159,7 +159,11 @@ function DataTableCampusFormGroup({
               textAlignment: 'center',
               hidden: hideCols.includes('year'),
               render(record) {
-                return <Highlight highlight={search}>{record.year}</Highlight>;
+                return (
+                  <Highlight highlightColor="teal" highlight={search}>
+                    {record.year}
+                  </Highlight>
+                );
               },
             },
             {
@@ -169,7 +173,11 @@ function DataTableCampusFormGroup({
               textAlignment: 'center',
               hidden: hideCols.includes('takeTime'),
               render(record) {
-                return <Highlight highlight={search}>{record.takeTime ? record.takeTime.toLocaleString() : '-'}</Highlight>;
+                return (
+                  <Highlight highlightColor="teal" highlight={search}>
+                    {record.takeTime ? record.takeTime.toLocaleString() : '-'}
+                  </Highlight>
+                );
               },
             },
             {
@@ -179,7 +187,11 @@ function DataTableCampusFormGroup({
               textAlignment: 'center',
               hidden: hideCols.includes('totalVariable'),
               render(record) {
-                return <Highlight highlight={search}>{record.totalVariable.toString()}</Highlight>;
+                return (
+                  <Highlight highlightColor="teal" highlight={search}>
+                    {record.totalVariable.toString()}
+                  </Highlight>
+                );
               },
             },
             {

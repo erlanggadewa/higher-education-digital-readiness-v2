@@ -123,7 +123,11 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               sortable: true,
               hidden: hideCols.includes('formGroupName'),
               render(record) {
-                return <Highlight highlight={search}>{record.formGroupName}</Highlight>;
+                return (
+                  <Highlight highlightColor="teal" highlight={search}>
+                    {record.formGroupName}
+                  </Highlight>
+                );
               },
             },
             {
@@ -133,7 +137,11 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               textAlignment: 'center',
               hidden: hideCols.includes('totalVariable'),
               render(record) {
-                return <Highlight highlight={search}>{record.totalVariable.toString()}</Highlight>;
+                return (
+                  <Highlight highlightColor="teal" highlight={search}>
+                    {record.totalVariable.toString()}
+                  </Highlight>
+                );
               },
             },
             {
