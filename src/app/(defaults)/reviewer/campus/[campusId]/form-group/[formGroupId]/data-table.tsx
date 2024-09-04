@@ -1,8 +1,8 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
+import HighlightField from '@/components/highlight/highlight';
 import { type IRootState } from '@/store';
 import { api } from '@/trpc/react';
-import { Highlight } from '@mantine/core';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -119,19 +119,7 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
               sortable: true,
               hidden: hideCols.includes('question'),
               render(record) {
-                return (
-                  <Highlight
-                    highlightStyles={(theme) => ({
-                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                      fontWeight: 700,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    })}
-                    highlight={search}
-                  >
-                    {record.question}
-                  </Highlight>
-                );
+                return <HighlightField search={search} value={record.question} />;
               },
             },
             {
@@ -150,34 +138,14 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
                               <span className="badge bg-warning dark:bg-warning-old">{item.option.point} Poin</span>
                               <span className="badge badge-outline-info">Jawaban Responden</span>
                             </div>
-                            <Highlight
-                              highlightStyles={(theme) => ({
-                                backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                                fontWeight: 700,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                              })}
-                              highlight={search}
-                            >
-                              {item.option.value}
-                            </Highlight>
+                            <HighlightField search={search} value={item.option.value} />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="badge bg-warning dark:bg-warning-old">{item.revisionOption.point} Poin</span>
                               <span className="badge badge-outline-success">Jawaban Reviewer</span>
                             </div>
-                            <Highlight
-                              highlightStyles={(theme) => ({
-                                backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                                fontWeight: 700,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                              })}
-                              highlight={search}
-                            >
-                              {item.revisionOption.value}
-                            </Highlight>
+                            <HighlightField search={search} value={item.revisionOption.value} />
                           </div>
                         </div>
                       );
@@ -192,19 +160,7 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
               sortable: true,
               hidden: hideCols.includes('answer.reviewComment'),
               render(record) {
-                return (
-                  <Highlight
-                    highlightStyles={(theme) => ({
-                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                      fontWeight: 700,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    })}
-                    highlight={search}
-                  >
-                    {record.answer.reviewComment ? record.answer.reviewComment : '-'}
-                  </Highlight>
-                );
+                return <HighlightField search={search} value={record.answer.reviewComment ? record.answer.reviewComment : '-'} />;
               },
             },
             {

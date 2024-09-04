@@ -1,11 +1,11 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
+import HighlightField from '@/components/highlight/highlight';
 import IconPencil from '@/components/icon/icon-pencil';
 import TabsFormGroup from '@/components/tabs/tabs-form-group';
 import { type IRootState } from '@/store';
 import { cn } from '@/utils/cn';
-import { Highlight } from '@mantine/core';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
@@ -135,19 +135,7 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 sortable: true,
                 hidden: hideCols.includes('campusName'),
                 render(record) {
-                  return (
-                    <Highlight
-                      highlightStyles={(theme) => ({
-                        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                        fontWeight: 700,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                      })}
-                      highlight={search}
-                    >
-                      {record.campusName}
-                    </Highlight>
-                  );
+                  return <HighlightField search={search} value={record.campusName} />;
                 },
               },
               {
@@ -157,19 +145,7 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 textAlignment: 'center',
                 hidden: hideCols.includes('submitTime'),
                 render(record) {
-                  return (
-                    <Highlight
-                      highlightStyles={(theme) => ({
-                        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                        fontWeight: 700,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                      })}
-                      highlight={search}
-                    >
-                      {record.submitTime ? record.submitTime.toLocaleString() : '-'}
-                    </Highlight>
-                  );
+                  return <HighlightField search={search} value={record.submitTime ? record.submitTime.toLocaleString() : '-'} />;
                 },
               },
               {

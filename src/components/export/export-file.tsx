@@ -1,7 +1,7 @@
 import IconFile from '../icon/icon-file';
 import IconPrinter from '../icon/icon-printer';
 
-function ExportFileComponent({ cols, rowData }: { cols: { accessor: string; title: string }[]; rowData: any[] }) {
+function ExportFileComponent({ fileName, cols, rowData }: { fileName?: string; cols: { accessor: string; title: string }[]; rowData: any[] }) {
   const exportTable = (type: any) => {
     let columns = cols.map((d) => ({
       key: d.accessor.split('.'),
@@ -9,7 +9,7 @@ function ExportFileComponent({ cols, rowData }: { cols: { accessor: string; titl
     }));
 
     let records = rowData;
-    let filename = 'table';
+    let filename = fileName ?? 'Data Tabel';
 
     let newVariable: any;
     newVariable = window.navigator;
