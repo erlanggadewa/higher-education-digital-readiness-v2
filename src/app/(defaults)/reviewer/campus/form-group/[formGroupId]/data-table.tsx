@@ -135,7 +135,19 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 sortable: true,
                 hidden: hideCols.includes('campusName'),
                 render(record) {
-                  return <Highlight highlight={search}>{record.campusName}</Highlight>;
+                  return (
+                    <Highlight
+                      highlightStyles={(theme) => ({
+                        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                        fontWeight: 700,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      })}
+                      highlight={search}
+                    >
+                      {record.campusName}
+                    </Highlight>
+                  );
                 },
               },
               {
@@ -145,7 +157,19 @@ function DataTableReviewerSelectedFormGroupCampus({ rowData, formGroupId }: { ro
                 textAlignment: 'center',
                 hidden: hideCols.includes('submitTime'),
                 render(record) {
-                  return <Highlight highlight={search}>{record.submitTime ? record.submitTime.toLocaleString() : '-'}</Highlight>;
+                  return (
+                    <Highlight
+                      highlightStyles={(theme) => ({
+                        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                        fontWeight: 700,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      })}
+                      highlight={search}
+                    >
+                      {record.submitTime ? record.submitTime.toLocaleString() : '-'}
+                    </Highlight>
+                  );
                 },
               },
               {
