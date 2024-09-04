@@ -1,11 +1,11 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
+import HighlightField from '@/components/highlight/highlight';
 import IconPencil from '@/components/icon/icon-pencil';
 import { type IRootState } from '@/store';
-import { api } from '@/trpc/react';
 import { cn } from '@/utils/cn';
-import { Highlight } from '@mantine/core';
+import { type SurveyLogStatus } from '@prisma/client';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
@@ -14,15 +14,36 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 
-function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string; selectedTab: 'Sedang Direview' | 'Belum Direview' | 'Sudah Direview' | 'Semua' }) {
+function DataTableCampusSelectedFormGroup({
+  data,
+}: {
+  data: {
+    formGroupId: string | undefined;
+    formGroupName: string | undefined;
+    formGroupDescription: string | undefined;
+    year: string | undefined;
+    variable: {
+      variableId: string;
+      variableAlias: string;
+      variableName: string;
+      variableDescription: string;
+      status: SurveyLogStatus | undefined;
+      takeTime: Date | undefined;
+      totalQuestion: number;
+    }[];
+  };
+}) {
   // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
-  const [rowData] = api.reviewer.dashboard.getFormGroup.useSuspenseQuery({ year });
+  const rowData = data.variable;
 
   const cols: { accessor: string; title: string }[] = [
-    { accessor: 'formGroupName', title: 'Nama Survei' },
-    { accessor: 'totalVariable', title: 'Total Variabel' },
-    { accessor: 'status', title: 'Status Review' },
+    { accessor: 'variableName', title: 'Nama Variabel' },
+    { accessor: 'variableAlias', title: 'Alias Variabel' },
+    { accessor: 'variableDescription', title: 'Deskripsi Variabel' },
+    { accessor: 'totalQuestion', title: 'Pertanyaan' },
+    { accessor: 'takeTime', title: 'Waktu Pengerjaan' },
+    { accessor: 'status', title: 'Status Survei' },
   ];
 
   // * Codingan di bawah ini sudah oke, tidak perlu diganti-ganti
@@ -32,12 +53,12 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(10);
-  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'formGroupId'));
+  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
 
   const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: 'formGroupName',
+    columnAccessor: 'variableName',
     direction: 'asc',
   });
 
@@ -69,20 +90,13 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
     setInitialRecords(() => {
       return rowData.filter((item) => {
         // * Ubah dan custom untuk pencarian di sini
-        return (
-          item.status
-            .toString()
-            .toLowerCase()
-            .includes(selectedTab !== 'Semua' ? selectedTab.toLowerCase() : '') &&
-          (item.totalVariable.toString().toLowerCase().includes(search.toLowerCase()) ||
-            item.status.toLowerCase().includes(search.toLowerCase()) ||
-            item.formGroupName.toLowerCase().includes(search.toLowerCase()))
-        );
+        return [];
       });
     });
 
     // * tambah state yang digunakan untuk search di sini
-  }, [search, selectedTab]);
+  }, [search]);
+  console.log('🚀 ~ search:', search);
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
@@ -118,70 +132,76 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               },
             },
             {
-              accessor: 'formGroupName',
-              title: 'Nama Survei',
+              accessor: 'variableName',
+              title: 'Nama Variabel',
               sortable: true,
-              hidden: hideCols.includes('formGroupName'),
-              render(record) {
+              hidden: hideCols.includes('variableName') || hideCols.includes('variableAlias'),
+              render(record, _index) {
                 return (
-                  <Highlight
-                    highlightStyles={(theme) => ({
-                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                      fontWeight: 700,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    })}
-                    highlight={search}
-                  >
-                    {record.formGroupName}
-                  </Highlight>
+                  <>
+                    <HighlightField search={search} value={record.variableAlias} />
+                    <HighlightField search={search} value={record.variableName} />
+                  </>
                 );
               },
             },
             {
-              accessor: 'totalVariable',
-              title: 'Total Variabel',
+              accessor: 'variableDescription',
+              title: 'Deskripsi Variabel',
+              sortable: true,
+              hidden: hideCols.includes('variableDescription'),
+              render(record) {
+                return (
+                  <div className="max-w-sm text-wrap">
+                    <HighlightField search={search} value={record.variableDescription} />
+                  </div>
+                );
+              },
+            },
+            {
+              accessor: 'totalQuestion',
+              title: 'Pertanyaan',
               sortable: true,
               textAlignment: 'center',
-              hidden: hideCols.includes('totalVariable'),
+              hidden: hideCols.includes('totalQuestion'),
               render(record) {
-                return (
-                  <Highlight
-                    highlightStyles={(theme) => ({
-                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                      fontWeight: 700,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    })}
-                    highlight={search}
-                  >
-                    {record.totalVariable.toString()}
-                  </Highlight>
-                );
+                return <HighlightField search={search} value={record.totalQuestion.toString()} />;
               },
             },
             {
+              accessor: 'takeTime',
+              title: 'Waktu Pengerjaan',
+              sortable: true,
+              textAlignment: 'center',
+              hidden: hideCols.includes('takeTime'),
+              render(record) {
+                return <HighlightField search={search} value={record.takeTime ? record.takeTime.toLocaleString() : '-'} />;
+              },
+            },
+
+            {
               accessor: 'status',
-              title: 'Status Review',
+              title: 'Status Survei',
               sortable: true,
               hidden: hideCols.includes('status'),
               textAlignment: 'center',
               render(record) {
                 let badgeClass = '';
+                let value = '';
                 switch (record.status) {
-                  case 'Sedang Direview':
-                    badgeClass = 'dark:bg-info-old dark:bg-info-old-old bg-info dark:bg-info-old';
+                  case 'WAITING':
+                    badgeClass = 'bg-info dark:bg-info-old';
+                    value = 'Menunggu Direview';
                     break;
-                  case 'Belum Direview':
-                    badgeClass = 'dark:bg-danger dark:bg-danger-old-old bg-danger dark:bg-danger-old';
-                    break;
-                  case 'Sudah Direview':
-                    badgeClass = 'dark:bg-success-old dark:bg-success-old-old bg-success dark:bg-success-old';
+                  case 'REVIEWED':
+                    badgeClass = 'dark:bg-success-old bg-success';
+                    value = 'Selesai Direview';
                     break;
                 }
-                return <span className={cn('badge', badgeClass)}>{record.status}</span>;
+                return <span className={cn('badge', badgeClass)}>{value}</span>;
               },
             },
+
             {
               accessor: 'aksi',
               title: 'Aksi',
@@ -189,9 +209,9 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               sortable: false,
               render(record) {
                 return (
-                  <Link href={`form-group/${record.formGroupId}`} className="flex items-center justify-center">
-                    <Tippy content={`Detail ${record.formGroupName}`} theme="primary">
-                      <button type="button" className="">
+                  <Link href={`form-group/${data.formGroupId}/variable/${record.variableId}`} className="flex items-center justify-center">
+                    <Tippy content={`Detail ${record.variableName}`} theme="primary">
+                      <button type="button" className="btn-sm btn btn-primary">
                         <IconPencil fill={true} className="" />
                       </button>
                     </Tippy>
@@ -217,4 +237,4 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
   );
 }
 
-export default DataTableReviewerFormGroupCampus;
+export default DataTableCampusSelectedFormGroup;
