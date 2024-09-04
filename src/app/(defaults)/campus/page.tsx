@@ -7,7 +7,6 @@ import CardDashboardCampus from './card-dashboard';
 async function CampusPage() {
   const session = await getServerAuthSession();
   const data = await api.campus.dashboard.getDashboard({ campusId: String(session?.user.id) });
-  console.log('🚀 ~ CampusPage ~ data:', data);
   return (
     <>
       <div>
@@ -28,7 +27,7 @@ async function CampusPage() {
             <CardDashboardCampus />
           </div>
           <div className="panel col-span-3 mt-6">
-            <div className="rounded-lg p-4">
+            <div className="rounded-lg p-4 px-20">
               <div className="mb-8 flex flex-col items-center justify-center">
                 <img
                   src={data.campus.campusUser?.image ?? '/assets/images/hedr.png'} // Use a similar logo URL
