@@ -110,7 +110,7 @@ export const campusSurveyRouter = createTRPCRouter({
               variableAlias: item.variable.alias,
               variableName: item.variable.name,
               variableDescription: item.variable.description,
-              status: item.campusSurveyLog[0]?.status,
+              status: item.campusSurveyLog[0]?.status === 'WAITING' ? 'Belum Disetujui' : 'Telah Disetujui',
               takeTime: item.campusSurveyLog[0]?.createdAt,
               totalQuestion: item._count?.question,
             };
