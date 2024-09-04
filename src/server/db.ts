@@ -15,6 +15,7 @@ const globalForPrisma = globalThis as unknown as {
 export const purePrisma = createPrismaClient();
 
 // enhance is a function that wraps the PrismaClient instance with zenstack runtime
-export const db = globalForPrisma.prisma ?? createPrismaClient();
+// export const db = enhance(globalForPrisma.prisma ?? purePrisma);
+export const db = globalForPrisma.prisma ?? purePrisma;
 
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
