@@ -5,13 +5,13 @@ import HighlightField from '@/components/highlight/highlight';
 import IconPencil from '@/components/icon/icon-pencil';
 import { type IRootState } from '@/store';
 import { cn } from '@/utils/cn';
-import { type SurveyLogStatus } from '@prisma/client';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 import 'tippy.js/dist/tippy.css';
 
 function DataTableCampusSelectedFormGroup({
@@ -27,12 +27,14 @@ function DataTableCampusSelectedFormGroup({
       variableAlias: string;
       variableName: string;
       variableDescription: string;
-      status: SurveyLogStatus | undefined;
+      status: string | undefined;
       takeTime: Date | undefined;
       totalQuestion: number;
     }[];
   };
 }) {
+  const router = useRouter();
+
   // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
   const rowData = data.variable;
@@ -90,13 +92,18 @@ function DataTableCampusSelectedFormGroup({
     setInitialRecords(() => {
       return rowData.filter((item) => {
         // * Ubah dan custom untuk pencarian di sini
-        return [];
+        return (
+          item.variableAlias.toLowerCase().includes(search.toLowerCase()) ||
+          item.variableName.toLowerCase().includes(search.toLowerCase()) ||
+          item.variableDescription.toLowerCase().includes(search.toLowerCase()) ||
+          item.totalQuestion.toString().toLowerCase().includes(search.toLowerCase()) ||
+          item.takeTime?.toLocaleString().toLowerCase().includes(search.toLowerCase())
+        );
       });
     });
 
     // * tambah state yang digunakan untuk search di sini
   }, [search]);
-  console.log('🚀 ~ search:', search);
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
@@ -107,7 +114,7 @@ function DataTableCampusSelectedFormGroup({
   return (
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <ExportFileComponent cols={cols} rowData={initialRecords} />
+        <ExportFileComponent fileName={data.formGroupName} cols={cols} rowData={initialRecords} />
 
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
           <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
@@ -187,18 +194,15 @@ function DataTableCampusSelectedFormGroup({
               textAlignment: 'center',
               render(record) {
                 let badgeClass = '';
-                let value = '';
                 switch (record.status) {
-                  case 'WAITING':
-                    badgeClass = 'bg-info dark:bg-info-old';
-                    value = 'Menunggu Direview';
+                  case 'Belum Disetujui':
+                    badgeClass = 'bg-danger dark:bg-danger-old';
                     break;
-                  case 'REVIEWED':
+                  case 'Sudah Disetujui':
                     badgeClass = 'dark:bg-success-old bg-success';
-                    value = 'Selesai Direview';
                     break;
                 }
-                return <span className={cn('badge', badgeClass)}>{value}</span>;
+                return <span className={cn('badge', badgeClass)}>{record.status}</span>;
               },
             },
 
@@ -209,13 +213,30 @@ function DataTableCampusSelectedFormGroup({
               sortable: false,
               render(record) {
                 return (
-                  <Link href={`form-group/${data.formGroupId}/variable/${record.variableId}`} className="flex items-center justify-center">
-                    <Tippy content={`Detail ${record.variableName}`} theme="primary">
-                      <button type="button" className="btn-sm btn btn-primary">
-                        <IconPencil fill={true} className="" />
-                      </button>
-                    </Tippy>
-                  </Link>
+                  <Tippy content={`Kerjakan`} theme="primary">
+                    <button
+                      type="button"
+                      className="btn-sm btn btn-primary"
+                      onClick={async () => {
+                        const status = await Swal.fire({
+                          icon: 'warning',
+                          title: 'Yakin Ingin Mengerjakan ?',
+                          text: 'Harap selesaikan survei ini dengan baik dan benar',
+                          showCancelButton: true,
+                          confirmButtonText: 'Ya',
+                          cancelButtonText: 'Batal',
+                          padding: '2em',
+                          customClass: { container: 'sweet-alerts' },
+                        });
+
+                        if (!status.isConfirmed) return;
+
+                        router.push(`survey/form-group/${data.formGroupId}/variable/${record.variableId}`);
+                      }}
+                    >
+                      <IconPencil fill={true} className="" />
+                    </button>
+                  </Tippy>
                 );
               },
             },
