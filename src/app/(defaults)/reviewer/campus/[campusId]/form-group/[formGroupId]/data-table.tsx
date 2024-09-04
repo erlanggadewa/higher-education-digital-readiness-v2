@@ -8,7 +8,7 @@ import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
-import ModalReviewCampus from './model-review';
+import ModalReviewCampus from './modal-review';
 
 function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId }: { campusUserId: string; variableId: string; formGroupId: string }) {
   const [data] = api.reviewer.campus.getSelectedSurveyCampusReview.useSuspenseQuery({ campusUserId, formGroupId, variableId });
