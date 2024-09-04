@@ -142,10 +142,28 @@ function DataTableCampusFormGroup({
               render(record, _index) {
                 return (
                   <>
-                    <Highlight highlightColor="teal" className="mb-2 font-bold" highlight={search}>
+                    <Highlight
+                      highlightStyles={(theme) => ({
+                        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                        fontWeight: 700,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      })}
+                      className="mb-2 font-bold"
+                      highlight={search}
+                    >
                       {record.formGroupName}
                     </Highlight>
-                    <Highlight highlightColor="teal" className="mb-2 font-bold" highlight={search}>
+                    <Highlight
+                      highlightStyles={(theme) => ({
+                        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                        fontWeight: 700,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      })}
+                      className="mb-2 font-bold"
+                      highlight={search}
+                    >
                       {record.description}
                     </Highlight>
                   </>
@@ -160,7 +178,15 @@ function DataTableCampusFormGroup({
               hidden: hideCols.includes('year'),
               render(record) {
                 return (
-                  <Highlight highlightColor="teal" highlight={search}>
+                  <Highlight
+                    highlightStyles={(theme) => ({
+                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                      fontWeight: 700,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    })}
+                    highlight={search}
+                  >
                     {record.year}
                   </Highlight>
                 );
@@ -174,7 +200,15 @@ function DataTableCampusFormGroup({
               hidden: hideCols.includes('takeTime'),
               render(record) {
                 return (
-                  <Highlight highlightColor="teal" highlight={search}>
+                  <Highlight
+                    highlightStyles={(theme) => ({
+                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                      fontWeight: 700,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    })}
+                    highlight={search}
+                  >
                     {record.takeTime ? record.takeTime.toLocaleString() : '-'}
                   </Highlight>
                 );
@@ -188,7 +222,15 @@ function DataTableCampusFormGroup({
               hidden: hideCols.includes('totalVariable'),
               render(record) {
                 return (
-                  <Highlight highlightColor="teal" highlight={search}>
+                  <Highlight
+                    highlightStyles={(theme) => ({
+                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                      fontWeight: 700,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    })}
+                    highlight={search}
+                  >
                     {record.totalVariable.toString()}
                   </Highlight>
                 );
@@ -248,9 +290,9 @@ function DataTableCampusFormGroup({
               sortable: false,
               render(record) {
                 return (
-                  <Link href={`form-group/${record.formGroupId}`} className="flex items-center justify-center">
+                  <Link href={`survey/form-group/${record.formGroupId}`} className="flex items-center justify-center">
                     <Tippy content={`Detail ${record.formGroupName}`} theme="primary">
-                      <button type="button" className="">
+                      <button type="button" className="btn-sm btn btn-primary">
                         <IconPencil fill={true} className="" />
                       </button>
                     </Tippy>

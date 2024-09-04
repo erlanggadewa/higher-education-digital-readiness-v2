@@ -120,7 +120,15 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
               hidden: hideCols.includes('question'),
               render(record) {
                 return (
-                  <Highlight highlightColor="teal" highlight={search}>
+                  <Highlight
+                    highlightStyles={(theme) => ({
+                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                      fontWeight: 700,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    })}
+                    highlight={search}
+                  >
                     {record.question}
                   </Highlight>
                 );
@@ -142,7 +150,15 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
                               <span className="badge bg-warning dark:bg-warning-old">{item.option.point} Poin</span>
                               <span className="badge badge-outline-info">Jawaban Responden</span>
                             </div>
-                            <Highlight highlightColor="teal" highlight={search}>
+                            <Highlight
+                              highlightStyles={(theme) => ({
+                                backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                                fontWeight: 700,
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                              })}
+                              highlight={search}
+                            >
                               {item.option.value}
                             </Highlight>
                           </div>
@@ -151,7 +167,15 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
                               <span className="badge bg-warning dark:bg-warning-old">{item.revisionOption.point} Poin</span>
                               <span className="badge badge-outline-success">Jawaban Reviewer</span>
                             </div>
-                            <Highlight highlightColor="teal" highlight={search}>
+                            <Highlight
+                              highlightStyles={(theme) => ({
+                                backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                                fontWeight: 700,
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                              })}
+                              highlight={search}
+                            >
                               {item.revisionOption.value}
                             </Highlight>
                           </div>
@@ -169,7 +193,15 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
               hidden: hideCols.includes('answer.reviewComment'),
               render(record) {
                 return (
-                  <Highlight highlightColor="teal" highlight={search}>
+                  <Highlight
+                    highlightStyles={(theme) => ({
+                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+                      fontWeight: 700,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    })}
+                    highlight={search}
+                  >
                     {record.answer.reviewComment ? record.answer.reviewComment : '-'}
                   </Highlight>
                 );

@@ -42,10 +42,7 @@ export const campusSurveyRouter = createTRPCRouter({
           return item2.variable;
         }).length;
       });
-      console.log('🚀 ~ totalVariable ~ totalVariable:', totalVariable);
-      console.log('🚀 data ~ File: campus-survey.ts');
-      console.dir(data, { depth: null });
-      console.log('🔚 data ~ File: campus-survey.ts');
+
       const result = data.map((item, index) => {
         return {
           formGroupId: item.id,
@@ -71,5 +68,57 @@ export const campusSurveyRouter = createTRPCRouter({
         };
       });
       return result;
+    }),
+
+  getSelectedFormGroup: protectedProcedure
+    .input(
+      z.object({
+        campusId: z.string().min(1).cuid(),
+        formGroupId: z.string().min(1).cuid(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const formGroup = await ctx.db.formGroup.findUnique({
+        where: { id: input.formGroupId, isActive: true, isPublished: true },
+        include: {
+          variableOnFormGroup: {
+            include: {
+              _count: {
+                select: {
+                  question: { where: { isActive: true } },
+                  campusSurveyLog: { where: { campusId: input.campusId } },
+                },
+              },
+              variable: true,
+              campusSurveyLog: {
+                where: { campusId: input.campusId },
+              },
+            },
+          },
+        },
+      });
+
+      const data = {
+        formGroupId: formGroup?.id,
+        formGroupName: formGroup?.name,
+        formGroupDescription: formGroup?.description,
+        year: formGroup?.year,
+        variable:
+          formGroup?.variableOnFormGroup.map((item) => {
+            return {
+              variableId: item.variable.id,
+              variableAlias: item.variable.alias,
+              variableName: item.variable.name,
+              variableDescription: item.variable.description,
+              status: item.campusSurveyLog[0]?.status,
+              takeTime: item.campusSurveyLog[0]?.createdAt,
+              totalQuestion: item._count?.question,
+            };
+          }) ?? [],
+      };
+      console.log('🚀 formGroup ~ File: campus-survey.ts');
+      console.dir(formGroup, { depth: null });
+      console.log('🔚 formGroup ~ File: campus-survey.ts');
+      return data;
     }),
 });
