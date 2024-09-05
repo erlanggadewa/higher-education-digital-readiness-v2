@@ -6,7 +6,6 @@ import DataTableCampusSelectedFormGroup from './data-table';
 async function ListSurveyFormGroupCampusPage({ params }: { params: { formGroupId: string } }) {
   const session = await getServerAuthSession();
   const data = await api.campus.campusSurvey.getSelectedFormGroup({ campusId: session?.user.id ?? '', formGroupId: params.formGroupId });
-  console.log('🚀 ~ ListSurveyFormGroupCampusPage ~ data:', data);
 
   return (
     <div>

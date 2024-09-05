@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -23,7 +24,7 @@ function DataTableCampusSelectedFormGroup({
     formGroupDescription: string | undefined;
     year: string | undefined;
     variable: {
-      variableId: string;
+      variableOnFormGroupId: string;
       variableAlias: string;
       variableName: string;
       variableDescription: string;
@@ -34,7 +35,7 @@ function DataTableCampusSelectedFormGroup({
   };
 }) {
   const router = useRouter();
-
+  const session = useSession();
   // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
   const rowData = data.variable;
@@ -196,10 +197,13 @@ function DataTableCampusSelectedFormGroup({
                 let badgeClass = '';
                 switch (record.status) {
                   case 'Belum Disetujui':
-                    badgeClass = 'bg-danger dark:bg-danger-old';
+                    badgeClass = 'bg-warning dark:bg-warning-old';
                     break;
                   case 'Sudah Disetujui':
                     badgeClass = 'dark:bg-success-old bg-success';
+                    break;
+                  case 'Menunggu Dikerjakan':
+                    badgeClass = 'dark:bg-danger-old bg-danger';
                     break;
                 }
                 return <span className={cn('badge', badgeClass)}>{record.status}</span>;
@@ -213,30 +217,34 @@ function DataTableCampusSelectedFormGroup({
               sortable: false,
               render(record) {
                 return (
-                  <Tippy content={`Kerjakan`} theme="primary">
-                    <button
-                      type="button"
-                      className="btn-sm btn btn-primary"
-                      onClick={async () => {
-                        const status = await Swal.fire({
-                          icon: 'warning',
-                          title: 'Yakin Ingin Mengerjakan ?',
-                          text: 'Harap selesaikan survei ini dengan baik dan benar',
-                          showCancelButton: true,
-                          confirmButtonText: 'Ya',
-                          cancelButtonText: 'Batal',
-                          padding: '2em',
-                          customClass: { container: 'sweet-alerts' },
-                        });
+                  <div className="flex items-center justify-center">
+                    <Tippy content={`Kerjakan`} theme="primary">
+                      <button
+                        type="button"
+                        className="btn-sm btn btn-primary"
+                        onClick={async () => {
+                          const isTake = record.status === 'Sudah Disetujui' || record.status === 'Belum Disetujui';
 
-                        if (!status.isConfirmed) return;
+                          const status = await Swal.fire({
+                            icon: isTake ? 'warning' : 'question',
+                            title: isTake ? 'Anda yakin ingin mengubah jawaban?' : 'Anda yakin ingin mengerjakan?',
+                            text: isTake ? 'Hal ini akan mereset status review anda!' : 'Harap kerjakan dan selesaikan survei ini dengan baik!',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya',
+                            cancelButtonText: 'Batal',
+                            padding: '2em',
+                            customClass: { container: 'sweet-alerts' },
+                          });
 
-                        router.push(`survey/form-group/${data.formGroupId}/variable/${record.variableId}`);
-                      }}
-                    >
-                      <IconPencil fill={true} className="" />
-                    </button>
-                  </Tippy>
+                          if (!status.isConfirmed) return;
+
+                          router.push(`/campus/${session.data?.user.id}/survey/take/variable-form-group/${record.variableOnFormGroupId}`);
+                        }}
+                      >
+                        <IconPencil fill={true} className="" />
+                      </button>
+                    </Tippy>
+                  </div>
                 );
               },
             },

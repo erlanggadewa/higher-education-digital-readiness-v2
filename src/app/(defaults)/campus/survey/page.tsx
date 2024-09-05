@@ -7,7 +7,6 @@ import DataTableCampusFormGroup from './data-table';
 async function ListSurveyCampusPage() {
   const session = await getServerAuthSession();
   const data = await api.campus.campusSurvey.getCampusSurvey({ campusId: session?.user.id ?? '' });
-  console.log('🚀 ~ ListSurveyCampusPage ~ data:', data);
 
   return (
     <div>

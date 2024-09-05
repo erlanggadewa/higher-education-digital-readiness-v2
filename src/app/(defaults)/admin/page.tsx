@@ -20,7 +20,6 @@ const CardDashboard = ({ count, label, color }: { count: number; label: string; 
 
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('');
-  console.log(selectedTab);
   return (
     <>
       <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary" />
