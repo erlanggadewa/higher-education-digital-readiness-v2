@@ -61,6 +61,7 @@ model CampusAnswer {
   optionId         String       @map("option_id")
   revisionOptionId String       @map("revision_option_id")
   campusId         String       @map("campus_id")
+  year             String
   answerStatus     AnswerStatus @default(WAITING) @map("answer_status")
   reviewComment    String?      @map("review_comment")
   reviewDate       DateTime?    @map("review_date")
@@ -73,7 +74,7 @@ model CampusAnswer {
   revisionOption   Option       @relation("ReviewerCampusAnswer", fields: [revisionOptionId], references: [id])
   campus           Campus       @relation(fields: [campusId], references: [campusId])
 
-  @@unique([questionId, campusId])
+  @@unique([questionId, campusId, year])
   @@map("campus_answers")
 
   @@allow("all", true)
@@ -86,6 +87,7 @@ model PublicAnswer {
   revisionOptionId String       @map("revision_option_id")
   campusId         String       @map("campus_id")
   userPublicId     String       @map("user_public_id")
+  year             String
   answerStatus     AnswerStatus @default(WAITING) @map("answer_status")
   reviewComment    String?      @map("review_comment")
   reviewDate       DateTime?    @map("review_date")
@@ -99,7 +101,7 @@ model PublicAnswer {
   campus           Campus       @relation(fields: [campusId], references: [campusId])
   userPublic       PublicUser   @relation(fields: [userPublicId], references: [id])
 
-  @@unique([questionId, userPublicId, campusId])
+  @@unique([questionId, userPublicId, campusId, year])
   @@map("public_answers")
 
   @@allow("all", true)
@@ -143,6 +145,7 @@ model PublicUser {
   role            String            @map("role")
   campusId        String            @map("campus_id")
   isActive        Boolean           @default(true) @map("is_active")
+  year            String
 
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
@@ -181,6 +184,7 @@ model Option {
 model Question {
   id                    String              @id @default(cuid())
   question              String
+  year                  String
   isActive              Boolean             @default(true) @map("is_active")
   variableOnFormGroupId String              @map("variable_on_form_group_id")
 
@@ -243,6 +247,7 @@ model ResultVariable {
   score        Float
   campusId     String         @map("campus_id")
   isApproved   Boolean        @default(false) @map("is_approved")
+  year         String
   isPublicUser ResultUserType
 
   result       Result         @relation(fields: [resultId], references: [id])
