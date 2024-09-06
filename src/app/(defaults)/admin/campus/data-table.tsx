@@ -13,12 +13,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
+import ExportFileComponent from "@/components/export/export-file";
+import HighlightField from "@/components/highlight/highlight";
 
 function DataTableAdminCampus() {
   const [data] = api.admin.campus.getListCampus.useSuspenseQuery();
   const rowData = data;
 
   const cols: { accessor: string; title: string }[] = [{ accessor: 'name', title: 'Nama Kampus' }];
+  const colsExported: { accessor: string; title: string }[] = [{ accessor: 'name', title: 'Nama Kampus' }, { accessor: 'email', title: 'Email Kampus' }, ];
 
   // show/hide
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
@@ -78,41 +81,45 @@ function DataTableAdminCampus() {
 
   return (
     <div>
-      <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <div className="text-right xl:min-w-96">
-          <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+            <ExportFileComponent fileName={'Daftar Kampus'} cols={colsExported} rowData={initialRecords}/>
+
+            <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
+                <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
+                                    showHideColumns={showHideColumns}/>
+                <div className="text-right xl:min-w-96">
+                    <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..."
+                           value={search} onChange={(e) => setSearch(e.target.value)}/>
+                </div>
+            </div>
         </div>
-        <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
-          <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
-        </div>
-      </div>
-      <div className="datatables">
-        <DataTable
-          idAccessor="id"
-          className="table-hover whitespace-nowrap rounded-md"
-          records={recordsData}
-          columns={[
-            {
-              accessor: 'no',
-              title: 'No.',
-              sortable: false,
-              textAlignment: 'center',
-              render: (record, index) => {
-                return <span>{index + 1}</span>;
-              },
-            },
-            {
-              accessor: 'name',
-              title: 'Nama Kampus',
-              sortable: true,
-              hidden: hideCols.includes('name'),
+        <div className="datatables">
+            <DataTable
+                idAccessor="id"
+                className="table-hover whitespace-nowrap rounded-md"
+                records={recordsData}
+                columns={[
+                    {
+                        accessor: 'no',
+                        title: 'No.',
+                        sortable: false,
+                        textAlignment: 'center',
+                        render: (record, index) => {
+                            return <span>{index + 1}</span>;
+                        },
+                    },
+                    {
+                        accessor: 'name',
+                        title: 'Nama Kampus',
+                        sortable: true,
+                        hidden: hideCols.includes('name'),
               render: (record, index) => {
                 return (
                   <div className="flex gap-3">
                     <img className="h-12 w-12 overflow-hidden rounded-full object-cover" src={record.image!} alt="img" />
                     <div className="flex flex-col justify-center">
-                      <h5>{record.name}</h5>
-                      <h6>{record.email}</h6>
+                      <h5><HighlightField value={record.name} search={search}/></h5>
+                      <h6><HighlightField value={record.email} search={search}/></h6>
                     </div>
                   </div>
                 );

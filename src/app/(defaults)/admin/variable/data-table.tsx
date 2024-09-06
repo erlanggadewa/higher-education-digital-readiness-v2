@@ -13,6 +13,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
+import ExportFileComponent from "@/components/export/export-file";
+import HighlightField from "@/components/highlight/highlight";
 
 function DataTableAdminVariable() {
   const [data] = api.admin.variable.getListVariable.useSuspenseQuery();
@@ -83,33 +85,37 @@ function DataTableAdminVariable() {
   return (
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <div className="text-right xl:min-w-96">
-          <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
+        <ExportFileComponent cols={cols} rowData={initialRecords}/>
+
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
-          <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
+          <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
+                              showHideColumns={showHideColumns}/>
+          <div className="text-right xl:min-w-96">
+            <input type="text" className="form-input ring dark:ring-gray-400" placeholder="Search..." value={search}
+                   onChange={(e) => setSearch(e.target.value)}/>
+          </div>
         </div>
       </div>
       <div className="datatables">
         <DataTable
-          idAccessor="id"
-          className="table-hover whitespace-nowrap rounded-md"
-          records={recordsData}
-          columns={[
-            {
-              accessor: 'no',
-              title: 'No.',
-              sortable: false,
-              textAlignment: 'center',
-              render(record, index) {
-                return <span>{index + 1}</span>;
+            idAccessor="id"
+            className="table-hover whitespace-nowrap rounded-md"
+            records={recordsData}
+            columns={[
+              {
+                accessor: 'no',
+                title: 'No.',
+                sortable: false,
+                textAlignment: 'center',
+                render(record, index) {
+                  return <span>{index + 1}</span>;
+                },
               },
-            },
-            {
-              accessor: 'alias',
-              title: 'Inisial Variabel',
-              sortable: true,
-              hidden: hideCols.includes('alias'),
+              {
+                accessor: 'alias',
+                title: 'Inisial Variabel',
+                sortable: true,
+                hidden: hideCols.includes('alias'),
               render(record, index) {
                 return <span className="badge badge-outline-success rounded-full">{record.alias}</span>;
               },
@@ -119,12 +125,14 @@ function DataTableAdminVariable() {
               title: 'Variabel',
               sortable: true,
               hidden: hideCols.includes('name'),
+              render: (record) => <HighlightField value={record.name} search={search}/>,
             },
             {
               accessor: 'description',
               title: 'Deskripsi',
               sortable: true,
               hidden: hideCols.includes('description'),
+                render: (record) => <HighlightField value={record.description} search={search}/>,
             },
             {
               accessor: 'aksi',
