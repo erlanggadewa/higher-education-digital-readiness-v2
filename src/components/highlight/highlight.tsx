@@ -4,7 +4,7 @@ function HighlightField({ value, search }: { value: string; search: string }) {
   return (
     <Highlight
       highlightStyles={(theme) => ({
-        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
+        backgroundImage: theme.fn.linearGradient(45, theme.colors.green[9], theme.colors.green[9]),
         fontWeight: 700,
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',

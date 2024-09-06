@@ -1,11 +1,11 @@
 'use client';
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
+import HighlightField from '@/components/highlight/highlight';
 import IconPencil from '@/components/icon/icon-pencil';
 import { type IRootState } from '@/store';
 import { api } from '@/trpc/react';
 import { cn } from '@/utils/cn';
-import { Highlight } from '@mantine/core';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
@@ -123,19 +123,7 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               sortable: true,
               hidden: hideCols.includes('formGroupName'),
               render(record) {
-                return (
-                  <Highlight
-                    highlightStyles={(theme) => ({
-                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                      fontWeight: 700,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    })}
-                    highlight={search}
-                  >
-                    {record.formGroupName}
-                  </Highlight>
-                );
+                return <HighlightField search={search} value={record.formGroupName} />;
               },
             },
             {
@@ -145,19 +133,7 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
               textAlignment: 'center',
               hidden: hideCols.includes('totalVariable'),
               render(record) {
-                return (
-                  <Highlight
-                    highlightStyles={(theme) => ({
-                      backgroundImage: theme.fn.linearGradient(45, theme.colors.green[8], theme.colors.green[9]),
-                      fontWeight: 700,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    })}
-                    highlight={search}
-                  >
-                    {record.totalVariable.toString()}
-                  </Highlight>
-                );
+                return <HighlightField search={search} value={record.totalVariable.toString()} />;
               },
             },
             {
