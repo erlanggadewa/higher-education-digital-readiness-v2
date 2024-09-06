@@ -8,7 +8,6 @@ import { cn } from '@/utils/cn';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -35,7 +34,6 @@ function DataTableCampusSelectedFormGroup({
   };
 }) {
   const router = useRouter();
-  const session = useSession();
   // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
 
   const rowData = data.variable;
@@ -216,15 +214,14 @@ function DataTableCampusSelectedFormGroup({
               textAlignment: 'center',
               sortable: false,
               render(record) {
+                const isTake = record.status === 'Sudah Disetujui' || record.status === 'Belum Disetujui';
                 return (
                   <div className="flex items-center justify-center">
-                    <Tippy content={`Kerjakan`} theme="primary">
+                    <Tippy content={isTake ? 'Ubah Jawaban' : 'Kerjakan'} theme={isTake ? 'danger' : 'primary'}>
                       <button
                         type="button"
-                        className="btn-sm btn btn-primary"
+                        className={cn('btn-sm btn', isTake ? 'btn-danger' : 'btn-primary')}
                         onClick={async () => {
-                          const isTake = record.status === 'Sudah Disetujui' || record.status === 'Belum Disetujui';
-
                           const status = await Swal.fire({
                             icon: isTake ? 'warning' : 'question',
                             title: isTake ? 'Anda yakin ingin mengubah jawaban?' : 'Anda yakin ingin mengerjakan?',
@@ -238,7 +235,7 @@ function DataTableCampusSelectedFormGroup({
 
                           if (!status.isConfirmed) return;
 
-                          router.push(`/campus/${session.data?.user.id}/survey/take/variable-form-group/${record.variableOnFormGroupId}`);
+                          router.push(`/campus/survey/take/variable-form-group/${record.variableOnFormGroupId}`);
                         }}
                       >
                         <IconPencil fill={true} className="" />

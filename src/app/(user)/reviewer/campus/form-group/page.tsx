@@ -1,5 +1,5 @@
 'use client';
-import DataTableReviewerFormGroupCampus from '@/app/(defaults)/reviewer/campus/form-group/data-table';
+import DataTableReviewerFormGroupCampus from '@/app/(user)/reviewer/campus/form-group/data-table';
 import ElementsBreadcrumbsDefault from '@/components/breadcrumbs/elements-breadcrumbs-default';
 import IconDatabase from '@/components/icon/icon-database';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';

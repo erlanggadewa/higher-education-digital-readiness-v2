@@ -128,7 +128,7 @@ export const campusSurveyRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const data = await ctx.db.variableOnFormGroup.findUnique({
+      const data = await ctx.db.variableOnFormGroup.findUniqueOrThrow({
         where: { id: input.variableOnFormGroupId },
         include: {
           formGroup: {
@@ -156,8 +156,6 @@ export const campusSurveyRouter = createTRPCRouter({
       console.log('🚀 data ~ File: campus-survey.ts');
       console.dir(data, { depth: null });
       console.log('🔚 data ~ File: campus-survey.ts');
-      console.log(JSON.stringify(data));
-
       return data;
     }),
 });
