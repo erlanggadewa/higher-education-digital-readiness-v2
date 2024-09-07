@@ -724,5 +724,5 @@ img.dark-img {
 }
 
 .banner {
-  @apply -mx-2 -mt-2 mb-4 rounded-b-md bg-primary p-6 font-bold dark:bg-primary-old md:-mx-6 md:-mt-6;
+  @apply -mx-2 -mt-2 rounded-b-md bg-primary p-6 font-bold dark:bg-primary-old md:-mx-6 md:-mt-6;
 }
