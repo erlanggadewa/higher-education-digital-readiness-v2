@@ -124,7 +124,7 @@ function DataTableCampusSelectedFormGroup({
       </div>
       <div className="datatables">
         <DataTable
-          idAccessor="formGroupId"
+          idAccessor="variableOnFormGroupId"
           className="table-hover whitespace-nowrap rounded-md"
           records={recordsData}
           columns={[

@@ -16,7 +16,7 @@ async function CampusPage() {
             <ElementsBreadcrumbsDefault data={['Campus', 'Dashboard']} />
           </div>
         </div>
-        <div className="panel -mt-16">
+        <div className="panel -mt-12">
           <div className="flex items-center gap-3 text-base font-bold md:text-lg">
             <IconUniversity />
             <h1>Selamat Datang {session?.user.name}</h1>

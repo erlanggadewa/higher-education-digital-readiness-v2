@@ -8,7 +8,7 @@ import 'tippy.js/dist/tippy.css';
 function BackButton() {
   const router = useRouter();
   return (
-    <div className="flex items-center justify-center">
+    <div className="hidden items-center justify-center sm:flex">
       <Tippy content={`Kembali`} theme="danger">
         <button
           type="button"

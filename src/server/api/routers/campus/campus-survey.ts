@@ -20,7 +20,18 @@ export const campusSurveyRouter = createTRPCRouter({
             },
           },
           variableOnFormGroup: {
-            some: {},
+            every: {
+              question: {
+                none: {
+                  question: undefined,
+                  option: {
+                    none: {
+                      value: undefined,
+                    },
+                  },
+                },
+              },
+            },
           },
         },
         include: {
@@ -79,7 +90,25 @@ export const campusSurveyRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const formGroup = await ctx.db.formGroup.findUnique({
-        where: { id: input.formGroupId, isActive: true, isPublished: true },
+        where: {
+          id: input.formGroupId,
+          isActive: true,
+          isPublished: true,
+          variableOnFormGroup: {
+            some: {
+              question: {
+                none: {
+                  question: undefined,
+                  option: {
+                    none: {
+                      value: undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         include: {
           variableOnFormGroup: {
             include: {
@@ -129,7 +158,19 @@ export const campusSurveyRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const data = await ctx.db.variableOnFormGroup.findUniqueOrThrow({
-        where: { id: input.variableOnFormGroupId },
+        where: {
+          id: input.variableOnFormGroupId,
+          question: {
+            none: {
+              question: undefined,
+              option: {
+                none: {
+                  value: undefined,
+                },
+              },
+            },
+          },
+        },
         include: {
           formGroup: {
             omit: { createdAt: true, updatedAt: true },
@@ -156,6 +197,54 @@ export const campusSurveyRouter = createTRPCRouter({
       console.log('🚀 data ~ File: campus-survey.ts');
       console.dir(data, { depth: null });
       console.log('🔚 data ~ File: campus-survey.ts');
+
       return data;
+    }),
+
+  answerQuestion: protectedProcedure
+    .input(
+      z.object({
+        campusId: z.string().min(1).cuid(),
+        year: z.string().min(1).max(4),
+        answer: z
+          .object({
+            questionId: z.string().min(1).cuid(),
+            answerId: z.string().min(1).cuid(),
+          })
+          .array(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.$transaction(async (tx) => {
+        for (const item of input.answer) {
+          await tx.campusAnswer.upsert({
+            where: {
+              questionId_campusId_year: {
+                questionId: item.questionId,
+                campusId: input.campusId,
+                year: input.year,
+              },
+            },
+            create: {
+              questionId: item.questionId,
+              optionId: item.answerId,
+              revisionOptionId: item.answerId,
+              campusId: input.campusId,
+              year: input.year,
+              answerStatus: 'WAITING',
+            },
+            update: {
+              questionId: item.questionId,
+              optionId: item.answerId,
+              revisionOptionId: item.answerId,
+              campusId: input.campusId,
+              year: input.year,
+              answerStatus: 'WAITING',
+            },
+          });
+        }
+      });
+
+      return 'success';
     }),
 });
