@@ -4,6 +4,7 @@ import { adminVariableRouter } from './variable';
 import { adminCampusRouter } from './campus';
 import { adminQuestionRouter } from './question';
 import { adminFormGroupRouter } from './form-group';
+import {adminLevelRouter} from "@/server/api/routers/admin/level";
 
 export const adminRoot = createTRPCRouter({
   dashboard: adminDashboardRouter,
@@ -11,4 +12,5 @@ export const adminRoot = createTRPCRouter({
   campus: adminCampusRouter,
   question: adminQuestionRouter,
   formGroup: adminFormGroupRouter,
+  level: adminLevelRouter,
 });
