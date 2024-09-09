@@ -13,7 +13,6 @@ import { menuAdmin, menuCampus, menuReviewer, MenuVertical } from './menu';
 function Sidebar({ session }: { session: Session | null }) {
   const dispatch = useDispatch();
   const pathname = usePathname();
-  console.log('🚀 ~ Sidebar ~ pathname:', pathname);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
 
