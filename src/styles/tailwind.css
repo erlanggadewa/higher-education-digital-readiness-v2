@@ -283,42 +283,42 @@
   }
 
   .btn-primary {
-    @apply border-primary bg-primary text-white shadow-primary/60;
+    @apply border-primary bg-primary text-white shadow-primary/60 dark:bg-primary-old dark:shadow-primary-old/60;
   }
   .btn-outline-primary {
     @apply border-primary text-primary shadow-none hover:bg-primary hover:text-white;
   }
 
   .btn-secondary {
-    @apply border-secondary bg-secondary text-white shadow-secondary/60;
+    @apply dark:bg-secondary-old dark:shadow-secondary-old/60 border-secondary bg-secondary text-white shadow-secondary/60;
   }
   .btn-outline-secondary {
     @apply border-secondary text-secondary shadow-none hover:bg-secondary hover:text-white;
   }
 
   .btn-success {
-    @apply border-success bg-success text-white shadow-success/60;
+    @apply border-success bg-success text-white shadow-success/60 dark:bg-success-old dark:shadow-success-old/60;
   }
   .btn-outline-success {
     @apply border-success text-success shadow-none hover:bg-success hover:text-white;
   }
 
   .btn-danger {
-    @apply border-danger bg-danger text-white shadow-danger/60;
+    @apply border-danger bg-danger text-white shadow-danger/60 dark:bg-danger-old dark:shadow-danger-old/60;
   }
   .btn-outline-danger {
     @apply border-danger text-danger shadow-none hover:bg-danger hover:text-white;
   }
 
   .btn-warning {
-    @apply border-warning bg-warning text-white shadow-warning/60;
+    @apply border-warning bg-warning text-white shadow-warning/60 dark:bg-warning-old dark:shadow-warning-old/60;
   }
   .btn-outline-warning {
     @apply border-warning text-warning shadow-none hover:bg-warning hover:text-white;
   }
 
   .btn-info {
-    @apply border-info bg-info text-white shadow-info/60;
+    @apply border-info bg-info text-white shadow-info/60 dark:bg-info-old dark:shadow-info-old/60;
   }
   .btn-outline-info {
     @apply border-info text-info shadow-none hover:bg-info hover:text-white;
@@ -433,7 +433,7 @@
   /* checkbox & radio */
   .form-radio,
   .form-checkbox {
-    @apply h-5 w-5 cursor-pointer rounded border-2 border-white-light bg-transparent text-primary !shadow-none !outline-none !ring-0 !ring-offset-0 checked:bg-[length:90%_90%] disabled:cursor-not-allowed disabled:bg-[#eee] dark:border-[#253b5c] dark:checked:border-transparent dark:disabled:bg-[#1b2e4b] ltr:mr-1.5 rtl:ml-1.5;
+    @apply h-5 w-5 cursor-pointer rounded border-2 border-white-light bg-transparent text-primary !shadow-none !outline-none !ring-0 !ring-offset-0 checked:bg-[length:90%_90%] disabled:cursor-not-allowed disabled:bg-[#eee] dark:border-primary dark:checked:border-transparent dark:disabled:bg-primary-old ltr:mr-1.5 rtl:ml-1.5;
   }
 
   .form-checkbox.outline-primary:checked {

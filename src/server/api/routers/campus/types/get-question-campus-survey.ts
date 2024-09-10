@@ -16,6 +16,7 @@ export type GetQuestionCampusSurvey = {
       optionId: string;
       revisionOptionId: string;
       campusId: string;
+      year: string;
       answerStatus: $Enums.AnswerStatus;
       reviewComment: string | null;
       reviewDate: Date | null;
@@ -31,6 +32,7 @@ export type GetQuestionCampusSurvey = {
   } & {
     id: string;
     question: string;
+    year: string;
     isActive: boolean;
     variableOnFormGroupId: string;
     createdAt: Date;

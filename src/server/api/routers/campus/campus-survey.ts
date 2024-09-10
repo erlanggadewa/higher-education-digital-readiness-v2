@@ -194,9 +194,6 @@ export const campusSurveyRouter = createTRPCRouter({
           },
         },
       });
-      console.log('🚀 data ~ File: campus-survey.ts');
-      console.dir(data, { depth: null });
-      console.log('🔚 data ~ File: campus-survey.ts');
 
       return data;
     }),
@@ -205,6 +202,7 @@ export const campusSurveyRouter = createTRPCRouter({
     .input(
       z.object({
         campusId: z.string().min(1).cuid(),
+        variableOnFormGroupId: z.string().min(1).cuid(),
         year: z.string().min(1).max(4),
         answer: z
           .object({
@@ -216,33 +214,53 @@ export const campusSurveyRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.$transaction(async (tx) => {
-        for (const item of input.answer) {
-          await tx.campusAnswer.upsert({
-            where: {
-              questionId_campusId_year: {
+        await Promise.all(
+          input.answer.map(async (item) => {
+            await tx.campusAnswer.upsert({
+              where: {
+                questionId_campusId_year: {
+                  questionId: item.questionId,
+                  campusId: input.campusId,
+                  year: input.year,
+                },
+              },
+              create: {
                 questionId: item.questionId,
+                optionId: item.answerId,
+                revisionOptionId: item.answerId,
                 campusId: input.campusId,
                 year: input.year,
+                answerStatus: 'WAITING',
               },
-            },
-            create: {
-              questionId: item.questionId,
-              optionId: item.answerId,
-              revisionOptionId: item.answerId,
+              update: {
+                questionId: item.questionId,
+                optionId: item.answerId,
+                revisionOptionId: item.answerId,
+                campusId: input.campusId,
+                year: input.year,
+                answerStatus: 'WAITING',
+              },
+            });
+          }),
+        );
+        await tx.campusSurveyLog.upsert({
+          where: {
+            campusId_variableOnFormGroupId: {
               campusId: input.campusId,
-              year: input.year,
-              answerStatus: 'WAITING',
+              variableOnFormGroupId: input.variableOnFormGroupId,
             },
-            update: {
-              questionId: item.questionId,
-              optionId: item.answerId,
-              revisionOptionId: item.answerId,
-              campusId: input.campusId,
-              year: input.year,
-              answerStatus: 'WAITING',
-            },
-          });
-        }
+          },
+          create: {
+            campusId: input.campusId,
+            variableOnFormGroupId: input.variableOnFormGroupId,
+            status: 'WAITING',
+          },
+          update: {
+            campusId: input.campusId,
+            variableOnFormGroupId: input.variableOnFormGroupId,
+            status: 'WAITING',
+          },
+        });
       });
 
       return 'success';

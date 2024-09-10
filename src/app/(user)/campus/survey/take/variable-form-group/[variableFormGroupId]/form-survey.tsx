@@ -1,11 +1,13 @@
 'use client';
 import DefaultAlertComponent from '@/components/alert/elements-alerts-default';
 import IconChecks from '@/components/icon/icon-checks';
+import IconRefresh from '@/components/icon/icon-refresh';
 import IconTask from '@/components/icon/icon-task';
 import { type GetQuestionCampusSurvey } from '@/server/api/routers/campus/types/get-question-campus-survey';
 import { api } from '@/trpc/react';
 import { ErrorMessage } from '@hookform/error-message';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
@@ -13,7 +15,10 @@ import BackButton from './back-button';
 
 function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
   const session = useSession();
+  const router = useRouter();
+
   const [totalAnswer, setTotalAnswer] = useState(0);
+  const totalPercentage = Math.round((totalAnswer / data.question.length) * 100);
 
   const createAnswerQuestion = api.campus.campusSurvey.answerQuestion.useMutation({
     onMutate() {
@@ -28,12 +33,14 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
     },
     async onSuccess() {
       Swal.close();
-      void Swal.fire({
+      await Swal.fire({
         title: 'Berhasil!',
         text: 'Jawaban anda berhasil disimpan',
         icon: 'success',
         customClass: { container: 'sweet-alerts' },
       });
+      router.push(`/campus/survey/form-group/${data.formGroupId}`);
+      router.refresh();
     },
   });
 
@@ -43,7 +50,8 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
     setValue,
     watch,
     getValues,
-    formState: { errors },
+    reset,
+    formState: { errors, dirtyFields },
   } = useForm({
     values: {
       answer: data.question.map((question) => {
@@ -54,8 +62,6 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
       }),
     },
   });
-
-  console.log('🚀 ~ FormSurvey ~ errors:', errors);
 
   // Function to update totalAnswer based on the current form state
   const updateTotalAnswer = () => {
@@ -76,7 +82,7 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
     return () => subscription.unsubscribe();
   }, [watch, getValues]); // Include dependencies to trigger effect when they change
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (payload) => {
     const status = await Swal.fire({
       icon: 'question',
       title: 'Anda yakin ingin mengirim jawaban?',
@@ -90,9 +96,10 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
 
     if (!status.isConfirmed) return;
     createAnswerQuestion.mutate({
-      answer: data.answer,
+      answer: payload.answer,
       campusId: session.data?.user.id ?? '',
-      year: new Date().getFullYear().toString(),
+      variableOnFormGroupId: data.id,
+      year: data.formGroup.year,
     });
   });
 
@@ -114,9 +121,9 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
         </div>
         <div className="-mx-2 flex items-center justify-center gap-3 bg-[#ebedf2] px-6 py-2 dark:bg-[#222222] md:-mx-6">
           <div className="h-2 w-full rounded-full bg-primary/30 dark:bg-primary/40">
-            <div style={{ width: `${(totalAnswer / data.question.length) * 100}%` }} className="h-2 rounded-full bg-gradient-to-r from-[#3cba92] to-[#0ba360] duration-300"></div>
+            <div style={{ width: `${totalPercentage}%` }} className="h-2 rounded-full bg-gradient-to-r from-[#3cba92] to-[#0ba360] duration-300"></div>
           </div>
-          <span className="text-base font-semibold">{(totalAnswer / data.question.length) * 100}%</span>
+          <span className="text-base font-semibold">{totalPercentage}%</span>
         </div>
       </div>
       <form onSubmit={onSubmit}>
@@ -148,14 +155,27 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
                     </label>
                   );
                 })}
-                <ErrorMessage errors={errors} name={`answer.${index}.answerId`} render={({ message }) => <DefaultAlertComponent type="warning" message={message} />} />
+
+                <ErrorMessage errors={errors} name={`answer.${index}.answerId`} render={({ message }) => <DefaultAlertComponent type="danger" message={message} />} />
+
+                {dirtyFields.answer?.[index] && data.campusSurveyLog.length !== 0 && (
+                  <div className="mb-4">
+                    <DefaultAlertComponent type="warning" message="Terjadi perubahan data jawaban" />
+                  </div>
+                )}
               </div>
             );
           })}
-          <button type="submit" className="btn btn-primary mb-5 w-full rounded-lg">
-            <IconChecks className="mr-2 h-6 w-6" />
-            SUBMIT
-          </button>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => reset()} className="btn btn-warning mb-5 w-full rounded-lg">
+              <IconRefresh className="mr-2 h-6 w-6" />
+              RESET
+            </button>
+            <button type="submit" className="btn btn-primary mb-5 w-full rounded-lg">
+              <IconChecks className="mr-2 h-6 w-6" />
+              SUBMIT
+            </button>
+          </div>
         </div>
       </form>
     </>

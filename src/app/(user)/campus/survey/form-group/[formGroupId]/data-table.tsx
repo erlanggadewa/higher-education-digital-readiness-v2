@@ -74,7 +74,7 @@ function DataTableCampusSelectedFormGroup({
   };
 
   useEffect(() => {
-    setInitialRecords(sortBy(rowData, 'formGroupName'));
+    setInitialRecords(sortBy(rowData, 'variableAlias'));
   }, [rowData]);
 
   useEffect(() => {
