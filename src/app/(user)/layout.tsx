@@ -9,7 +9,7 @@ import Sidebar from '@/components/layouts/sidebar';
 import Portals from '@/components/portal/portals';
 import { getServerAuthSession } from '@/server/auth';
 
-export default async function DefaultLayout({ children }: { children: React.ReactNode }) {
+export default async function DefaultAuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerAuthSession();
 
   return (

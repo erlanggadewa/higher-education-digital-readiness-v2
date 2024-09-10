@@ -1,5 +1,5 @@
 'use client';
-import DataTableReviewerFormGroupCampus from '@/app/(defaults)/reviewer/campus/form-group/data-table';
+import DataTableReviewerFormGroupCampus from '@/app/(user)/reviewer/campus/form-group/data-table';
 import ElementsBreadcrumbsDefault from '@/components/breadcrumbs/elements-breadcrumbs-default';
 import IconDatabase from '@/components/icon/icon-database';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
@@ -24,7 +24,7 @@ function ReviewerFormGroupCampusPage() {
           <Select className="max-w-24" defaultValue={listYear[0]} options={listYear} placeholder="Tahun" isSearchable={false} onChange={(val) => setYear(val!.value)} />
         </div>
       </div>
-      <div className="panel -mt-14">
+      <div className="panel -mt-16">
         <div className="mb-3 flex items-center gap-3 text-lg font-bold">
           <IconDatabase />
           <h1>Daftar Survey HEDR</h1>

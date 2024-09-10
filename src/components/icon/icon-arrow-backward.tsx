@@ -1,16 +1,23 @@
 import { type FC } from 'react';
 
 interface IconArrowBackwardProps {
-    className?: string;
+  className?: string;
 }
 
 const IconArrowBackward: FC<IconArrowBackwardProps> = ({ className }) => {
-    return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-            <path d="M9.5 7L4.5 12L9.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path opacity="0.5" d="M4.5 12L14.5 12C16.1667 12 19.5 13 19.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-    );
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48" className={className}>
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth={4}
+        d="M44 40.836q-7.34-8.96-13.036-10.168t-10.846-.365V41L4 23.545L20.118 7v10.167q9.523.075 16.192 6.833q6.668 6.758 7.69 16.836Z"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
 };
 
 export default IconArrowBackward;

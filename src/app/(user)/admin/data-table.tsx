@@ -5,7 +5,6 @@ import 'tippy.js/dist/tippy.css';
 
 function DataTableAdminDashboard({ year }: { year: number }) {
   const [data] = api.admin.dashboard.getFormGroup.useSuspenseQuery({ year: '' + year });
-  console.log(data);
   // const rowData = data.question;
 
   const cols: { accessor: string; title: string }[] = [

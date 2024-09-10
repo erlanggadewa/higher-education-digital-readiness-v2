@@ -7,7 +7,6 @@ import DataTableCampusFormGroup from './data-table';
 async function ListSurveyCampusPage() {
   const session = await getServerAuthSession();
   const data = await api.campus.campusSurvey.getCampusSurvey({ campusId: session?.user.id ?? '' });
-  console.log('🚀 ~ ListSurveyCampusPage ~ data:', data);
 
   return (
     <div>
@@ -22,7 +21,7 @@ async function ListSurveyCampusPage() {
           </div>
         </div>
       </div>
-      <div className="panel -mt-14">
+      <div className="panel -mt-16">
         <div className="mb-3 flex items-center gap-3 text-lg font-bold">
           <IconDatabase />
           <h1>Daftar Survey HEDR</h1>
