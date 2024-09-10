@@ -89,17 +89,17 @@ const LevelPage = () => {
                                             <div className="flex gap-2">
                                                 <Tippy content={`Edit ${item.value}`} theme="primary">
                                                     <button type="button"
-                                                            className="bg-warning p-2 rounded-lg text-white">
+                                                            className="bg-primary p-2 rounded-lg text-white">
                                                         <IconPencil/>
                                                     </button>
                                                 </Tippy>
-                                                <Tippy content={`Detail ${item.value}`} theme="primary">
+                                                <Tippy content={`Detail ${item.value}`} theme="info">
                                                     <button type="button"
                                                             className="bg-info p-2 rounded-lg text-white">
                                                         <IconEye/>
                                                     </button>
                                                 </Tippy>
-                                                <Tippy content={`Remove ${item.value}`} theme="primary">
+                                                <Tippy content={`Remove ${item.value}`} theme="danger">
                                                     <button type="button"
                                                             className="bg-danger p-2 rounded-lg text-white">
                                                         <IconTrash/>

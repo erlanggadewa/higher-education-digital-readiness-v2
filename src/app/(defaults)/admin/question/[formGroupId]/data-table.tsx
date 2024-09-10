@@ -144,7 +144,7 @@ function DataTableAdminVariable({formGroup, data: rowData}: { formGroup: any, da
                                     <Link href={`/admin/question/${formGroup.formGroupId}/${record.id}`}
                                           className="flex items-center justify-center">
                                         <Tippy content={`Edit pertanyaan ${record.name}`} theme="primary">
-                                            <button type="button" className="">
+                                            <button type="button" className="bg-primary p-2 rounded-lg text-white">
                                                 <IconPencil/>
                                             </button>
                                         </Tippy>

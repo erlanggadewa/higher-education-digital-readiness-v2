@@ -158,7 +158,7 @@ function DataTableAdminQuestion({data: rowData}: { data: any[] }) {
                                     // <Link href={`/admin/question/${formGroup.formGroupId}/${record.id}`}
                                     //       className="flex items-center justify-center">
                                         <Tippy content={`Edit survey ${record.name}`} theme="primary">
-                                            <button type="button" className="">
+                                            <button type="button" className="bg-primary p-2 rounded-lg text-white">
                                                 <IconPencil/>
                                             </button>
                                         </Tippy>

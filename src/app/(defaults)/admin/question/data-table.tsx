@@ -158,22 +158,22 @@ function DataTableAdminQuestion({year}: {year: string}) {
                             sortable: false,
                             render(record) {
                                 return (
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 justify-center">
                                         <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
                                             <Tippy content={`Edit ${record.name}`} theme="primary">
-                                                <button type="button" className="">
+                                                <button type="button" className="bg-primary p-2 rounded-lg text-white">
                                                     <IconPencil />
                                                 </button>
                                             </Tippy>
                                         </Link>
-                                        <Tippy content={`Remove ${record.name}`} theme="primary">
-                                            <button type="button" className="">
+                                        <Tippy content={`Remove ${record.name}`} theme="danger">
+                                            <button type="button" className="bg-danger p-2 rounded-lg text-white">
                                                 <IconTrash />
                                             </button>
                                         </Tippy>
                                         <Link href={`question/${record.id}`} className="flex items-center justify-center">
-                                            <Tippy content={`Detail ${record.name}`} theme="primary">
-                                                <button type="button" className="">
+                                            <Tippy content={`Detail ${record.name}`} theme="info">
+                                                <button type="button" className="bg-info p-2 rounded-lg text-white">
                                                     <IconEye />
                                                 </button>
                                             </Tippy>
