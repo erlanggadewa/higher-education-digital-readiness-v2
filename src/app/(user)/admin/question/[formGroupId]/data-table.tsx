@@ -1,11 +1,8 @@
 'use client';
 
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
-import IconEye from '@/components/icon/icon-eye';
 import IconPencil from '@/components/icon/icon-pencil';
-import IconTrash from '@/components/icon/icon-trash';
 import {type IRootState} from '@/store';
-import {api} from '@/trpc/react';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import {DataTable, type DataTableSortStatus} from 'mantine-datatable';
@@ -16,14 +13,11 @@ import 'tippy.js/dist/tippy.css';
 import ExportFileComponent from "@/components/export/export-file";
 import HighlightField from "@/components/highlight/highlight";
 
-function DataTableAdminVariable() {
-    const [data] = api.admin.variable.getListVariable.useSuspenseQuery();
-    const rowData = data;
-
+function DataTableAdminVariable({formGroup, data: rowData}: { formGroup: any, data: any[] }) {
     const cols: { accessor: string; title: string }[] = [
-        {accessor: 'alias', title: 'Inisial Pertanyaan'},
         {accessor: 'name', title: 'Variabel'},
-        {accessor: 'description', title: 'Deskripsi'},
+        {accessor: 'totalQuestion', title: 'Jumlah Pertanyaan'},
+        {accessor: 'updatedAt', title: 'Terakhir Modifikasi'},
     ];
 
     // show/hide
@@ -69,7 +63,7 @@ function DataTableAdminVariable() {
         setInitialRecords(() => {
             return rowData.filter((item) => {
                 // * Ubah dan custom untuk pencarian di sini
-                return item.alias.toLowerCase().includes(search.toLowerCase()) || item.description.toLowerCase().includes(search.toLowerCase()) || item.name.toLowerCase().includes(search.toLowerCase());
+                return item.name.toLowerCase().includes(search.toLowerCase()) || item.totalQuestion.toString().includes(search.toLowerCase()) || item.alias.toLowerCase().includes(search.toLowerCase()) || item.updatedAt.toLocaleString().includes(search.toLowerCase());
             });
         });
 
@@ -85,7 +79,7 @@ function DataTableAdminVariable() {
     return (
         <div>
             <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                <ExportFileComponent cols={cols} rowData={initialRecords}/>
+                <ExportFileComponent fileName={formGroup.formGroupName} cols={cols} rowData={initialRecords}/>
 
                 <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
                     <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
@@ -113,28 +107,32 @@ function DataTableAdminVariable() {
                             },
                         },
                         {
-                            accessor: 'alias',
-                            title: 'Inisial Variabel',
-                            sortable: true,
-                            hidden: hideCols.includes('alias'),
-                            render(record, index) {
-                                return <span className="badge badge-outline-success rounded-full">{record.alias}</span>;
-                            },
-                        },
-                        {
                             accessor: 'name',
                             title: 'Variabel',
                             sortable: true,
                             hidden: hideCols.includes('name'),
-                            render: (record) => <HighlightField value={record.name} search={search}/>,
+                            render(record) {
+                                return (<>
+                                    <h5 className="font-bold"><HighlightField value={record.alias} search={search}/></h5>
+                                    <p><HighlightField value={record.name} search={search}/></p>
+                                </>);
+                            },
                         },
                         {
-                            accessor: 'description',
-                            title: 'Deskripsi',
+                            accessor: 'totalQuestion',
+                            title: 'Jumlah Pertanyaan',
                             sortable: true,
-                            hidden: hideCols.includes('description'),
-                            render: (record) => <div className="max-w-sm text-wrap"><HighlightField
-                                value={record.description} search={search}/></div>,
+                            textAlignment: 'center',
+                            hidden: hideCols.includes('totalQuestion'),
+                            render: (record) => <HighlightField value={""+record.totalQuestion} search={search}/>
+                        },
+                        {
+                            accessor: 'updatedAt',
+                            title: 'Terakhir Modifikasi',
+                            sortable: true,
+                            textAlignment: 'center',
+                            hidden: hideCols.includes('updatedAt'),
+                            render: (record) => <HighlightField search={search} value={record.updatedAt.toLocaleString()} />
                         },
                         {
                             accessor: 'aksi',
@@ -143,29 +141,14 @@ function DataTableAdminVariable() {
                             sortable: false,
                             render(record) {
                                 return (
-                                    <div className="flex gap-2 justify-center">
-                                        <Link href={`form-group/${record.id}`}
-                                              className="flex items-center justify-center">
-                                            <Tippy content={`Edit ${record.name}`} theme="primary">
-                                                <button type="button" className="bg-primary p-2 rounded-lg text-white">
-                                                    <IconPencil/>
-                                                </button>
-                                            </Tippy>
-                                        </Link>
-                                        <Tippy content={`Remove ${record.name}`} theme="danger">
-                                            <button type="button" className="bg-danger p-2 rounded-lg text-white">
-                                                <IconTrash/>
+                                    <Link href={`/admin/question/${formGroup.formGroupId}/${record.id}`}
+                                          className="flex items-center justify-center">
+                                        <Tippy content={`Edit pertanyaan ${record.name}`} theme="primary">
+                                            <button type="button" className="bg-primary p-2 rounded-lg text-white">
+                                                <IconPencil/>
                                             </button>
                                         </Tippy>
-                                        <Link href={`form-group/${record.id}`}
-                                              className="flex items-center justify-center">
-                                            <Tippy content={`Detail ${record.name}`} theme="info">
-                                                <button type="button" className="bg-info p-2 rounded-lg text-white">
-                                                    <IconEye/>
-                                                </button>
-                                            </Tippy>
-                                        </Link>
-                                    </div>
+                                    </Link>
                                 );
                             },
                         },

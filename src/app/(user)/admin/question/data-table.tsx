@@ -4,26 +4,30 @@ import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import IconEye from '@/components/icon/icon-eye';
 import IconPencil from '@/components/icon/icon-pencil';
 import IconTrash from '@/components/icon/icon-trash';
-import {type IRootState} from '@/store';
-import {api} from '@/trpc/react';
+import { type IRootState } from '@/store';
+import { api } from '@/trpc/react';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
-import {DataTable, type DataTableSortStatus} from 'mantine-datatable';
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import Link from 'next/link';
-import {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
-import ExportFileComponent from "@/components/export/export-file";
+import IconPlus from "@/components/icon/icon-plus";
 import HighlightField from "@/components/highlight/highlight";
 
-function DataTableAdminVariable() {
-    const [data] = api.admin.variable.getListVariable.useSuspenseQuery();
+function DataTableAdminQuestion({year}: {year: string}) {
+    const [data] = api.admin.formGroup.getFormGroupByYear.useSuspenseQuery(year);
+    const utils = api.useUtils();
+    const {mutate: handleUpdatePublished} = api.admin.formGroup.updatePublishedFormGroup.useMutation({
+         onSuccess: () =>  utils.admin.formGroup.getFormGroupByYear.invalidate(year),
+    })
     const rowData = data;
 
     const cols: { accessor: string; title: string }[] = [
-        {accessor: 'alias', title: 'Inisial Pertanyaan'},
-        {accessor: 'name', title: 'Variabel'},
-        {accessor: 'description', title: 'Deskripsi'},
+        { accessor: 'name', title: 'Pertanyaan' },
+        { accessor: 'isPublished', title: 'Open' },
+        { accessor: 'jumlah', title: 'Jumlah Survey' },
     ];
 
     // show/hide
@@ -69,7 +73,7 @@ function DataTableAdminVariable() {
         setInitialRecords(() => {
             return rowData.filter((item) => {
                 // * Ubah dan custom untuk pencarian di sini
-                return item.alias.toLowerCase().includes(search.toLowerCase()) || item.description.toLowerCase().includes(search.toLowerCase()) || item.name.toLowerCase().includes(search.toLowerCase());
+                return item.name.toLowerCase().includes(search.toLowerCase()) || item.description.toLowerCase().includes(search.toLowerCase());
             });
         });
 
@@ -85,7 +89,10 @@ function DataTableAdminVariable() {
     return (
         <div>
             <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                <ExportFileComponent cols={cols} rowData={initialRecords}/>
+                <button type="button"
+                        className="btn bg-white text-primary dark:text-white-light dark:bg-[#191e3a] border-primary shadow-none">
+                    <IconPlus/> Tambah Survey
+                </button>
 
                 <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
                     <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
@@ -113,28 +120,36 @@ function DataTableAdminVariable() {
                             },
                         },
                         {
-                            accessor: 'alias',
-                            title: 'Inisial Variabel',
-                            sortable: true,
-                            hidden: hideCols.includes('alias'),
-                            render(record, index) {
-                                return <span className="badge badge-outline-success rounded-full">{record.alias}</span>;
-                            },
-                        },
-                        {
                             accessor: 'name',
-                            title: 'Variabel',
+                            title: 'Pertanyaan',
                             sortable: true,
                             hidden: hideCols.includes('name'),
                             render: (record) => <HighlightField value={record.name} search={search}/>,
                         },
                         {
-                            accessor: 'description',
-                            title: 'Deskripsi',
+                            accessor: 'isPublished',
+                            title: 'Open',
+                            hidden: hideCols.includes('isPublished'),
+                            render: (record,index) => <label className="w-12 h-6 relative">
+                                <input type="checkbox"
+                                       onChange={(e) =>  handleUpdatePublished({
+                                             id: record.id,
+                                             isPublished: e.target.checked
+                                        })
+                                       }
+                                       checked={record.isPublished}
+                                       className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
+                                       id={`isPublished-${record.id}-${index}`}/>
+                                <span
+                                    className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                            </label>
+                        },
+                        {
+                            accessor: 'jumlah',
+                            title: 'Jumlah Survey',
                             sortable: true,
-                            hidden: hideCols.includes('description'),
-                            render: (record) => <div className="max-w-sm text-wrap"><HighlightField
-                                value={record.description} search={search}/></div>,
+                            hidden: hideCols.includes('jumlah'),
+                            render: record => <HighlightField value={""+record.variableOnFormGroup.length} search={search}/>
                         },
                         {
                             accessor: 'aksi',
@@ -144,24 +159,22 @@ function DataTableAdminVariable() {
                             render(record) {
                                 return (
                                     <div className="flex gap-2 justify-center">
-                                        <Link href={`form-group/${record.id}`}
-                                              className="flex items-center justify-center">
+                                        <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
                                             <Tippy content={`Edit ${record.name}`} theme="primary">
                                                 <button type="button" className="bg-primary p-2 rounded-lg text-white">
-                                                    <IconPencil/>
+                                                    <IconPencil />
                                                 </button>
                                             </Tippy>
                                         </Link>
                                         <Tippy content={`Remove ${record.name}`} theme="danger">
                                             <button type="button" className="bg-danger p-2 rounded-lg text-white">
-                                                <IconTrash/>
+                                                <IconTrash />
                                             </button>
                                         </Tippy>
-                                        <Link href={`form-group/${record.id}`}
-                                              className="flex items-center justify-center">
+                                        <Link href={`question/${record.id}`} className="flex items-center justify-center">
                                             <Tippy content={`Detail ${record.name}`} theme="info">
                                                 <button type="button" className="bg-info p-2 rounded-lg text-white">
-                                                    <IconEye/>
+                                                    <IconEye />
                                                 </button>
                                             </Tippy>
                                         </Link>
@@ -180,15 +193,11 @@ function DataTableAdminVariable() {
                     sortStatus={sortStatus}
                     onSortStatusChange={setSortStatus}
                     minHeight={200}
-                    paginationText={({
-                                         from,
-                                         to,
-                                         totalRecords
-                                     }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
                 />
             </div>
         </div>
     );
 }
 
-export default DataTableAdminVariable;
+export default DataTableAdminQuestion;

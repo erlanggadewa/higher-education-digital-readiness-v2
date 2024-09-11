@@ -5,7 +5,7 @@ interface IconPencilProps {
     fill?: boolean;
 }
 
-const IconPencil: FC<IconPencilProps> = ({ className, fill = false }) => {
+const IconPencil: FC<IconPencilProps> = ({ className, fill = true }) => {
     return (
         <>
             {fill ? (
