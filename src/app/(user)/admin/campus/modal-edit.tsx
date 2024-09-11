@@ -75,7 +75,10 @@ function ModalEditKampus({setShowModal, showModal, id}: {
             });
         },
         async onSuccess() {
-            await utils.admin.campus.getListCampus.invalidate();
+            await Promise.all([
+                utils.admin.campus.getListCampus.invalidate(),
+                utils.admin.campus.getDetailCampus.invalidate(id)
+            ])
             Swal.close();
             void Swal.fire({
                 title: 'Berhasil!',
@@ -122,7 +125,7 @@ function ModalEditKampus({setShowModal, showModal, id}: {
             ...payload,
             id,
             teleponPT: payload.teleponPT.replace('_', ''),
-            faximilePT: payload.teleponPT.replace('_', ''),
+            faximilePT: payload.faximilePT.replace('_', ''),
         });
     };
 
@@ -323,7 +326,7 @@ function ModalEditKampus({setShowModal, showModal, id}: {
                                                         className="text-danger">*</span></label>
                                                     <textarea {...register('alamatPT')} id="address"
                                                               placeholder="Masukkan alamat kampus"
-                                                              className="form-textarea min-h-[133px] max-h-[133px]"/>
+                                                              className="form-textarea min-h-[133px] max-h-[133px] mb-2"/>
                                                     <ErrorMessage errors={errors} name="alamatPT"
                                                                   render={({message}) => <DefaultAlertComponent
                                                                       type="warning" message={message}/>}/>

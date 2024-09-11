@@ -38,7 +38,7 @@ const VariablePage = () => {
                     <DataTableAdminVariable/>
                 </Suspense>
             </div>
-            <ModalTambahVariabel setShowModal={(value) => setShowModalTambah(value)} showModal={showModalTambah}/>
+            <ModalTambahVariabel setShowModal={setShowModalTambah} showModal={showModalTambah}/>
         </>
     );
 };

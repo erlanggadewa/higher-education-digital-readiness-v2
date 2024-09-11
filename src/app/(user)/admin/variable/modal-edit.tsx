@@ -40,7 +40,10 @@ function ModalEditVariabel({setShowModal, showModal, id}: {
             });
         },
         async onSuccess() {
-            await utils.admin.variable.getListVariable.invalidate();
+            await Promise.all([
+                utils.admin.variable.getListVariable.invalidate(),
+                utils.admin.variable.getDetailVariable.invalidate(id)
+            ])
             Swal.close();
             void Swal.fire({
                 title: 'Berhasil!',
