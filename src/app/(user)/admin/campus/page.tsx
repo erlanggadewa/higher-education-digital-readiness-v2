@@ -6,7 +6,7 @@ import DataTableAdminCampus from './data-table';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
 import IconPlus from '@/components/icon/icon-plus';
 import IconUniversity from '@/components/icon/icon-university';
-import ModalTambahKampus from "@/app/(defaults)/admin/campus/modal-tambah";
+import ModalTambahKampus from "./modal-tambah";
 
 const CampusPage = () => {
     const [showModalTambah, setShowModalTambah] = useState(false);
