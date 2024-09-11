@@ -98,6 +98,7 @@ function FormSurvey({ data }: { data: GetQuestionCampusSurvey }) {
     createAnswerQuestion.mutate({
       answer: payload.answer,
       campusId: session.data?.user.id ?? '',
+      variableId: data.variable.id,
       variableOnFormGroupId: data.id,
       year: data.formGroup.year,
     });
