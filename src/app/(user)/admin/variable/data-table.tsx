@@ -54,7 +54,6 @@ function DataTableAdminVariable() {
     });
 
     const cols: { accessor: string; title: string }[] = [
-        {accessor: 'alias', title: 'Inisial Pertanyaan'},
         {accessor: 'name', title: 'Variabel'},
         {accessor: 'description', title: 'Deskripsi'},
     ];
@@ -163,20 +162,15 @@ function DataTableAdminVariable() {
                             },
                         },
                         {
-                            accessor: 'alias',
-                            title: 'Inisial Variabel',
-                            sortable: true,
-                            hidden: hideCols.includes('alias'),
-                            render(record, index) {
-                                return <span className="badge badge-outline-success rounded-full">{record.alias}</span>;
-                            },
-                        },
-                        {
                             accessor: 'name',
                             title: 'Variabel',
                             sortable: true,
                             hidden: hideCols.includes('name'),
-                            render: (record) => <HighlightField value={record.name} search={search}/>,
+                            render: (record) =>
+                                <div className="flex gap-2 items-center">
+                                    <HighlightField value={record.name} search={search}/>
+                                    <span className="badge badge-outline-success rounded-full">{record.alias}</span>
+                                </div>,
                         },
                         {
                             accessor: 'description',
