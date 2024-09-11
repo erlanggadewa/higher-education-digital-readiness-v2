@@ -1,32 +1,68 @@
 import IconX from '@/components/icon/icon-x';
 import {api} from '@/trpc/react';
 import {Dialog, Transition} from '@headlessui/react';
-import {useForm} from 'react-hook-form';
+import {type SubmitHandler, useForm} from 'react-hook-form';
 import Swal from 'sweetalert2';
-import {Fragment} from 'react';
+import {Fragment, useEffect} from 'react';
+import Tippy from "@tippyjs/react";
+import IconRefresh from "@/components/icon/icon-refresh";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {generatePassword} from "@/utils/password-utils";
+import {z} from "@/utils/id-zod";
 
-function ModalUbahPasswordKampus({setShowModal, showModal}: { setShowModal: (value: boolean) => void; showModal: boolean }) {
-    const utils = api.useUtils();
+const schema = z.object({
+    password: z.string().min(1, 'Wajib diisi'),
+});
+
+type Schema = z.infer<typeof schema>
+
+function ModalUbahPasswordKampus({setShowModal, showModal, id}: {
+    setShowModal: (value: boolean) => void;
+    showModal: boolean,
+    id: string
+}) {
+    const {mutate: resetPassword} = api.admin.campus.resetPassword.useMutation({
+        onMutate() {
+            void Swal.fire({
+                title: 'Mohon Tunggu!',
+                text: 'Sedang mengedit password kampus',
+                didOpen: () => Swal.showLoading(),
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+        async onSuccess() {
+            Swal.close();
+            void Swal.fire({
+                title: 'Berhasil!',
+                text: 'Password kampus berhasil diedit',
+                icon: 'success',
+                customClass: {container: 'sweet-alerts'},
+            });
+            setShowModal(false);
+        },
+    })
 
     const {
         register,
         handleSubmit,
         setValue,
         reset,
-    } = useForm();
-
-    const onSubmit = handleSubmit(async (payload) => {
-        await Swal.fire({
-            icon: 'warning',
-            title: '',
-            text: 'Perhatikan kembali hasil review anda',
-            showCancelButton: true,
-            confirmButtonText: 'Ya',
-            cancelButtonText: 'Batal',
-            padding: '2em',
-            customClass: {container: 'sweet-alerts'},
-        });
+    } = useForm<Schema>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            password: generatePassword(),
+        },
     });
+
+    useEffect(() => {
+        reset();
+    }, [showModal]);
+
+    const onSubmit: SubmitHandler<Schema> = async (payload) => {
+        resetPassword({id, ...payload});
+    };
 
     return (
         <Transition appear show={showModal} as={Fragment}>
@@ -48,7 +84,7 @@ function ModalUbahPasswordKampus({setShowModal, showModal}: { setShowModal: (val
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel
-                                className="panel my-8 w-full max-w-3xl overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                className="panel my-8 w-full max-w-md overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                 <div
                                     className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-dark">
                                     <div className="text-lg font-bold">Edit Password</div>
@@ -58,8 +94,26 @@ function ModalUbahPasswordKampus({setShowModal, showModal}: { setShowModal: (val
                                 </div>
 
                                 <div className="p-5">
-                                    <form onSubmit={onSubmit} className="flex flex-col gap-5">
-
+                                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                                        <div>
+                                            <label htmlFor="password">Password Kampus<span
+                                                className="text-danger">*</span></label>
+                                            <div className="flex gap-2">
+                                                <input id="password" type="text"
+                                                       disabled {...register('password')}
+                                                       className="form-input mb-2 disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed"/>
+                                                <Tippy content='Generate Password' theme="danger">
+                                                    <button type="button"
+                                                            onClick={() => setValue('password', generatePassword())}
+                                                            className="bg-danger rounded-lg p-2 text-white mb-2">
+                                                        <IconRefresh/>
+                                                    </button>
+                                                </Tippy>
+                                            </div>
+                                        </div>
+                                        <button type="submit" className="btn btn-primary">
+                                            Edit
+                                        </button>
                                     </form>
                                 </div>
                             </Dialog.Panel>

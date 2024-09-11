@@ -9,18 +9,53 @@ import {api} from '@/trpc/react';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import {DataTable, type DataTableSortStatus} from 'mantine-datatable';
-import Link from 'next/link';
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import 'tippy.js/dist/tippy.css';
 import ExportFileComponent from "@/components/export/export-file";
 import HighlightField from "@/components/highlight/highlight";
 import ModalEditKampus from "@/app/(defaults)/admin/campus/modal-edit";
 import ModalUbahPasswordKampus from "@/app/(defaults)/admin/campus/modal-ubah-password";
 
+import 'tippy.js/dist/tippy.css';
+import Swal from "sweetalert2";
+import {AnswerStatus} from "@prisma/client";
+
 function DataTableAdminCampus() {
     const [data] = api.admin.campus.getListCampus.useSuspenseQuery();
     const rowData = data;
+
+    const utils = api.useUtils();
+    const {mutate: removeUserCampus} = api.admin.campus.removeUserCampus.useMutation({
+        onMutate() {
+            void Swal.fire({
+                title: 'Mohon Tunggu!',
+                text: 'Sedang menghapus user kampus',
+                didOpen: () => Swal.showLoading(),
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+        async onSuccess() {
+            await utils.admin.campus.getListCampus.invalidate();
+            Swal.close();
+            void Swal.fire({
+                title: 'Berhasil!',
+                text: 'User kampus berhasil dihapus',
+                icon: 'success',
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+        onError() {
+            Swal.close();
+            void Swal.fire({
+                title: 'Gagal!',
+                text: 'User kampus gagal dihapus',
+                icon: 'error',
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+    });
 
     const cols: { accessor: string; title: string }[] = [{accessor: 'name', title: 'Nama Kampus'}];
     const colsExported: { accessor: string; title: string }[] = [{
@@ -45,6 +80,7 @@ function DataTableAdminCampus() {
     });
 
     const [hideCols, setHideCols] = useState<string[]>([]);
+    const [selectedId, setSelectedId] = useState<string>('');
 
     const showHideColumns = (col: string, _value: any) => {
         if (hideCols.includes(col)) {
@@ -85,6 +121,20 @@ function DataTableAdminCampus() {
         setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
         setPage(1);
     }, [sortStatus]);
+
+    const handleRemove = async (id: string) => {
+        const status = await Swal.fire({
+            icon: 'warning',
+            title: 'Yakin Menghapus Kampus ?',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal',
+            padding: '2em',
+            customClass: {container: 'sweet-alerts'},
+        });
+        if (!status.isConfirmed) return;
+        removeUserCampus(id);
+    }
 
     return (
         <div>
@@ -142,18 +192,25 @@ function DataTableAdminCampus() {
                                 return (
                                     <div className="flex gap-2 justify-center">
                                         <Tippy content={`Edit ${record.name}`} theme="primary">
-                                            <button onClick={() => setShowModalEdit(true)} type="button"
+                                            <button onClick={() => {
+                                                setSelectedId(record.id);
+                                                setShowModalEdit(true)
+                                            }} type="button"
                                                     className="bg-primary p-2 rounded-lg text-white">
                                                 <IconPencil/>
                                             </button>
                                         </Tippy>
                                         <Tippy content={`Remove ${record.name}`} theme="danger">
-                                            <button onClick={() => setShowModalEdit(true)} type="button" className="bg-danger p-2 rounded-lg text-white">
+                                            <button onClick={() => handleRemove(record.id)} type="button"
+                                                    className="bg-danger p-2 rounded-lg text-white">
                                                 <IconTrash/>
                                             </button>
                                         </Tippy>
                                         <Tippy content={`Edit Password ${record.name}`} theme="info">
-                                            <button onClick={() => setShowModalUbahPassword(true)} type="button" className="bg-info p-2 rounded-lg text-white">
+                                            <button onClick={() => {
+                                                setSelectedId(record.id);
+                                                setShowModalUbahPassword(true)
+                                            }} type="button" className="bg-info p-2 rounded-lg text-white">
                                                 <IconKey/>
                                             </button>
                                         </Tippy>
@@ -179,9 +236,12 @@ function DataTableAdminCampus() {
                                      }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
                 />
             </div>
-            <ModalEditKampus setShowModal={(value) => setShowModalEdit(value)} showModal={showModalEdit}/>
-            <ModalUbahPasswordKampus setShowModal={(value) => setShowModalUbahPassword(value)}
-                                     showModal={showModalUbahPassword}/>
+            {!!selectedId && <>
+                <ModalEditKampus id={selectedId} setShowModal={(value) => setShowModalEdit(value)}
+                                 showModal={showModalEdit}/>
+                <ModalUbahPasswordKampus id={selectedId} setShowModal={(value) => setShowModalUbahPassword(value)}
+                                         showModal={showModalUbahPassword}/>
+            </>}
         </div>
     );
 }
