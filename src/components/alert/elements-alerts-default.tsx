@@ -10,10 +10,10 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
       {type === 'danger' ? (
         <div
           className={cn(
-            'dark:bg-danger-old-dark-light relative flex items-center rounded border border-danger bg-danger p-2.5 text-danger before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent dark:bg-danger dark:bg-danger-light ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
+            'relative flex items-center rounded border border-danger bg-danger p-2 text-white before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent dark:bg-danger-old ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
           )}
         >
-          <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
+          <span className="absolute inset-y-0 m-auto h-6 w-6 text-white ltr:-right-11 rtl:-left-11">
             <IconDanger className="h-full w-full" />
           </span>
           <span className="font-medium ltr:pr-2 rtl:pl-2">
@@ -24,10 +24,10 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
       ) : type === 'success' ? (
         <div
           className={cn(
-            'dark:bg-success-old dark:bg-success-old-dark-light dark:bg-success-old-light relative flex items-center rounded border border-success bg-success p-2.5 text-success before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
+            'relative flex items-center rounded border border-success bg-success p-2 text-white before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent dark:bg-success-old ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
           )}
         >
-          <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
+          <span className="absolute inset-y-0 m-auto h-6 w-6 text-white ltr:-right-11 rtl:-left-11">
             <IconChecks className="h-full w-full" />
           </span>
           <span className="font-medium ltr:pr-2 rtl:pl-2">
@@ -38,10 +38,10 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
       ) : type === 'warning' ? (
         <div
           className={cn(
-            'dark:bg-warning-old dark:bg-warning-old-dark-light dark:bg-warning-old-light relative flex items-center rounded border border-warning bg-warning p-2.5 text-warning before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
+            'relative flex items-center rounded border border-warning bg-warning p-2 text-white before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent dark:bg-warning-old ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
           )}
         >
-          <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
+          <span className="absolute inset-y-0 m-auto h-6 w-6 text-white ltr:-right-11 rtl:-left-11">
             <IconBell className="h-full w-full" />
           </span>
           <span className="font-medium ltr:pr-2 rtl:pl-2">
@@ -52,10 +52,10 @@ function DefaultAlertComponent({ message, type }: { message: string; type: 'dang
       ) : type === 'info' ? (
         <div
           className={cn(
-            'dark:bg-info-old dark:bg-info-old-dark-light dark:bg-info-old-light relative flex items-center rounded border border-info bg-info p-2.5 text-info before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
+            'relative flex items-center rounded border border-info bg-info p-2 text-white before:absolute before:top-1/2 before:-mt-2 before:inline-block before:border-b-8 before:border-r-8 before:border-t-8 before:border-b-transparent before:border-r-inherit before:border-t-transparent dark:bg-info-old ltr:border-r-[61px] ltr:before:right-0 rtl:border-l-[61px] rtl:before:left-0 rtl:before:rotate-180',
           )}
         >
-          <span className="absolute inset-y-0 m-auto h-7 w-7 text-white ltr:-right-11 rtl:-left-11">
+          <span className="absolute inset-y-0 m-auto h-6 w-6 text-white ltr:-right-11 rtl:-left-11">
             <IconInfoCircle className="h-full w-full stroke-[100px] text-white" />
           </span>
           <span className="font-medium ltr:pr-2 rtl:pl-2">

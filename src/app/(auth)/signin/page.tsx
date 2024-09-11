@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const SignIn = () => {
   return (
-    <div className="relative flex h-screen w-full flex-col justify-between overflow-hidden rounded-md backdrop-blur-lg dark:bg-black/50 lg:flex-row lg:gap-10 xl:gap-0">
+    <div className="relative flex h-screen w-full flex-col justify-between overflow-hidden backdrop-blur-lg dark:bg-black/50 lg:flex-row lg:gap-10 xl:gap-0">
       <div className="relative hidden w-full items-center justify-center bg-cover lg:block lg:w-2/3">
         <Image
           src={'/assets/images/auth/login-background.jpg'}
@@ -20,6 +20,7 @@ const SignIn = () => {
             objectFit: 'cover',
             zIndex: -1,
           }}
+          priority={true}
         />
         <div className="z-[999] flex h-full w-full items-center px-20">
           <div>
@@ -34,15 +35,16 @@ const SignIn = () => {
       </div>
 
       <div className="relative flex h-full w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-md xl:max-w-xl">
-        <div className="flex w-full items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
-          <Link href="/" className="block w-8 lg:hidden">
-            <Image width={1000} height={1000} src="/assets/images/logo.svg" alt="Logo" className="mx-auto w-10" />
-          </Link>
-        </div>
-
         <div className="w-full max-w-[440px] lg:mt-16">
-          <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-          <p className="text-base font-bold leading-normal">Masukan email dan password anda untuk login</p>
+          <div className="flex gap-5">
+            <Link href="/" className="block place-content-center">
+              <Image width={1000} height={1000} src="/assets/images/hedr.png" alt="Logo" className="w-20" />
+            </Link>
+            <div>
+              <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
+              <p className="text-base font-bold leading-normal">Masukan akun anda untuk login</p>
+            </div>
+          </div>
           <br />
           <ComponentsAuthLoginForm />
         </div>

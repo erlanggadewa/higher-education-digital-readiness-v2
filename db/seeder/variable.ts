@@ -56,7 +56,7 @@ export const variables = [
   {
     id: 'clhxi5bf7000mg4tvc23r5zyk',
     alias: 'DRC',
-    name: 'Digital Research and	Community',
+    name: 'Digital Research and Community',
     description: 'Koordinasi, pelaksanaan, pemantauan dan evaluasi kegiatan penelitian dan pengabdian kepada masyarakat berbasis digital.',
   },
 ];
