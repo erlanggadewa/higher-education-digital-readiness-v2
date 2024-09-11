@@ -12,8 +12,11 @@ import {useSelector} from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 import ExportFileComponent from "@/components/export/export-file";
 import HighlightField from "@/components/highlight/highlight";
+import {type GetFormGroup} from "@/server/api/routers/admin/types/get-formgroup";
 
-function DataTableAdminVariable({formGroup, data: rowData}: { formGroup: any, data: any[] }) {
+function DataTableAdminVariable({data}: { data: GetFormGroup }) {
+    const formGroup = data;
+    const rowData = data.variable;
     const cols: { accessor: string; title: string }[] = [
         {accessor: 'name', title: 'Variabel'},
         {accessor: 'totalQuestion', title: 'Jumlah Pertanyaan'},
