@@ -57,6 +57,11 @@ function DataTableAdminVariable() {
         {accessor: 'name', title: 'Variabel'},
         {accessor: 'description', title: 'Deskripsi'},
     ];
+    const colsExport: { accessor: string; title: string }[] = [
+        {accessor: 'alias', title: 'Alias'},
+        {accessor: 'name', title: 'Variabel'},
+        {accessor: 'description', title: 'Deskripsi'},
+    ];
 
     // show/hide
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
@@ -134,7 +139,7 @@ function DataTableAdminVariable() {
     return (
         <div>
             <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                <ExportFileComponent cols={cols} rowData={initialRecords}/>
+                <ExportFileComponent cols={colsExport} rowData={initialRecords}/>
 
                 <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
                     <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
