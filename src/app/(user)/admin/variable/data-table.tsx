@@ -133,8 +133,10 @@ function DataTableAdminVariable() {
                             title: 'Deskripsi',
                             sortable: true,
                             hidden: hideCols.includes('description'),
-                            render: (record) => <div className="max-w-sm text-wrap"><HighlightField
-                                value={record.description} search={search}/></div>,
+                            cellsClassName: 'max-w-sm text-wrap',
+                            render: (record) =>
+                                <HighlightField
+                                    value={record.description} search={search}/>,
                         },
                         {
                             accessor: 'aksi',

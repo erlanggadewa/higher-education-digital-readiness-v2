@@ -25,8 +25,7 @@ const FormGroupDetailPage = async ({params}: { params: { formGroupId: string } }
                 </h3>
                 <Suspense fallback={<TableSkeletonComponent/>}>
                     <DataTableAdminVariable
-                        formGroup={dataFormGroup}
-                        data={dataFormGroup?.variable}/>
+                        data={dataFormGroup}/>
                 </Suspense>
             </div>
         </>
