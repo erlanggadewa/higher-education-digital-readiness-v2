@@ -13,12 +13,11 @@ import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import ExportFileComponent from "@/components/export/export-file";
 import HighlightField from "@/components/highlight/highlight";
-import ModalEditKampus from "@/app/(defaults)/admin/campus/modal-edit";
-import ModalUbahPasswordKampus from "@/app/(defaults)/admin/campus/modal-ubah-password";
+import ModalEditKampus from "./modal-edit";
+import ModalUbahPasswordKampus from "./modal-ubah-password";
 
 import 'tippy.js/dist/tippy.css';
 import Swal from "sweetalert2";
-import {AnswerStatus} from "@prisma/client";
 
 function DataTableAdminCampus() {
     const [data] = api.admin.campus.getListCampus.useSuspenseQuery();
