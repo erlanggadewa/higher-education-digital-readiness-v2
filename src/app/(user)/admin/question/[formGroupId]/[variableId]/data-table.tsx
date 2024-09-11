@@ -15,7 +15,6 @@ import 'tippy.js/dist/tippy.css';
 
 function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
   const rowData = data.question;
-  console.log(rowData);
   const cols: { accessor: string; title: string }[] = [
     { accessor: 'question', title: 'Pertanyaan' },
     { accessor: 'option', title: 'Opsi dan Bobot Jawaban' },
@@ -68,8 +67,7 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
     setInitialRecords(() => {
       return rowData.filter((item) => {
         // * Ubah dan custom untuk pencarian di sini
-        return true;
-        // return item.name.toLowerCase().includes(search.toLowerCase()) || item.totalQuestion.toString().includes(search.toLowerCase()) || item.alias.toLowerCase().includes(search.toLowerCase()) || item.updatedAt.toLocaleString().includes(search.toLowerCase());
+        return item.question.includes(search.toLowerCase()) || item.option.some((opt) => opt.value.includes(search.toLowerCase()));
       });
     });
 
