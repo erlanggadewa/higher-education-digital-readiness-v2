@@ -18,7 +18,6 @@ import ModalUbahPasswordKampus from "./modal-ubah-password";
 
 import 'tippy.js/dist/tippy.css';
 import Swal from "sweetalert2";
-import {AnswerStatus} from "@prisma/client";
 
 function DataTableAdminCampus() {
     const [data] = api.admin.campus.getListCampus.useSuspenseQuery();
