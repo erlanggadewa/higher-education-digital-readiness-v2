@@ -43,7 +43,7 @@
     "@trpc/react-query": "^11.0.0-rc.477",
     "@trpc/server": "^11.0.0-rc.477",
     "@x1mrdonut1x/nouislider-react": "^3.4.3",
-    "@zenstackhq/runtime": "^2.4.1",
+    "@zenstackhq/runtime": "^2.5.1",
     "apexcharts": "^3.52.0",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
