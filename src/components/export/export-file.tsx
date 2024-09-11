@@ -29,7 +29,7 @@ function ExportFileComponent({ fileName, cols, rowData }: { fileName?: string; c
           if (index > 0) {
             result += coldelimiter;
           }
-          let val = d.key.reduce((acc, key) => acc && acc[key], item) ?? '';
+          let val = d.key.reduce((acc, key) => acc && acc[key], item) ?? '-';
 
           result += val;
         });
@@ -61,7 +61,7 @@ function ExportFileComponent({ fileName, cols, rowData }: { fileName?: string; c
       records.map((item) => {
         rowhtml += '<tr>';
         columns.map((d) => {
-          let val = d.key.reduce((acc, key) => acc && acc[key], item) ?? '';
+          let val = d.key.reduce((acc, key) => acc && acc[key], item) ?? '-';
 
           rowhtml += '<td>' + val + '</td>';
         });
@@ -89,7 +89,7 @@ function ExportFileComponent({ fileName, cols, rowData }: { fileName?: string; c
           if (index > 0) {
             result += coldelimiter;
           }
-          let val = d.key.reduce((acc, key) => acc && acc[key], item) ?? '';
+          let val = d.key.reduce((acc, key) => acc && acc[key], item) ?? '-';
 
           result += val;
         });

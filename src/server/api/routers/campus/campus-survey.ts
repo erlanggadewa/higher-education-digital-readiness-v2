@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { z } from '@/utils/id-zod';
+import { type Prisma } from '@prisma/client';
 import { HelperCampus } from './helper/helper-reviewer-campus';
 
 export const campusSurveyRouter = createTRPCRouter({
@@ -20,7 +21,18 @@ export const campusSurveyRouter = createTRPCRouter({
             },
           },
           variableOnFormGroup: {
-            some: {},
+            every: {
+              question: {
+                none: {
+                  question: undefined,
+                  option: {
+                    none: {
+                      value: undefined,
+                    },
+                  },
+                },
+              },
+            },
           },
         },
         include: {
@@ -79,7 +91,25 @@ export const campusSurveyRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const formGroup = await ctx.db.formGroup.findUnique({
-        where: { id: input.formGroupId, isActive: true, isPublished: true },
+        where: {
+          id: input.formGroupId,
+          isActive: true,
+          isPublished: true,
+          variableOnFormGroup: {
+            some: {
+              question: {
+                none: {
+                  question: undefined,
+                  option: {
+                    none: {
+                      value: undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         include: {
           variableOnFormGroup: {
             include: {
@@ -106,19 +136,156 @@ export const campusSurveyRouter = createTRPCRouter({
         variable:
           formGroup?.variableOnFormGroup.map((item) => {
             return {
-              variableId: item.variable.id,
+              variableOnFormGroupId: item.id,
               variableAlias: item.variable.alias,
               variableName: item.variable.name,
               variableDescription: item.variable.description,
-              status: item.campusSurveyLog[0]?.status === 'WAITING' ? 'Belum Disetujui' : 'Telah Disetujui',
+              status: item.campusSurveyLog[0]?.status === 'WAITING' ? 'Belum Disetujui' : item.campusSurveyLog[0]?.status === 'REVIEWED' ? 'Sudah Disetujui' : 'Menunggu Dikerjakan',
               takeTime: item.campusSurveyLog[0]?.createdAt,
               totalQuestion: item._count?.question,
             };
           }) ?? [],
       };
-      console.log('🚀 formGroup ~ File: campus-survey.ts');
-      console.dir(formGroup, { depth: null });
-      console.log('🔚 formGroup ~ File: campus-survey.ts');
+
       return data;
+    }),
+
+  getQuestionSurvey: protectedProcedure
+    .input(
+      z.object({
+        campusId: z.string().min(1).cuid(),
+        variableOnFormGroupId: z.string().min(1).cuid(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.db.variableOnFormGroup.findUniqueOrThrow({
+        where: {
+          id: input.variableOnFormGroupId,
+          question: {
+            none: {
+              question: undefined,
+              option: {
+                none: {
+                  value: undefined,
+                },
+              },
+            },
+          },
+        },
+        include: {
+          formGroup: {
+            omit: { createdAt: true, updatedAt: true },
+          },
+          variable: {
+            omit: { createdAt: true, updatedAt: true },
+          },
+          campusSurveyLog: { where: { campusId: input.campusId } },
+          question: {
+            where: { isActive: true },
+            omit: { createdAt: true, updatedAt: true },
+            include: {
+              campusAnswer: {
+                omit: { createdAt: true, updatedAt: true },
+                where: { campusId: input.campusId },
+              },
+              option: {
+                omit: { createdAt: true, updatedAt: true },
+              },
+            },
+          },
+        },
+      });
+      console.log('🚀 data ~ File: campus-survey.ts');
+      console.dir(data, { depth: null });
+      console.log('🔚 data ~ File: campus-survey.ts');
+      return data;
+    }),
+
+  answerQuestion: protectedProcedure
+    .input(
+      z.object({
+        campusId: z.string().min(1).cuid(),
+        variableId: z.string().min(1).cuid(),
+        variableOnFormGroupId: z.string().min(1).cuid(),
+        year: z.string().min(1).max(4),
+        answer: z
+          .object({
+            questionId: z.string().min(1).cuid(),
+            answerId: z.string().min(1).cuid(),
+          })
+          .array(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.$transaction(async (tx) => {
+        const promises = [];
+        for (const item of input.answer) {
+          const payload: Prisma.CampusAnswerUncheckedCreateInput = {
+            questionId: item.questionId,
+            optionId: item.answerId,
+            revisionOptionId: item.answerId,
+            campusId: input.campusId,
+            year: input.year,
+            answerStatus: 'WAITING',
+          };
+
+          const promise = tx.campusAnswer.upsert({
+            where: {
+              questionId_campusId_year: {
+                questionId: item.questionId,
+                campusId: input.campusId,
+                year: input.year,
+              },
+            },
+            create: payload,
+            update: payload,
+          });
+          promises.push(promise);
+        }
+
+        await Promise.all([
+          ...promises,
+          tx.campusSurveyLog.upsert({
+            where: {
+              campusId_variableOnFormGroupId: {
+                campusId: input.campusId,
+                variableOnFormGroupId: input.variableOnFormGroupId,
+              },
+            },
+            create: {
+              campusId: input.campusId,
+              variableOnFormGroupId: input.variableOnFormGroupId,
+              status: 'WAITING',
+            },
+            update: {
+              campusId: input.campusId,
+              variableOnFormGroupId: input.variableOnFormGroupId,
+              status: 'WAITING',
+            },
+          }),
+          tx.result.updateMany({
+            where: {
+              campusId: input.campusId,
+              year: input.year,
+            },
+            data: {
+              isApproved: false,
+            },
+          }),
+          tx.resultVariable.updateMany({
+            where: {
+              variableId: input.variableId,
+              campusId: input.campusId,
+              year: input.year,
+              userType: 'CAMPUS',
+            },
+            data: {
+              isApproved: false,
+            },
+          }),
+        ]);
+      });
+
+      return 'success';
     }),
 });
