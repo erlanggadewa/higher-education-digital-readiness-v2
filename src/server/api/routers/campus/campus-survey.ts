@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { z } from '@/utils/id-zod';
+import { type Prisma } from '@prisma/client';
 import { HelperCampus } from './helper/helper-reviewer-campus';
 
 export const campusSurveyRouter = createTRPCRouter({
@@ -194,7 +195,9 @@ export const campusSurveyRouter = createTRPCRouter({
           },
         },
       });
-
+      console.log('🚀 data ~ File: campus-survey.ts');
+      console.dir(data, { depth: null });
+      console.log('🔚 data ~ File: campus-survey.ts');
       return data;
     }),
 
@@ -202,6 +205,7 @@ export const campusSurveyRouter = createTRPCRouter({
     .input(
       z.object({
         campusId: z.string().min(1).cuid(),
+        variableId: z.string().min(1).cuid(),
         variableOnFormGroupId: z.string().min(1).cuid(),
         year: z.string().min(1).max(4),
         answer: z
@@ -214,53 +218,72 @@ export const campusSurveyRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.$transaction(async (tx) => {
-        await Promise.all(
-          input.answer.map(async (item) => {
-            await tx.campusAnswer.upsert({
-              where: {
-                questionId_campusId_year: {
-                  questionId: item.questionId,
-                  campusId: input.campusId,
-                  year: input.year,
-                },
-              },
-              create: {
+        const promises = [];
+        for (const item of input.answer) {
+          const payload: Prisma.CampusAnswerUncheckedCreateInput = {
+            questionId: item.questionId,
+            optionId: item.answerId,
+            revisionOptionId: item.answerId,
+            campusId: input.campusId,
+            year: input.year,
+            answerStatus: 'WAITING',
+          };
+
+          const promise = tx.campusAnswer.upsert({
+            where: {
+              questionId_campusId_year: {
                 questionId: item.questionId,
-                optionId: item.answerId,
-                revisionOptionId: item.answerId,
                 campusId: input.campusId,
                 year: input.year,
-                answerStatus: 'WAITING',
               },
-              update: {
-                questionId: item.questionId,
-                optionId: item.answerId,
-                revisionOptionId: item.answerId,
+            },
+            create: payload,
+            update: payload,
+          });
+          promises.push(promise);
+        }
+
+        await Promise.all([
+          ...promises,
+          tx.campusSurveyLog.upsert({
+            where: {
+              campusId_variableOnFormGroupId: {
                 campusId: input.campusId,
-                year: input.year,
-                answerStatus: 'WAITING',
+                variableOnFormGroupId: input.variableOnFormGroupId,
               },
-            });
-          }),
-        );
-        await tx.campusSurveyLog.upsert({
-          where: {
-            campusId_variableOnFormGroupId: {
+            },
+            create: {
               campusId: input.campusId,
               variableOnFormGroupId: input.variableOnFormGroupId,
+              status: 'WAITING',
             },
-          },
-          create: {
-            campusId: input.campusId,
-            variableOnFormGroupId: input.variableOnFormGroupId,
-            status: 'WAITING',
-          },
-          update: {
-            campusId: input.campusId,
-            variableOnFormGroupId: input.variableOnFormGroupId,
-            status: 'WAITING',
-          },
-        });
+            update: {
+              campusId: input.campusId,
+              variableOnFormGroupId: input.variableOnFormGroupId,
+              status: 'WAITING',
+            },
+          }),
+          tx.result.updateMany({
+            where: {
+              campusId: input.campusId,
+              year: input.year,
+            },
+            data: {
+              isApproved: false,
+            },
+          }),
+          tx.resultVariable.updateMany({
+            where: {
+              variableId: input.variableId,
+              campusId: input.campusId,
+              year: input.year,
+              userType: 'CAMPUS',
+            },
+            data: {
+              isApproved: false,
+            },
+          }),
+        ]);
       });
 
       return 'success';
