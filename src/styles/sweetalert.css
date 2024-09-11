@@ -10,11 +10,11 @@ body.swal2-toast-shown .swal2-container.toast {
 }
 
 .dark .swal2-popup {
-  background: #0e1726;
+  background: #222222;
 }
 
 .dark .swal2-popup .swal2-title {
-  color: #888ea8;
+  color: white;
 }
 
 .swal2-popup .swal2-title {
