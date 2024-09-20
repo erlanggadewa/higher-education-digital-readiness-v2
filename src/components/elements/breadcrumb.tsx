@@ -21,7 +21,7 @@ const BreadCrumb = ({ routes }: BreadCrumbProps) => {
           </Link>
         </li>
         {routes.map((route, index) => (
-          <li className="before:px-1.5 before:content-['/']">
+          <li key={`breadcrumb-${index}`} className="before:px-1.5 before:content-['/']">
             {index === routes.length - 1 ? (
               <button type="button">{route.label}</button>
             ) : (
