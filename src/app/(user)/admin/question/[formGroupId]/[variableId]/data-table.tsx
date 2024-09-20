@@ -83,7 +83,7 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
   return (
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <ExportFileComponent cols={colsExport} rowData={initialRecords} />
+        <ExportFileComponent fileName={`Daftar Pertanyaan ${data.variable?.alias} (${data.variable?.name})`} cols={colsExport} rowData={initialRecords} />
 
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
           <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />

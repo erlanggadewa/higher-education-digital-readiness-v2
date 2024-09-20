@@ -15,6 +15,8 @@ import ExportFileComponent from "@/components/export/export-file";
 import HighlightField from "@/components/highlight/highlight";
 import ModalEditVariabel from "./modal-edit";
 import Swal from "sweetalert2";
+import IconEye from "@/components/icon/icon-eye";
+import Link from "next/link";
 
 function DataTableAdminVariable() {
     const [data] = api.admin.variable.getListVariable.useSuspenseQuery();
@@ -139,7 +141,7 @@ function DataTableAdminVariable() {
     return (
         <div>
             <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                <ExportFileComponent cols={colsExport} rowData={initialRecords}/>
+                <ExportFileComponent fileName="Daftar Variabel" cols={colsExport} rowData={initialRecords}/>
 
                 <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
                     <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
@@ -210,6 +212,13 @@ function DataTableAdminVariable() {
                                                 <IconTrash/>
                                             </button>
                                         </Tippy>
+                                        <Link href={`variable/${record.id}`} className="flex items-center justify-center">
+                                            <Tippy content={`Detail ${record.name}`} theme="info">
+                                                <button type="button" className="bg-info p-2 rounded-lg text-white">
+                                                    <IconEye />
+                                                </button>
+                                            </Tippy>
+                                        </Link>
                                     </div>
                                 );
                             },
