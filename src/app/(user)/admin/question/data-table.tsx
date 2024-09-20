@@ -15,11 +15,18 @@ import { useSelector } from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 import IconPlus from "@/components/icon/icon-plus";
 import HighlightField from "@/components/highlight/highlight";
+import ModalTambahSurvey from "./modal-tambah";
+import ModalEditSurvey from "./modal-edit";
+import Switch from "@/components/elements/switch";
+import Swal from "sweetalert2";
 
 function DataTableAdminQuestion({year}: {year: string}) {
     const [data] = api.admin.formGroup.getFormGroupByYear.useSuspenseQuery(year);
     const utils = api.useUtils();
     const {mutate: handleUpdatePublished} = api.admin.formGroup.updatePublishedFormGroup.useMutation({
+         onSuccess: () =>  utils.admin.formGroup.getFormGroupByYear.invalidate(year),
+    })
+    const {mutate: removeFormGroup} = api.admin.formGroup.removeFormGroup.useMutation({
          onSuccess: () =>  utils.admin.formGroup.getFormGroupByYear.invalidate(year),
     })
     const rowData = data;
@@ -45,6 +52,9 @@ function DataTableAdminQuestion({year}: {year: string}) {
     });
 
     const [hideCols, setHideCols] = useState<string[]>([]);
+    const [showModalTambah, setShowModalTambah] = useState(false);
+    const [showModalEdit, setShowModalEdit] = useState(false);
+    const [selectedId, setSelectedId] = useState<string>('');
 
     const showHideColumns = (col: string, _value: any) => {
         if (hideCols.includes(col)) {
@@ -86,10 +96,25 @@ function DataTableAdminQuestion({year}: {year: string}) {
         setPage(1);
     }, [sortStatus]);
 
+    const handleRemove = async (id: string) => {
+        const status = await Swal.fire({
+            icon: 'warning',
+            title: 'Apakah yakin untuk menghapus?',
+            text: 'Anda tidak dapat mengurungkan tindakan ini',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal',
+            padding: '2em',
+            customClass: {container: 'sweet-alerts'},
+        });
+        if (!status.isConfirmed) return;
+        removeFormGroup(id);
+    }
+
     return (
         <div>
             <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                <button type="button"
+                <button onClick={() => setShowModalTambah(true)} type="button"
                         className="btn bg-white text-primary dark:text-white-light dark:bg-[#191e3a] border-primary shadow-none">
                     <IconPlus/> Tambah Survey
                 </button>
@@ -130,19 +155,12 @@ function DataTableAdminQuestion({year}: {year: string}) {
                             accessor: 'isPublished',
                             title: 'Open',
                             hidden: hideCols.includes('isPublished'),
-                            render: (record,index) => <label className="w-12 h-6 relative">
-                                <input type="checkbox"
-                                       onChange={(e) =>  handleUpdatePublished({
-                                             id: record.id,
-                                             isPublished: e.target.checked
-                                        })
-                                       }
-                                       checked={record.isPublished}
-                                       className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
-                                       id={`isPublished-${record.id}-${index}`}/>
-                                <span
-                                    className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
-                            </label>
+                            render: (record,index) => <Switch
+                                id={`isPublished-${record.id}-${index}`}
+                                onChange={(value: boolean) => handleUpdatePublished({
+                                id: record.id,
+                                isPublished: value})}
+                                value={record.isPublished} />
                         },
                         {
                             accessor: 'jumlah',
@@ -159,15 +177,16 @@ function DataTableAdminQuestion({year}: {year: string}) {
                             render(record) {
                                 return (
                                     <div className="flex gap-2 justify-center">
-                                        <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
-                                            <Tippy content={`Edit ${record.name}`} theme="primary">
-                                                <button type="button" className="bg-primary p-2 rounded-lg text-white">
-                                                    <IconPencil />
-                                                </button>
-                                            </Tippy>
-                                        </Link>
+                                        <Tippy content={`Edit ${record.name}`} theme="primary">
+                                            <button onClick={() => {
+                                                setSelectedId(record.id)
+                                                setShowModalEdit(true)
+                                            }} type="button" className="bg-primary p-2 rounded-lg text-white">
+                                                <IconPencil />
+                                            </button>
+                                        </Tippy>
                                         <Tippy content={`Remove ${record.name}`} theme="danger">
-                                            <button type="button" className="bg-danger p-2 rounded-lg text-white">
+                                            <button onClick={() => handleRemove(record.id)} type="button" className="bg-danger p-2 rounded-lg text-white">
                                                 <IconTrash />
                                             </button>
                                         </Tippy>
@@ -196,6 +215,8 @@ function DataTableAdminQuestion({year}: {year: string}) {
                     paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
                 />
             </div>
+            <ModalTambahSurvey year={year} setShowModal={setShowModalTambah} showModal={showModalTambah}/>
+            {!!selectedId && <ModalEditSurvey setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId}/>}
         </div>
     );
 }
