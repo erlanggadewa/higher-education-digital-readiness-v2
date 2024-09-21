@@ -1,12 +1,14 @@
 import IconFile from '../icon/icon-file';
 import IconPrinter from '../icon/icon-printer';
 
-function ExportFileComponent({ fileName, cols, rowData }: { fileName?: string; cols: { accessor: string; title: string }[]; rowData: any[] }) {
+function ExportFileComponent({ fileName, cols, rowData }: { fileName?: string; cols: { accessor: string; title: string; hiddenPrint?: boolean }[]; rowData: any[] }) {
   const exportTable = (type: any) => {
-    let columns = cols.map((d) => ({
-      key: d.accessor.split('.'),
-      title: d.title,
-    }));
+    let columns = cols
+      .filter((e) => !e.hiddenPrint)
+      .map((d) => ({
+        key: d.accessor.split('.'),
+        title: d.title,
+      }));
 
     let records = rowData;
     let filename = fileName ?? 'Data Tabel';

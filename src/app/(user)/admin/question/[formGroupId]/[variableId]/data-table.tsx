@@ -15,7 +15,8 @@ import 'tippy.js/dist/tippy.css';
 
 function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
   const rowData = data.question;
-  const cols: { accessor: string; title: string }[] = [
+
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
     { accessor: 'question', title: 'Pertanyaan' },
     { accessor: 'option', title: 'Opsi dan Bobot Jawaban' },
   ];

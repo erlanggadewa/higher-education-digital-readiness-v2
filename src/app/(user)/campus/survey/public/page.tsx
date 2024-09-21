@@ -1,12 +1,12 @@
 import ElementsBreadcrumbsDefault from '@/components/breadcrumbs/elements-breadcrumbs-default';
-import IconDatabase from '@/components/icon/icon-database';
+import IconGlobe from '@/components/icon/icon-globe';
 import { getServerAuthSession } from '@/server/auth';
 import { api } from '@/trpc/server';
-import DataTableCampusFormGroup from './data-table';
+import DataTablePublicFormGroup from './data-table';
 
-async function ListSurveyCampusPage() {
+async function CampusPublicSurvey() {
   const session = await getServerAuthSession();
-  const data = await api.campus.campusSurvey.getCampusSurvey({ campusId: session?.user.id ?? '' });
+  const data = await api.campus.publicSurvey.getPublicSurvey({ campusId: session?.user.id ?? '' });
 
   return (
     <div>
@@ -16,21 +16,21 @@ async function ListSurveyCampusPage() {
             <img className="w-12 overflow-hidden rounded-full bg-white object-cover" src={session?.user.image ?? ''} alt="img" />
             <div className="justify-center-center flex flex-col gap-1">
               <h1 className="text-xl text-white">{session?.user.name}</h1>
-              <ElementsBreadcrumbsDefault data={['Campus', 'Survey']} />
+              <ElementsBreadcrumbsDefault data={['Public', 'Survey']} />
             </div>
           </div>
         </div>
       </div>
       <div className="panel -mt-16">
         <div className="mb-3 flex items-center gap-3 text-lg font-bold">
-          <IconDatabase />
-          <h1>Daftar Survei Kampus</h1>
-          <span className="badge bg-primary">Kampus</span>
+          <IconGlobe />
+          <h1>Daftar Survey Publik</h1>
+          <span className="badge bg-primary">Umum</span>
         </div>
-        <DataTableCampusFormGroup data={data} />
+        <DataTablePublicFormGroup data={data} />
       </div>
     </div>
   );
 }
 
-export default ListSurveyCampusPage;
+export default CampusPublicSurvey;

@@ -130,6 +130,7 @@ model Campus {
   resultVariable  ResultVariable[]
   publicAnswer    PublicAnswer[]
   campusSurveyLog CampusSurveyLog[]
+  urlPublicSurvey UrlPublicSurvey[]
 
   @@map("campuses")
 
@@ -215,6 +216,7 @@ model FormGroup {
 
   variableOnFormGroup VariableOnFormGroup[]
   roleOnFormGroup     RoleOnFormGroup[]
+  urlPublicSurvey     UrlPublicSurvey[]
 
   @@map("form_groups")
 
@@ -327,6 +329,7 @@ model RoleUser {
   publicUser      PublicUser[]
   roleOnFormGroup RoleOnFormGroup[]
   campusUser      CampusUser[]
+  urlPublicSurvey UrlPublicSurvey[]
 
   @@map("role_users")
 
@@ -407,13 +410,21 @@ model PublicSurveyLog {
 }
 
 model UrlPublicSurvey {
-  id        String   @id @default(cuid())
-  payload   Json
+  id          String    @id @default(cuid())
+  role        String
+  year        String
+  campusId    String    @map("campus_id")
+  formGroupId String    @map("form_group_id")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  campus      Campus    @relation(fields: [campusId], references: [campusId])
+  formGroup   FormGroup @relation(fields: [formGroupId], references: [id])
+  roleUser    RoleUser  @relation(fields: [role], references: [role])
 
   @@map("url_public_survey")
 
+  @@unique([role, campusId, formGroupId, year])
   @@allow("all", true)
 }

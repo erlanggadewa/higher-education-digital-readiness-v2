@@ -7,7 +7,7 @@ function DataTableAdminDashboard({ year }: { year: number }) {
   const [data] = api.admin.dashboard.getFormGroup.useSuspenseQuery({ year: '' + year });
   // const rowData = data.question;
 
-  const cols: { accessor: string; title: string }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
     { accessor: 'question', title: 'Pertanyaan' },
     { accessor: 'option', title: 'Jawaban' },
     { accessor: 'answer.reviewComment', title: 'Keterangan' },
