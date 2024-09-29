@@ -1,7 +1,7 @@
 import IconX from '@/components/icon/icon-x';
 import {api} from '@/trpc/react';
 import {Dialog, Transition} from '@headlessui/react';
-import {useForm, type SubmitHandler, Controller} from 'react-hook-form';
+import {useForm, type SubmitHandler} from 'react-hook-form';
 import Swal from 'sweetalert2';
 import {Fragment, useEffect} from 'react';
 import {ErrorMessage} from "@hookform/error-message";
@@ -10,29 +10,33 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "@/utils/id-zod";
 import TouchSpin from "@/components/elements/touch-spin";
 import LoadingDotComponent from "@/components/loading/loading-dot";
+import {useParams} from "next/navigation";
 
 const schema = z.object({
-    nama: z.string().min(1, 'Wajib diisi'),
     deskripsi: z.string().min(1, 'Wajib diisi'),
-    minPoint: z.number(),
-    maxPoint: z.number(),
 });
 
 type Schema = z.infer<typeof schema>
 
-function ModalEditLevel({setShowModal, showModal, id}: {
+function ModalEditVariableLevel({setShowModal, showModal, id}: {
     setShowModal: (value: boolean) => void
     showModal: boolean
     id: string
 }) {
-    const {data, isLoading} = api.admin.level.getDetailLevel.useQuery(id);
+    const params = useParams<{
+        variableId: string;
+    }>();
+    const {data, isLoading} = api.admin.variable.getLevelDetailById.useQuery({
+        levelId: id,
+        variableId: params.variableId
+    });
     const utils = api.useUtils();
 
-    const {mutate: updateLevel} = api.admin.level.updateLevel.useMutation({
+    const {mutate: updateLevelDescription} = api.admin.variable.updateLevelDescription.useMutation({
         onMutate() {
             void Swal.fire({
                 title: 'Mohon Tunggu!',
-                text: 'Sedang mengedit Level',
+                text: 'Sedang mengedit Deskripsi Level',
                 didOpen: () => Swal.showLoading(),
                 allowEscapeKey: false,
                 allowOutsideClick: false,
@@ -41,13 +45,13 @@ function ModalEditLevel({setShowModal, showModal, id}: {
         },
         async onSuccess() {
             await Promise.all([
-                utils.admin.level.getLevelList.invalidate(),
-                utils.admin.level.getDetailLevel.invalidate(id)
+                utils.admin.variable.getLevelByVariableId.invalidate(params.variableId),
+                utils.admin.variable.getLevelDetailById.invalidate({levelId: id, variableId: params.variableId}),
             ])
             Swal.close();
             void Swal.fire({
                 title: 'Berhasil!',
-                text: 'Level berhasil diedit',
+                text: 'Deskripsi Level berhasil diedit',
                 icon: 'success',
                 customClass: {container: 'sweet-alerts'},
             });
@@ -59,15 +63,11 @@ function ModalEditLevel({setShowModal, showModal, id}: {
         register,
         handleSubmit,
         reset,
-        control,
         formState: {errors}
     } = useForm<Schema>({
         resolver: zodResolver(schema),
         values: {
-            nama: data?.value ?? '',
-            deskripsi: data?.description ?? '',
-            minPoint: data?.minPoint ?? 0,
-            maxPoint: data?.maxPoint ?? 0,
+            deskripsi: data?.levelVariable?.descriptionLevelVariable ?? '',
         }
     });
 
@@ -76,7 +76,12 @@ function ModalEditLevel({setShowModal, showModal, id}: {
     }, [showModal]);
 
     const onSubmit: SubmitHandler<Schema> = async (payload) => {
-        updateLevel({...payload, id});
+        updateLevelDescription({
+            id: data?.levelVariable?.id ?? null,
+            levelId: id,
+            variableId: params.variableId,
+            description: payload.deskripsi,
+        })
     };
 
     return (
@@ -110,21 +115,29 @@ function ModalEditLevel({setShowModal, showModal, id}: {
 
                                 <div className="p-5">
                                     {data && !isLoading ?
-                                        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                                        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
                                             <div>
-                                                <label htmlFor="nama">Nama Level<span
-                                                    className="text-danger">*</span></label>
-                                                <input {...register('nama')}
-                                                       id="nama"
-                                                       type="text"
-                                                       placeholder="Masukkan nama level"
-                                                       className="form-input mb-2"/>
-                                                <ErrorMessage errors={errors} name="nama"
-                                                              render={({message}) => <DefaultAlertComponent
-                                                                  type="warning" message={message}/>}/>
+                                                <label
+                                                    htmlFor="nama">Level {data?.variable?.alias} - {data?.variable?.name}</label>
+                                                <input
+                                                    id="nama"
+                                                    type="text"
+                                                    className="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed mb-2"
+                                                    value={data?.level?.value} disabled/>
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label htmlFor="minPoint">Min Poin</label>
+                                                    <TouchSpin id="minPoint" disabled value={data?.level?.minPoint}/>
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="maxPoint">Max Poin</label>
+                                                    <TouchSpin id="maxPoint" disabled value={data?.level?.maxPoint}/>
+                                                </div>
                                             </div>
                                             <div>
-                                                <label htmlFor="deskripsi">Deskripsi Level<span
+                                                <label
+                                                    htmlFor="deskripsi">Deskripsi {data?.variable?.alias} - {data?.variable?.name}<span
                                                     className="text-danger">*</span></label>
                                                 <textarea {...register('deskripsi')} id="deskripsi"
                                                           placeholder="Masukkan deskripsi level"
@@ -132,38 +145,6 @@ function ModalEditLevel({setShowModal, showModal, id}: {
                                                 <ErrorMessage errors={errors} name="deskripsi"
                                                               render={({message}) => <DefaultAlertComponent
                                                                   type="warning" message={message}/>}/>
-                                            </div>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div>
-                                                    <Controller
-                                                        control={control}
-                                                        name="minPoint"
-                                                        render={({field: {onChange, value}}) => <>
-                                                            <label htmlFor="minPoint">Min Poin</label>
-                                                            <TouchSpin id="minPoint"
-                                                                       value={value}
-                                                                       onChange={(value) => onChange(value)}/>
-                                                            <ErrorMessage errors={errors} name="minPoint"
-                                                                          render={({message}) => <DefaultAlertComponent
-                                                                              type="warning" message={message}/>}/>
-                                                        </>}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <Controller
-                                                        control={control}
-                                                        name="maxPoint"
-                                                        render={({field: {onChange, value}}) => <>
-                                                            <label htmlFor="maxPoint">Min Poin</label>
-                                                            <TouchSpin id="maxPoint"
-                                                                       value={value}
-                                                                       onChange={(value) => onChange(value)}/>
-                                                            <ErrorMessage errors={errors} name="maxPoint"
-                                                                          render={({message}) => <DefaultAlertComponent
-                                                                              type="warning" message={message}/>}/>
-                                                        </>}
-                                                    />
-                                                </div>
                                             </div>
                                             <button type="submit" className="btn btn-primary">
                                                 Edit
@@ -179,4 +160,4 @@ function ModalEditLevel({setShowModal, showModal, id}: {
     );
 }
 
-export default ModalEditLevel;
+export default ModalEditVariableLevel;

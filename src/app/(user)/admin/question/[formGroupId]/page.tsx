@@ -13,7 +13,7 @@ const FormGroupDetailPage = async ({params}: { params: { formGroupId: string } }
             <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary"/>
             <div className="flex justify-between">
                 <div>
-                    <div className="flex justify-center gap-2 mb-3">
+                    <div className="flex gap-2 mb-3">
                         <BackButton/>
                         <h1 className="text-2xl font-bold text-white-light">{dataFormGroup?.formGroupName}</h1>
                     </div>

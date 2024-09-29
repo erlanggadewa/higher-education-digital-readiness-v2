@@ -23,7 +23,7 @@ const BreadCrumb = ({ routes }: BreadCrumbProps) => {
         {routes.map((route, index) => (
           <li key={`breadcrumb-${index}`} className="before:px-1.5 before:content-['/']">
             {index === routes.length - 1 ? (
-              <button type="button">{route.label}</button>
+              <button className="cursor-default" type="button">{route.label}</button>
             ) : (
               <Link
                 href={{

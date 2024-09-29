@@ -161,7 +161,7 @@ function DataTableAdminCampus() {
                             title: 'No.',
                             sortable: false,
                             textAlignment: 'center',
-                            render: (record, index) => {
+                            render: (_, index) => {
                                 return <span>{index + 1}</span>;
                             },
                         },
@@ -170,7 +170,7 @@ function DataTableAdminCampus() {
                             title: 'Nama Kampus',
                             sortable: true,
                             hidden: hideCols.includes('name'),
-                            render: (record, index) => {
+                            render: (record) => {
                                 return (
                                     <div className="flex gap-3">
                                         <img className="h-12 w-12 overflow-hidden rounded-full object-cover"

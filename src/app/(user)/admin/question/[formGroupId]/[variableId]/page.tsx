@@ -1,13 +1,20 @@
+'use client'
+
 import BreadCrumb from '@/components/elements/breadcrumb';
 import IconDatabase from '@/components/icon/icon-database';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
-import {api} from '@/trpc/server';
-import {Suspense} from 'react';
+import {api} from '@/trpc/react';
+import {Suspense, useState} from 'react';
 import DataTableAdminQuestion from './data-table';
 import BackButton from "@/components/elements/back-button";
+import IconPlus from "@/components/icon/icon-plus";
+import {useParams} from "next/navigation";
+import ModalTambahPertanyaan from "./modal-tambah";
 
-const VariableDetailPage = async ({params}: { params: { formGroupId: string; variableId: string } }) => {
-    const dataQuestion = await api.admin.question.getQuestion({
+const VariableDetailPage = () => {
+    const [showModalTambah, setShowModalTambah] = useState(false)
+    const params = useParams<{ formGroupId: string; variableId: string }>()
+    const [dataQuestion] = api.admin.question.getQuestion.useSuspenseQuery({
         formGroupId: params.formGroupId,
         variableId: params.variableId,
     });
@@ -16,7 +23,7 @@ const VariableDetailPage = async ({params}: { params: { formGroupId: string; var
             <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary"/>
             <div className="flex justify-between">
                 <div>
-                    <div className="flex justify-center gap-2 mb-3">
+                    <div className="flex gap-2 mb-3">
                         <BackButton/>
                         <h1 className="text-2xl font-bold text-white-light">
                             {dataQuestion.variable?.alias} - {dataQuestion.formGroup?.name}
@@ -26,6 +33,14 @@ const VariableDetailPage = async ({params}: { params: { formGroupId: string; var
                         label: 'List Variabel',
                         path: `/admin/question/${params.formGroupId}`
                     }, {label: 'Pertanyaan'}]}/>
+                </div>
+                <div>
+                    <button
+                        onClick={() => setShowModalTambah(true)}
+                        type="button"
+                        className="btn bg-white dark:bg-[#191e3a] dark:border-[#1b2e4b] dark:shadow-none">
+                        <IconPlus/> Tambah Pertanyaan
+                    </button>
                 </div>
             </div>
             <div
@@ -38,6 +53,7 @@ const VariableDetailPage = async ({params}: { params: { formGroupId: string; var
                     <DataTableAdminQuestion data={dataQuestion ?? []}/>
                 </Suspense>
             </div>
+            <ModalTambahPertanyaan showModal={showModalTambah} setShowModal={setShowModalTambah}/>
         </>
     );
 };

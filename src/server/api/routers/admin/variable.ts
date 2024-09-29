@@ -58,4 +58,95 @@ export const adminVariableRouter = createTRPCRouter({
                 },
             });
         }),
+    getLevelByVariableId: protectedProcedure
+        .input(z.string().cuid())
+        .query(async ({ctx, input}) => {
+            const [variable, level, levelVariable] = await Promise.all([
+                ctx.db.variable.findUnique({
+                    where: {
+                        id: input,
+                    },
+                }),
+                ctx.db.levelIndex.findMany({
+                    orderBy: [{
+                        minPoint: 'asc',
+                    }, {
+                        maxPoint: 'asc',
+                    }]
+                }),
+                ctx.db.levelIndexOnVariables.findMany({
+                    where: {
+                        variableId: input,
+                    },
+                })
+            ]);
+
+            return {
+                variable,
+                level: level.map((l) => {
+                    const levelVar = levelVariable.find((lv) => lv.levelIndexId === l.id);
+                    return {
+                        ...l,
+                        descriptionLevelVariable: levelVar?.descriptionLevelVariable,
+                    };
+                })
+            };
+        }),
+    getLevelDetailById: protectedProcedure
+        .input(z.object({
+            levelId: z.string().cuid(),
+            variableId: z.string().cuid(),
+        }))
+        .query(async ({ctx, input}) => {
+            const [variable, level, levelVariable] = await Promise.all([
+                ctx.db.variable.findUnique({
+                    where: {
+                        id: input.variableId,
+                    },
+                }),
+                ctx.db.levelIndex.findUnique({
+                    where: {
+                        id: input.levelId,
+                    },
+                }),
+                ctx.db.levelIndexOnVariables.findFirst({
+                    where: {
+                        variableId: input.variableId,
+                        levelIndexId: input.levelId,
+                    },
+                }),
+            ]);
+            return {
+                variable,
+                level,
+                levelVariable,
+            };
+        }),
+    updateLevelDescription: protectedProcedure
+        .input(z.object({
+            id: z.string().cuid().nullable(),
+            levelId: z.string().cuid(),
+            variableId: z.string().cuid(),
+            description: z.string(),
+        }))
+        .mutation(async ({ctx, input}) => {
+            if (input.id) {
+                return ctx.db.levelIndexOnVariables.update({
+                    where: {
+                        id: input.id,
+                    },
+                    data: {
+                        descriptionLevelVariable: input.description,
+                    },
+                });
+            } else {
+                return ctx.db.levelIndexOnVariables.create({
+                    data: {
+                        descriptionLevelVariable: input.description,
+                        levelIndexId: input.levelId,
+                        variableId: input.variableId,
+                    },
+                });
+            }
+        }),
 });

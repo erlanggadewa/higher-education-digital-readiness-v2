@@ -30,23 +30,34 @@ export const adminQuestionRouter = createTRPCRouter({
         variableId: z.string(),
         formGroupId: z.string(),
     })).query(async ({ctx, input}) => {
-        const data = await ctx.db.variableOnFormGroup.findFirst({
-            where: {
-                variableId: input.variableId,
-                formGroupId: input.formGroupId,
-            },
-            include: {
-                formGroup: true,
-                question: {
-                    include: {
-                        option: true,
-                    }
+        const [variable, formGroup, data] = await Promise.all([
+            ctx.db.variable.findUnique({
+                where: {
+                    id: input.variableId,
+                }
+            }),
+            ctx.db.formGroup.findUnique({
+                where: {
+                    id: input.formGroupId,
                 },
-                variable: true,
-            },
-        });
+            }),
+            ctx.db.variableOnFormGroup.findFirst({
+                where: {
+                    variableId: input.variableId,
+                    formGroupId: input.formGroupId,
+                },
+                include: {
+                    question: {
+                        include: {
+                            option: true,
+                        }
+                    },
+                },
+            })
+        ])
         return {
-            ...data,
+            variable,
+            formGroup,
             question: data?.question.map((item) => ({
                 ...item,
                 optionJoin: item.option.map((e, index) => String.fromCharCode(97+index)+ '. ' + e.value + ' (' + e.point + ' poin)').join('<br>')

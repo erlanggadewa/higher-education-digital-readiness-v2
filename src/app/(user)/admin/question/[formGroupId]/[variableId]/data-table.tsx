@@ -11,6 +11,7 @@ import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import QuestionOption from '@/components/elements/question-option';
 import 'tippy.js/dist/tippy.css';
 
 function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
@@ -124,15 +125,7 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
               hidden: hideCols.includes('option'),
               render: (record) =>
                 record.option.map((item, index) => (
-                  <div key={`option-${index}`} className="flex items-center gap-2">
-                    <span className="badge h-full min-w-16 bg-primary py-2 text-center dark:bg-primary-old">{item.point} Poin</span>
-                    <div className="flex w-full">
-                      <div className="flex items-center justify-center border border-white-light bg-[#f1f2f3] px-3 font-semibold dark:border-[#17263c] dark:bg-[#1b2e4b] ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0">
-                        <input type="radio" value={item.id} id={item.id} name="revisionOptionId" className="form-radio border-white-light text-blue-500 dark:border-white-dark ltr:mr-0 rtl:ml-0" />
-                      </div>
-                      <input type="text" className="form-input disabled:pointer-events-none ltr:rounded-l-none rtl:rounded-r-none" readOnly value={item.value} />
-                    </div>
-                  </div>
+                    <QuestionOption key={`option-${index}`} value={item.value} point={item.point} readOnly />
                 )),
             },
             {
