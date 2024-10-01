@@ -10,6 +10,7 @@ import BackButton from "@/components/elements/back-button";
 import IconPlus from "@/components/icon/icon-plus";
 import {useParams} from "next/navigation";
 import ModalTambahPertanyaan from "./modal-tambah";
+import moment from "moment";
 
 const VariableDetailPage = () => {
     const [showModalTambah, setShowModalTambah] = useState(false)
@@ -51,7 +52,7 @@ const VariableDetailPage = () => {
                 </Suspense>
             </div>
             <ModalTambahPertanyaan showModal={showModalTambah} setShowModal={setShowModalTambah}
-                                   year={dataQuestion?.formGroup?.year ?? ""}/>
+                                   year={dataQuestion?.formGroup?.year ?? "" + moment().year()}/>
         </>
     );
 };

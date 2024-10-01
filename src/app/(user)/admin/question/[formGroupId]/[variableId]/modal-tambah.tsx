@@ -44,7 +44,10 @@ function ModalTambahPertanyaan({setShowModal, showModal, year}: {
             });
         },
         async onSuccess() {
-            await utils.admin.question.getQuestion.invalidate();
+            await Promise.all([
+                utils.admin.question.getQuestion.invalidate(),
+                utils.admin.formGroup.getFormGroupById.invalidate(formGroupId),
+            ])
             Swal.close();
             void Swal.fire({
                 title: 'Berhasil!',
@@ -151,8 +154,8 @@ function ModalTambahPertanyaan({setShowModal, showModal, year}: {
                                                                         className="bg-danger p-2 rounded-lg text-white">
                                                                     <IconTrash/>
                                                                 </button>
-                                                            </Tippy> : <button
-                                                                className="btn p-4 border-none shadow-none ml-1 cursor-default"/>}
+                                                            </Tippy> : <button type="button"
+                                                                               className="btn p-4 border-none shadow-none ml-1 cursor-default"/>}
                                                         </div>
                                                         <ErrorMessage errors={errors} name={`options.${index}.option`}
                                                                       render={({message}) => <DefaultAlertComponent

@@ -5,7 +5,7 @@ const QuestionOption = ({value, point, id, placeholder, onChange}: {
     placeholder?: string
     onChange?: (value: string) => void
 }) => {
-    return (point ?
+    return (point !== undefined ?
             <div className="flex items-center gap-2">
                 <span
                     className="badge h-full min-w-16 bg-primary py-2 text-center dark:bg-primary-old">{point} Poin</span>

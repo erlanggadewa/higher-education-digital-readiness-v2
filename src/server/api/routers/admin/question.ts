@@ -48,6 +48,12 @@ export const adminQuestionRouter = createTRPCRouter({
                 },
                 include: {
                     question: {
+                        where: {
+                            isActive: true,
+                        },
+                        orderBy: {
+                            createdAt: 'asc'
+                        },
                         include: {
                             option: true,
                         }
@@ -64,6 +70,18 @@ export const adminQuestionRouter = createTRPCRouter({
             }))
         };
     }),
+    getQuestionDetail: protectedProcedure
+        .input(z.string())
+        .query(async ({ctx, input}) => {
+            return ctx.db.question.findUnique({
+                where: {
+                    id: input,
+                },
+                include: {
+                    option: true,
+                }
+            });
+        }),
     createQuestion: protectedProcedure
         .input(z.object({
             formGroupId: z.string().cuid(),
@@ -99,6 +117,46 @@ export const adminQuestionRouter = createTRPCRouter({
                             }))
                         }
                     }
+                }
+            });
+        }),
+    updateQuestion: protectedProcedure
+        .input(z.object({
+            id: z.string(),
+            question: z.string(),
+            options: z.array(z.object({
+                option: z.string(),
+                point: z.number(),
+            }))
+        }))
+        .mutation(async ({ctx, input}) => {
+            return ctx.db.question.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    question: input.question,
+                    option: {
+                        deleteMany: {},
+                        createMany: {
+                            data: input.options.map((item) => ({
+                                value: item.option,
+                                point: item.point,
+                            }))
+                        }
+                    }
+                }
+            });
+        }),
+    removeQuestion: protectedProcedure
+        .input(z.string())
+        .mutation(async ({ctx, input}) => {
+            return ctx.db.question.update({
+                where: {
+                    id: input,
+                },
+                data: {
+                    isActive: false,
                 }
             });
         }),
