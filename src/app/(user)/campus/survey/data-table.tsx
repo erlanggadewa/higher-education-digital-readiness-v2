@@ -33,7 +33,7 @@ function DataTableCampusFormGroup({
 
   const rowData = data;
 
-  const cols: { accessor: string; title: string }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
     { accessor: 'formGroupName', title: 'Nama Survei' },
     { accessor: 'totalVariable', title: 'Total Variabel' },
     { accessor: 'year', title: 'Tahun' },
