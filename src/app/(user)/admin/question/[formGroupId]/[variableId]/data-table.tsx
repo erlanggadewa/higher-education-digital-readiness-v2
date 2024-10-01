@@ -125,7 +125,7 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
               hidden: hideCols.includes('option'),
               render: (record) =>
                 record.option.map((item, index) => (
-                    <QuestionOption key={`option-${index}`} value={item.value} point={item.point} readOnly />
+                    <QuestionOption key={`option-${index}`} value={item.value} point={item.point} />
                 )),
             },
             {
