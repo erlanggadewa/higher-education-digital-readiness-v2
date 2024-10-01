@@ -60,8 +60,46 @@ export const adminQuestionRouter = createTRPCRouter({
             formGroup,
             question: data?.question.map((item) => ({
                 ...item,
-                optionJoin: item.option.map((e, index) => String.fromCharCode(97+index)+ '. ' + e.value + ' (' + e.point + ' poin)').join('<br>')
+                optionJoin: item.option.map((e, index) => String.fromCharCode(97 + index) + '. ' + e.value + ' (' + e.point + ' poin)').join('<br>')
             }))
         };
     }),
+    createQuestion: protectedProcedure
+        .input(z.object({
+            formGroupId: z.string().cuid(),
+            variableId: z.string().cuid(),
+            year: z.string(),
+            question: z.string(),
+            options: z.array(z.object({
+                option: z.string(),
+                point: z.number(),
+            }))
+        }))
+        .mutation(async ({ctx, input}) => {
+            const variableFormGroup = await ctx.db.variableOnFormGroup.findFirst({
+                where: {
+                    formGroupId: input.formGroupId,
+                    variableId: input.variableId,
+                }
+            });
+            return ctx.db.question.create({
+                data: {
+                    question: input.question,
+                    year: input.year,
+                    variableOnForm: {
+                        connect: {
+                            id: variableFormGroup?.id,
+                        },
+                    },
+                    option: {
+                        createMany: {
+                            data: input.options.map((item) => ({
+                                value: item.option,
+                                point: item.point,
+                            }))
+                        }
+                    }
+                }
+            });
+        }),
 });

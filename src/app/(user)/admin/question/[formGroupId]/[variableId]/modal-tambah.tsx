@@ -1,7 +1,7 @@
 import IconX from '@/components/icon/icon-x';
 import {api} from '@/trpc/react';
 import {Dialog, Transition} from '@headlessui/react';
-import {useForm, type SubmitHandler} from 'react-hook-form';
+import {useForm, type SubmitHandler, useFieldArray, Controller} from 'react-hook-form';
 import Swal from 'sweetalert2';
 import {Fragment, useEffect} from 'react';
 import {ErrorMessage} from "@hookform/error-message";
@@ -12,27 +12,27 @@ import QuestionOption from "@/components/elements/question-option";
 import TouchSpin from "@/components/elements/touch-spin";
 import IconTrash from "@/components/icon/icon-trash";
 import Tippy from "@tippyjs/react";
+import {useParams} from "next/navigation";
 
 const schema = z.object({
-    nama: z.string().min(1, 'Wajib diisi'),
-    alias: z.string().min(1, 'Wajib diisi'),
-    deskripsi: z.string().min(1, 'Wajib diisi'),
     question: z.string().min(1, 'Wajib diisi'),
     options: z.array(z.object({
         option: z.string().min(1, 'Wajib diisi'),
-        point: z.number().min(1, 'Wajib diisi'),
-    })),
+        point: z.number().default(0),
+    })).min(2, 'Minimal 2 opsi jawaban')
 });
 
 type Schema = z.infer<typeof schema>
 
-function ModalTambahPertanyaan({setShowModal, showModal}: {
+function ModalTambahPertanyaan({setShowModal, showModal, year}: {
     setShowModal: (value: boolean) => void;
     showModal: boolean
+    year: string
 }) {
+    const {variableId, formGroupId} = useParams<{ formGroupId: string; variableId: string }>()
     const utils = api.useUtils();
 
-    const {mutate: createVariable} = api.admin.variable.createVariable.useMutation({
+    const {mutate: createQuestion} = api.admin.question.createQuestion.useMutation({
         onMutate() {
             void Swal.fire({
                 title: 'Mohon Tunggu!',
@@ -44,7 +44,7 @@ function ModalTambahPertanyaan({setShowModal, showModal}: {
             });
         },
         async onSuccess() {
-            await utils.admin.variable.getListVariable.invalidate();
+            await utils.admin.question.getQuestion.invalidate();
             Swal.close();
             void Swal.fire({
                 title: 'Berhasil!',
@@ -60,9 +60,19 @@ function ModalTambahPertanyaan({setShowModal, showModal}: {
         register,
         handleSubmit,
         reset,
+        control,
         formState: {errors}
     } = useForm<Schema>({
         resolver: zodResolver(schema),
+        defaultValues: {
+            question: '',
+            options: [{option: '', point: 0}, {option: '', point: 0}],
+        }
+    });
+
+    const {fields, append, remove} = useFieldArray({
+        control,
+        name: "options",
     });
 
     useEffect(() => {
@@ -70,7 +80,7 @@ function ModalTambahPertanyaan({setShowModal, showModal}: {
     }, [showModal]);
 
     const onSubmit: SubmitHandler<Schema> = async (payload) => {
-        createVariable(payload);
+        createQuestion({year, formGroupId, variableId, ...payload});
     };
 
     return (
@@ -121,36 +131,41 @@ function ModalTambahPertanyaan({setShowModal, showModal}: {
                                                 className="text-danger">*</span></label>
 
                                             <div className="flex gap-2 flex-col">
-                                                <div className="flex items-center gap-2">
-                                                    <QuestionOption placeholder="Masukkan opsi jawaban"/>
-                                                    <TouchSpin/>
-                                                    <Tippy content="Remove option" theme="danger">
-                                                        <button type="button"
-                                                                className="bg-danger p-2 rounded-lg text-white">
-                                                            <IconTrash/>
-                                                        </button>
-                                                    </Tippy>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <QuestionOption placeholder="Masukkan opsi jawaban"/>
-                                                    <TouchSpin/>
-                                                    <Tippy content="Remove option" theme="danger">
-                                                        <button type="button"
-                                                                className="bg-danger p-2 rounded-lg text-white">
-                                                            <IconTrash/>
-                                                        </button>
-                                                    </Tippy>
-                                                </div>
+                                                {fields.map((field, index) => (
+                                                    <>
+                                                        <div key={`option-${field.id}`}
+                                                             className="flex items-center gap-2">
+                                                            <Controller
+                                                                control={control}
+                                                                name={`options.${index}.option`}
+                                                                render={({field: {onChange}}) => <QuestionOption
+                                                                    onChange={onChange}
+                                                                    placeholder="Masukkan opsi jawaban"/>}/>
+                                                            <Controller
+                                                                control={control}
+                                                                name={`options.${index}.point`}
+                                                                render={({field: {onChange}}) =>
+                                                                    <TouchSpin onChange={onChange}/>}/>
+                                                            {index >= 2 ? <Tippy content="Remove option" theme="danger">
+                                                                <button onClick={() => remove(index)} type="button"
+                                                                        className="bg-danger p-2 rounded-lg text-white">
+                                                                    <IconTrash/>
+                                                                </button>
+                                                            </Tippy> : <button
+                                                                className="btn p-4 border-none shadow-none ml-1 cursor-default"/>}
+                                                        </div>
+                                                        <ErrorMessage errors={errors} name={`options.${index}.option`}
+                                                                      render={({message}) => <DefaultAlertComponent
+                                                                          type="warning" message={message}/>}/>
+                                                    </>
+                                                ))}
                                             </div>
 
-                                            <button type="button"
+                                            <button onClick={() => append({option: '', point: 0})} type="button"
                                                     className="mt-3 font-semibold text-primary hover:underline group">
                                                 + Tambah opsi jawaban lainnya
                                             </button>
 
-                                            <ErrorMessage errors={errors} name="question"
-                                                          render={({message}) => <DefaultAlertComponent
-                                                              type="warning" message={message}/>}/>
                                         </div>
                                         <button type="submit" className="btn btn-primary">
                                             Tambah

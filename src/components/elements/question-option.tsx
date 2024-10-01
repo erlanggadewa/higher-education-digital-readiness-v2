@@ -1,8 +1,9 @@
-const QuestionOption = ({value, point, id, placeholder}: {
+const QuestionOption = ({value, point, id, placeholder, onChange}: {
     value?: string,
     id?: string,
     point?: number,
     placeholder?: string
+    onChange?: (value: string) => void
 }) => {
     return (point ?
             <div className="flex items-center gap-2">
@@ -30,7 +31,7 @@ const QuestionOption = ({value, point, id, placeholder}: {
                        placeholder={placeholder}
                        id={id}
                        className="form-input disabled:pointer-events-none ltr:rounded-l-none rtl:rounded-r-none"
-                       value={value}/>
+                       value={value} onChange={(e) => onChange && onChange(e.target.value)}/>
             </div>
     );
 };

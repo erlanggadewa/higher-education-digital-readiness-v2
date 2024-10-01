@@ -13,11 +13,8 @@ import ModalTambahPertanyaan from "./modal-tambah";
 
 const VariableDetailPage = () => {
     const [showModalTambah, setShowModalTambah] = useState(false)
-    const params = useParams<{ formGroupId: string; variableId: string }>()
-    const [dataQuestion] = api.admin.question.getQuestion.useSuspenseQuery({
-        formGroupId: params.formGroupId,
-        variableId: params.variableId,
-    });
+    const {formGroupId, variableId} = useParams<{ formGroupId: string; variableId: string }>()
+    const [dataQuestion] = api.admin.question.getQuestion.useSuspenseQuery({formGroupId, variableId});
     return (
         <>
             <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary"/>
@@ -31,7 +28,7 @@ const VariableDetailPage = () => {
                     </div>
                     <BreadCrumb routes={[{label: 'Survey', path: '/admin/question'}, {
                         label: 'List Variabel',
-                        path: `/admin/question/${params.formGroupId}`
+                        path: `/admin/question/${formGroupId}`
                     }, {label: 'Pertanyaan'}]}/>
                 </div>
                 <div>
@@ -53,7 +50,8 @@ const VariableDetailPage = () => {
                     <DataTableAdminQuestion data={dataQuestion ?? []}/>
                 </Suspense>
             </div>
-            <ModalTambahPertanyaan showModal={showModalTambah} setShowModal={setShowModalTambah}/>
+            <ModalTambahPertanyaan showModal={showModalTambah} setShowModal={setShowModalTambah}
+                                   year={dataQuestion?.formGroup?.year ?? ""}/>
         </>
     );
 };
