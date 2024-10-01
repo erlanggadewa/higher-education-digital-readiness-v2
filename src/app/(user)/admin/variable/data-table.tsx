@@ -1,7 +1,6 @@
 'use client';
 
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
-import IconEye from '@/components/icon/icon-eye';
 import IconPencil from '@/components/icon/icon-pencil';
 import IconTrash from '@/components/icon/icon-trash';
 import {type IRootState} from '@/store';
@@ -9,19 +8,59 @@ import {api} from '@/trpc/react';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import {DataTable, type DataTableSortStatus} from 'mantine-datatable';
-import Link from 'next/link';
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 import ExportFileComponent from "@/components/export/export-file";
 import HighlightField from "@/components/highlight/highlight";
+import ModalEditVariabel from "./modal-edit";
+import Swal from "sweetalert2";
+import IconEye from "@/components/icon/icon-eye";
+import Link from "next/link";
 
 function DataTableAdminVariable() {
     const [data] = api.admin.variable.getListVariable.useSuspenseQuery();
     const rowData = data;
 
+    const utils = api.useUtils();
+    const {mutate: removeVariable} = api.admin.variable.removeVariable.useMutation({
+        onMutate() {
+            void Swal.fire({
+                title: 'Mohon Tunggu!',
+                text: 'Sedang menghapus variabel',
+                didOpen: () => Swal.showLoading(),
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+        async onSuccess() {
+            await utils.admin.variable.getListVariable.invalidate();
+            Swal.close();
+            void Swal.fire({
+                title: 'Berhasil!',
+                text: 'Variabel berhasil dihapus',
+                icon: 'success',
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+        onError() {
+            Swal.close();
+            void Swal.fire({
+                title: 'Gagal!',
+                text: 'Variabel gagal dihapus',
+                icon: 'error',
+                customClass: {container: 'sweet-alerts'},
+            });
+        },
+    });
+
     const cols: { accessor: string; title: string }[] = [
-        {accessor: 'alias', title: 'Inisial Pertanyaan'},
+        {accessor: 'name', title: 'Variabel'},
+        {accessor: 'description', title: 'Deskripsi'},
+    ];
+    const colsExport: { accessor: string; title: string }[] = [
+        {accessor: 'alias', title: 'Alias'},
         {accessor: 'name', title: 'Variabel'},
         {accessor: 'description', title: 'Deskripsi'},
     ];
@@ -41,6 +80,8 @@ function DataTableAdminVariable() {
     });
 
     const [hideCols, setHideCols] = useState<string[]>([]);
+    const [showModalEdit, setShowModalEdit] = useState(false);
+    const [selectedId, setSelectedId] = useState<string>('');
 
     const showHideColumns = (col: string, _value: any) => {
         if (hideCols.includes(col)) {
@@ -82,10 +123,25 @@ function DataTableAdminVariable() {
         setPage(1);
     }, [sortStatus]);
 
+    const handleRemove = async (id: string) => {
+        const status = await Swal.fire({
+            icon: 'warning',
+            title: 'Apakah yakin untuk menghapus?',
+            text: 'Anda tidak dapat mengurungkan tindakan ini',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal',
+            padding: '2em',
+            customClass: {container: 'sweet-alerts'},
+        });
+        if (!status.isConfirmed) return;
+        removeVariable(id);
+    }
+
     return (
         <div>
             <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                <ExportFileComponent cols={cols} rowData={initialRecords}/>
+                <ExportFileComponent fileName="Daftar Variabel" cols={colsExport} rowData={initialRecords}/>
 
                 <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
                     <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols}
@@ -113,20 +169,15 @@ function DataTableAdminVariable() {
                             },
                         },
                         {
-                            accessor: 'alias',
-                            title: 'Inisial Variabel',
-                            sortable: true,
-                            hidden: hideCols.includes('alias'),
-                            render(record, index) {
-                                return <span className="badge badge-outline-success rounded-full">{record.alias}</span>;
-                            },
-                        },
-                        {
                             accessor: 'name',
                             title: 'Variabel',
                             sortable: true,
                             hidden: hideCols.includes('name'),
-                            render: (record) => <HighlightField value={record.name} search={search}/>,
+                            render: (record) =>
+                                <div className="flex gap-2 items-center">
+                                    <HighlightField value={record.name} search={search}/>
+                                    <span className="badge badge-outline-success rounded-full">{record.alias}</span>
+                                </div>,
                         },
                         {
                             accessor: 'description',
@@ -146,24 +197,25 @@ function DataTableAdminVariable() {
                             render(record) {
                                 return (
                                     <div className="flex gap-2 justify-center">
-                                        <Link href={`form-group/${record.id}`}
-                                              className="flex items-center justify-center">
-                                            <Tippy content={`Edit ${record.name}`} theme="primary">
-                                                <button type="button" className="bg-primary p-2 rounded-lg text-white">
-                                                    <IconPencil/>
-                                                </button>
-                                            </Tippy>
-                                        </Link>
+                                        <Tippy content={`Edit ${record.name}`} theme="primary">
+                                            <button onClick={() => {
+                                                setSelectedId(record.id)
+                                                setShowModalEdit(true)
+                                            }} type="button"
+                                                    className="bg-primary p-2 rounded-lg text-white">
+                                                <IconPencil/>
+                                            </button>
+                                        </Tippy>
                                         <Tippy content={`Remove ${record.name}`} theme="danger">
-                                            <button type="button" className="bg-danger p-2 rounded-lg text-white">
+                                            <button onClick={() => handleRemove(record.id)} type="button"
+                                                    className="bg-danger p-2 rounded-lg text-white">
                                                 <IconTrash/>
                                             </button>
                                         </Tippy>
-                                        <Link href={`form-group/${record.id}`}
-                                              className="flex items-center justify-center">
+                                        <Link href={`variable/${record.id}`} className="flex items-center justify-center">
                                             <Tippy content={`Detail ${record.name}`} theme="info">
                                                 <button type="button" className="bg-info p-2 rounded-lg text-white">
-                                                    <IconEye/>
+                                                    <IconEye />
                                                 </button>
                                             </Tippy>
                                         </Link>
@@ -189,6 +241,8 @@ function DataTableAdminVariable() {
                                      }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
                 />
             </div>
+            {!!selectedId && <ModalEditVariabel id={selectedId} setShowModal={(value) => setShowModalEdit(value)}
+                                                showModal={showModalEdit}/>}
         </div>
     );
 }

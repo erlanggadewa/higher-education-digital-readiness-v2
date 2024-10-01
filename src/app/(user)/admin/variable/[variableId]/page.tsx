@@ -1,27 +1,24 @@
 'use client'
 
+import BackButton from "@/components/elements/back-button";
 import BreadCrumb from "@/components/elements/breadcrumb";
-import IconPlus from "@/components/icon/icon-plus";
-import IconBarChart from "@/components/icon/icon-bar-chart";
-import IconCaretDown from '@/components/icon/icon-caret-down';
-import IconSquareRotated from '@/components/icon/icon-square-rotated'
+import {api} from "@/trpc/react";
+import {useParams} from "next/navigation";
+import IconSquareRotated from "@/components/icon/icon-square-rotated";
 import Tippy from "@tippyjs/react";
 import IconPencil from "@/components/icon/icon-pencil";
-import IconTrash from "@/components/icon/icon-trash";
 import LoadingDotComponent from "@/components/loading/loading-dot";
-import {Swiper, SwiperSlide} from 'swiper/react';
-import {Navigation} from 'swiper/modules';
-import {api} from '@/trpc/react';
-import themeConfig from '@/theme.config';
+import {Swiper, SwiperSlide} from "swiper/react";
+import {Navigation} from "swiper/modules";
+import themeConfig from "@/theme.config";
+import IconCaretDown from "@/components/icon/icon-caret-down";
 import {Suspense, useState} from "react";
-import ModalTambahLevel from "./modal-tambah";
-import ModalEditLevel from "./modal-edit";
-import Swal from "sweetalert2";
+import ModalEditVariableLevel from "./modal-edit";
+import {cn} from "@/utils/cn";
 
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'tippy.js/dist/tippy.css';
-import {cn} from "@/utils/cn";
 
 const colors = [
     'danger',
@@ -31,80 +28,30 @@ const colors = [
     '[#854D0E]'
 ];
 
-const LevelPage = () => {
-    const [showModalTambah, setShowModalTambah] = useState(false);
+const VariableLevelPage = () => {
+    const params = useParams<{
+        variableId: string;
+    }>();
     const [showModalEdit, setShowModalEdit] = useState(false);
     const [selectedId, setSelectedId] = useState<string>('');
-    const [data] = api.admin.level.getLevelList.useSuspenseQuery();
-
-    const utils = api.useUtils();
-    const {mutate: removeLevel} = api.admin.level.removeLevel.useMutation({
-        onMutate() {
-            void Swal.fire({
-                title: 'Mohon Tunggu!',
-                text: 'Sedang menghapus level',
-                didOpen: () => Swal.showLoading(),
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                customClass: {container: 'sweet-alerts'},
-            });
-        },
-        async onSuccess() {
-            await utils.admin.level.getLevelList.invalidate();
-            Swal.close();
-            void Swal.fire({
-                title: 'Berhasil!',
-                text: 'Level berhasil dihapus',
-                icon: 'success',
-                customClass: {container: 'sweet-alerts'},
-            });
-        },
-        onError() {
-            Swal.close();
-            void Swal.fire({
-                title: 'Gagal!',
-                text: 'Level gagal dihapus',
-                icon: 'error',
-                customClass: {container: 'sweet-alerts'},
-            });
-        },
-    });
-
-    const handleRemove = async (id: string) => {
-        const status = await Swal.fire({
-            icon: 'warning',
-            title: 'Apakah yakin untuk menghapus?',
-            text: 'Anda tidak dapat mengurungkan tindakan ini',
-            showCancelButton: true,
-            confirmButtonText: 'Ya',
-            cancelButtonText: 'Batal',
-            padding: '2em',
-            customClass: {container: 'sweet-alerts'},
-        });
-        if (!status.isConfirmed) return;
-        removeLevel(id);
-    }
+    const [data] = api.admin.variable.getLevelByVariableId.useSuspenseQuery(params.variableId);
 
     return (
         <>
             <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary"/>
             <div className="flex justify-between">
                 <div>
-                    <h1 className="mb-2 text-2xl font-bold text-white-light">Level</h1>
-                    <BreadCrumb routes={[{label: 'Level'}]}/>
-                </div>
-                <div>
-                    <button onClick={() => setShowModalTambah(true)} type="button"
-                            className="btn bg-white dark:bg-[#191e3a] dark:border-[#1b2e4b] dark:shadow-none">
-                        <IconPlus/> Tambah Level
-                    </button>
+                    <div className="flex gap-2 mb-3">
+                        <BackButton/>
+                        <h1 className="text-2xl font-bold text-white-light">Level {data?.variable?.name} ({data?.variable?.alias})</h1>
+                    </div>
+                    <BreadCrumb routes={[{label: 'Variabel', path: '/admin/variable'}, {label: 'Level'}]}/>
                 </div>
             </div>
             <div
                 className="mb-5 w-full rounded-md border border-white-light bg-white p-5 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <h3 className="mb-3 flex text-xl font-semibold text-[#3b3f5c] dark:text-white-light">
-                    <IconBarChart className="mr-3"/>
-                    Daftar Level
+                    {data?.level.length} Level
                 </h3>
                 <Suspense fallback={<LoadingDotComponent position="center"/>}>
                     <div className="relative px-16">
@@ -132,7 +79,7 @@ const LevelPage = () => {
                             dir={themeConfig.rtlClass}
                             key={themeConfig.rtlClass === 'rtl' ? 'true' : 'false'}
                         >
-                            {data.map((item, i) => {
+                            {data?.level.map((item, i) => {
                                 return (
                                     <SwiperSlide key={i}>
                                         <div
@@ -161,12 +108,6 @@ const LevelPage = () => {
                                                             <IconPencil/>
                                                         </button>
                                                     </Tippy>
-                                                    <Tippy content={`Remove ${item.value}`} theme="danger">
-                                                        <button onClick={() => handleRemove(item.id)} type="button"
-                                                                className="bg-danger p-2 rounded-lg text-white">
-                                                            <IconTrash/>
-                                                        </button>
-                                                    </Tippy>
                                                 </div>
                                             </div>
                                         </div>
@@ -185,12 +126,10 @@ const LevelPage = () => {
                     </div>
                 </Suspense>
             </div>
-            <ModalTambahLevel showModal={showModalTambah} setShowModal={setShowModalTambah}/>
-            {!!selectedId &&
-                <ModalEditLevel id={selectedId} setShowModal={(value) => setShowModalEdit(value)}
-                                showModal={showModalEdit}/>}
+            {selectedId &&
+                <ModalEditVariableLevel setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId}/>}
         </>
-    )
-}
+    );
+};
 
-export default LevelPage
+export default VariableLevelPage;

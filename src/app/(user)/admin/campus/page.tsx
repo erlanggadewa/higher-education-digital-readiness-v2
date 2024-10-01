@@ -36,7 +36,7 @@ const CampusPage = () => {
                     <DataTableAdminCampus/>
                 </Suspense>
             </div>
-            <ModalTambahKampus setShowModal={(value) => setShowModalTambah(value)} showModal={showModalTambah}/>
+            <ModalTambahKampus setShowModal={setShowModalTambah} showModal={showModalTambah}/>
         </>
     );
 };

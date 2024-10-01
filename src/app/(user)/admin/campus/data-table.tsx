@@ -71,14 +71,14 @@ function DataTableAdminCampus() {
     const [recordsData, setRecordsData] = useState(initialRecords);
 
     const [search, setSearch] = useState('');
-    const [showModalEdit, setShowModalEdit] = useState(false);
-    const [showModalUbahPassword, setShowModalUbahPassword] = useState(false);
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
         columnAccessor: 'name',
         direction: 'asc',
     });
 
     const [hideCols, setHideCols] = useState<string[]>([]);
+    const [showModalEdit, setShowModalEdit] = useState(false);
+    const [showModalUbahPassword, setShowModalUbahPassword] = useState(false);
     const [selectedId, setSelectedId] = useState<string>('');
 
     const showHideColumns = (col: string, _value: any) => {
@@ -124,7 +124,8 @@ function DataTableAdminCampus() {
     const handleRemove = async (id: string) => {
         const status = await Swal.fire({
             icon: 'warning',
-            title: 'Yakin Menghapus Kampus ?',
+            title: 'Apakah yakin untuk menghapus?',
+            text: 'Anda tidak dapat mengurungkan tindakan ini',
             showCancelButton: true,
             confirmButtonText: 'Ya',
             cancelButtonText: 'Batal',
@@ -160,7 +161,7 @@ function DataTableAdminCampus() {
                             title: 'No.',
                             sortable: false,
                             textAlignment: 'center',
-                            render: (record, index) => {
+                            render: (_, index) => {
                                 return <span>{index + 1}</span>;
                             },
                         },
@@ -169,7 +170,7 @@ function DataTableAdminCampus() {
                             title: 'Nama Kampus',
                             sortable: true,
                             hidden: hideCols.includes('name'),
-                            render: (record, index) => {
+                            render: (record) => {
                                 return (
                                     <div className="flex gap-3">
                                         <img className="h-12 w-12 overflow-hidden rounded-full object-cover"
