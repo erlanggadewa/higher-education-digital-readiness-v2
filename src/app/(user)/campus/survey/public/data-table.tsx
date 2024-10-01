@@ -26,7 +26,7 @@ function DataTablePublicFormGroup({
     description: string;
     role: string;
     year: string;
-    urlPublicSurveyId: string;
+    urlPublicSurveyId: string | undefined;
   }[];
 }) {
   // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
@@ -95,7 +95,7 @@ function DataTablePublicFormGroup({
           item.name.toLowerCase().includes(search.toLowerCase()) ||
           item.year.toLowerCase().includes(search.toLowerCase()) ||
           item.role.toLowerCase().includes(search.toLowerCase()) ||
-          item.urlPublicSurveyId.toLowerCase().includes(search.toLowerCase().split('/').reverse()[0] ?? '')
+          item.urlPublicSurveyId?.toLowerCase().includes(search.toLowerCase().split('/').reverse()[0] ?? '')
         );
       });
     });
