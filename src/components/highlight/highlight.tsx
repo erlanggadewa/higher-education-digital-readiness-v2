@@ -1,6 +1,7 @@
 import { Highlight } from '@mantine/core';
+import {cn} from "@/utils/cn";
 
-function HighlightField({ value, search }: { value: string; search: string }) {
+function HighlightField({ value, search, className }: { value: string; search: string; className?: string }) {
   return (
     <Highlight
       highlightStyles={(theme) => ({
@@ -9,7 +10,7 @@ function HighlightField({ value, search }: { value: string; search: string }) {
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
       })}
-      className="mb-2 font-bold"
+      className={cn("font-bold", className)}
       highlight={search}
     >
       {value}

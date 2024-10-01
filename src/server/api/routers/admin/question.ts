@@ -30,27 +30,137 @@ export const adminQuestionRouter = createTRPCRouter({
         variableId: z.string(),
         formGroupId: z.string(),
     })).query(async ({ctx, input}) => {
-        const data = await ctx.db.variableOnFormGroup.findFirst({
-            where: {
-                variableId: input.variableId,
-                formGroupId: input.formGroupId,
-            },
-            include: {
-                formGroup: true,
-                question: {
-                    include: {
-                        option: true,
-                    }
+        const [variable, formGroup, data] = await Promise.all([
+            ctx.db.variable.findUnique({
+                where: {
+                    id: input.variableId,
+                }
+            }),
+            ctx.db.formGroup.findUnique({
+                where: {
+                    id: input.formGroupId,
                 },
-                variable: true,
-            },
-        });
+            }),
+            ctx.db.variableOnFormGroup.findFirst({
+                where: {
+                    variableId: input.variableId,
+                    formGroupId: input.formGroupId,
+                },
+                include: {
+                    question: {
+                        where: {
+                            isActive: true,
+                        },
+                        orderBy: {
+                            createdAt: 'asc'
+                        },
+                        include: {
+                            option: true,
+                        }
+                    },
+                },
+            })
+        ])
         return {
-            ...data,
+            variable,
+            formGroup,
             question: data?.question.map((item) => ({
                 ...item,
-                optionJoin: item.option.map((e, index) => String.fromCharCode(97+index)+ '. ' + e.value + ' (' + e.point + ' poin)').join('<br>')
+                optionJoin: item.option.map((e, index) => String.fromCharCode(97 + index) + '. ' + e.value + ' (' + e.point + ' poin)').join('<br>')
             }))
         };
     }),
+    getQuestionDetail: protectedProcedure
+        .input(z.string())
+        .query(async ({ctx, input}) => {
+            return ctx.db.question.findUnique({
+                where: {
+                    id: input,
+                },
+                include: {
+                    option: true,
+                }
+            });
+        }),
+    createQuestion: protectedProcedure
+        .input(z.object({
+            formGroupId: z.string().cuid(),
+            variableId: z.string().cuid(),
+            year: z.string(),
+            question: z.string(),
+            options: z.array(z.object({
+                option: z.string(),
+                point: z.number(),
+            }))
+        }))
+        .mutation(async ({ctx, input}) => {
+            return ctx.db.question.create({
+                data: {
+                    question: input.question,
+                    year: input.year,
+                    variableOnForm: {
+                        connectOrCreate: {
+                            where: {
+                                formGroupId_variableId: {
+                                    formGroupId: input.formGroupId,
+                                    variableId: input.variableId,
+                                },
+                            },
+                            create: {
+                                formGroupId: input.formGroupId,
+                                variableId: input.variableId,
+                            }
+                        }
+                    },
+                    option: {
+                        createMany: {
+                            data: input.options.map((item) => ({
+                                value: item.option,
+                                point: item.point,
+                            }))
+                        }
+                    }
+                }
+            });
+        }),
+    updateQuestion: protectedProcedure
+        .input(z.object({
+            id: z.string(),
+            question: z.string(),
+            options: z.array(z.object({
+                option: z.string(),
+                point: z.number(),
+            }))
+        }))
+        .mutation(async ({ctx, input}) => {
+            return ctx.db.question.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    question: input.question,
+                    option: {
+                        deleteMany: {},
+                        createMany: {
+                            data: input.options.map((item) => ({
+                                value: item.option,
+                                point: item.point,
+                            }))
+                        }
+                    }
+                }
+            });
+        }),
+    removeQuestion: protectedProcedure
+        .input(z.string())
+        .mutation(async ({ctx, input}) => {
+            return ctx.db.question.update({
+                where: {
+                    id: input,
+                },
+                data: {
+                    isActive: false,
+                }
+            });
+        }),
 });

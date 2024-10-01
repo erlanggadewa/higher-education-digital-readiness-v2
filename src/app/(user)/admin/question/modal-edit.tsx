@@ -1,38 +1,37 @@
-'use client'
-
 import IconX from '@/components/icon/icon-x';
 import {api} from '@/trpc/react';
 import {Dialog, Transition} from '@headlessui/react';
-import {type SubmitHandler, useForm} from 'react-hook-form';
+import {useForm, type SubmitHandler, Controller} from 'react-hook-form';
 import Swal from 'sweetalert2';
 import {Fragment, useEffect} from 'react';
 import {ErrorMessage} from "@hookform/error-message";
 import DefaultAlertComponent from "@/components/alert/elements-alerts-default";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "@/utils/id-zod";
+import Switch from "@/components/elements/switch";
 import LoadingDotComponent from "@/components/loading/loading-dot";
 
 const schema = z.object({
-    nama: z.string().min(1, 'Wajib diisi'),
-    alias: z.string().min(1, 'Wajib diisi'),
-    deskripsi: z.string().min(1, 'Wajib diisi'),
+    name: z.string().min(1, 'Wajib diisi'),
+    description: z.string().min(1, 'Wajib diisi'),
+    isPublished: z.boolean().default(false),
 });
 
 type Schema = z.infer<typeof schema>
 
-function ModalEditVariabel({setShowModal, showModal, id}: {
-    setShowModal: (value: boolean) => void;
-    showModal: boolean,
+function ModalEditSurvey({setShowModal, showModal, id}: {
+    setShowModal: (value: boolean) => void
+    showModal: boolean
     id: string
 }) {
-    const {data, isLoading} = api.admin.variable.getDetailVariable.useQuery(id);
+    const {data, isLoading} = api.admin.formGroup.getFormGroupById.useQuery(id);
     const utils = api.useUtils();
 
-    const {mutate: updateVariable} = api.admin.variable.updateVariable.useMutation({
+    const {mutate: updateFormGroup} = api.admin.formGroup.updateFormGroup.useMutation({
         onMutate() {
             void Swal.fire({
                 title: 'Mohon Tunggu!',
-                text: 'Sedang mengedit variabel',
+                text: 'Sedang mengedit Survey',
                 didOpen: () => Swal.showLoading(),
                 allowEscapeKey: false,
                 allowOutsideClick: false,
@@ -41,13 +40,13 @@ function ModalEditVariabel({setShowModal, showModal, id}: {
         },
         async onSuccess() {
             await Promise.all([
-                utils.admin.variable.getListVariable.invalidate(),
-                utils.admin.variable.getDetailVariable.invalidate(id)
+                utils.admin.formGroup.getFormGroupByYear.invalidate(data?.year),
+                utils.admin.formGroup.getFormGroupById.invalidate(id)
             ])
             Swal.close();
             void Swal.fire({
                 title: 'Berhasil!',
-                text: 'Variabel berhasil diedit',
+                text: 'Survey berhasil diedit',
                 icon: 'success',
                 customClass: {container: 'sweet-alerts'},
             });
@@ -57,16 +56,17 @@ function ModalEditVariabel({setShowModal, showModal, id}: {
 
     const {
         register,
+        control,
         handleSubmit,
         reset,
-        formState: {errors},
+        formState: {errors}
     } = useForm<Schema>({
         resolver: zodResolver(schema),
         values: {
-            alias: data?.alias ?? '',
-            deskripsi: data?.description ?? '',
-            nama: data?.name ?? '',
-        },
+            name: data?.formGroupName ?? '',
+            description: data?.formGroupDescription ?? '',
+            isPublished: data?.isPublished ?? false,
+        }
     });
 
     useEffect(() => {
@@ -74,7 +74,7 @@ function ModalEditVariabel({setShowModal, showModal, id}: {
     }, [showModal]);
 
     const onSubmit: SubmitHandler<Schema> = async (payload) => {
-        updateVariable({...payload, id});
+        updateFormGroup({id,...payload})
     };
 
     return (
@@ -100,55 +100,52 @@ function ModalEditVariabel({setShowModal, showModal, id}: {
                                 className="panel my-8 w-full max-w-2xl overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                 <div
                                     className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-dark">
-                                    <div className="text-lg font-bold">Edit Variabel</div>
+                                    <div className="text-lg font-bold">Edit Survey HEDR {data?.year ? 'Tahun ' + data.year : ''}</div>
                                     <button type="button" onClick={() => setShowModal(false)} className="">
                                         <IconX/>
                                     </button>
                                 </div>
+
                                 <div className="p-5">
-                                    {!!data && !isLoading ?
+                                    {data && !isLoading ?
                                         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label htmlFor="nama">Nama Variabel<span
-                                                        className="text-danger">*</span></label>
-                                                    <input {...register('nama')}
-                                                           id="nama"
-                                                           type="text"
-                                                           placeholder="Masukkan nama variabel"
-                                                           className="form-input mb-2"/>
-                                                    <ErrorMessage errors={errors} name="nama"
-                                                                  render={({message}) => <DefaultAlertComponent
-                                                                      type="warning" message={message}/>}/>
-                                                </div>
-                                                <div>
-                                                    <label htmlFor="alias">Inisial Variabel<span
-                                                        className="text-danger">*</span></label>
-                                                    <input {...register('alias')}
-                                                           id="alias"
-                                                           type="text"
-                                                           placeholder="Masukkan inisial variabel"
-                                                           className="form-input mb-2"/>
-                                                    <ErrorMessage errors={errors} name="alias"
-                                                                  render={({message}) => <DefaultAlertComponent
-                                                                      type="warning" message={message}/>}/>
-                                                </div>
-                                            </div>
                                             <div>
-                                                <label htmlFor="deskripsi">Deskripsi Variabel<span
+                                                <label htmlFor="nama">Nama Survey<span
                                                     className="text-danger">*</span></label>
-                                                <textarea {...register('deskripsi')} id="deskripsi"
-                                                          placeholder="Masukkan deskripsi variabel"
-                                                          className="form-textarea min-h-[135px] max-h-[135px]"/>
-                                                <ErrorMessage errors={errors} name="deskripsi"
+                                                <input {...register('name')}
+                                                       id="nama"
+                                                       type="text"
+                                                       placeholder="Masukkan nama survey"
+                                                       className="form-input mb-2"/>
+                                                <ErrorMessage errors={errors} name="name"
                                                               render={({message}) => <DefaultAlertComponent
                                                                   type="warning" message={message}/>}/>
+                                            </div>
+                                            <div>
+                                                <label htmlFor="deskripsi">Deskripsi Survey<span
+                                                    className="text-danger">*</span></label>
+                                                <textarea {...register('description')} id="deskripsi"
+                                                          placeholder="Masukkan deskripsi survey"
+                                                          className="form-textarea min-h-[135px] max-h-[135px] mb-2"/>
+                                                <ErrorMessage errors={errors} name="description"
+                                                              render={({message}) => <DefaultAlertComponent
+                                                                  type="warning" message={message}/>}/>
+                                            </div>
+                                            <div className="flex">
+                                                <Controller
+                                                    control={control}
+                                                    name="isPublished"
+                                                    render={({field: {onChange, value}}) => <Switch
+                                                        onChange={(value) => onChange(value)} value={value}/>}
+                                                />
+                                                <span className="ml-2 text-gray-500">*Buka survey saat anda telah membuat list pertanyaan pada Survey ini nanti</span>
                                             </div>
                                             <button type="submit" className="btn btn-primary">
                                                 Edit
                                             </button>
-                                        </form>
-                                        : <LoadingDotComponent position={"center"}/>}
+                                        </form> :
+                                        <LoadingDotComponent position={"center"}/>
+                                    }
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
@@ -159,4 +156,4 @@ function ModalEditVariabel({setShowModal, showModal, id}: {
     );
 }
 
-export default ModalEditVariabel;
+export default ModalEditSurvey;

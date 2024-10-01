@@ -110,7 +110,7 @@ function ModalTambahKampus({setShowModal, showModal}: { setShowModal: (value: bo
         createUserCampus({
             ...payload,
             teleponPT: payload.teleponPT.replace('_', ''),
-            faximilePT: payload.teleponPT.replace('_', '')
+            faximilePT: payload.faximilePT.replace('_', ''),
         });
     };
 
@@ -314,7 +314,7 @@ function ModalTambahKampus({setShowModal, showModal}: { setShowModal: (value: bo
                                                     className="text-danger">*</span></label>
                                                 <textarea {...register('alamatPT')} id="address"
                                                           placeholder="Masukkan alamat kampus"
-                                                          className="form-textarea min-h-[133px] max-h-[133px]"/>
+                                                          className="form-textarea min-h-[133px] max-h-[133px] mb-2"/>
                                                 <ErrorMessage errors={errors} name="alamatPT"
                                                               render={({message}) => <DefaultAlertComponent
                                                                   type="warning" message={message}/>}/>

@@ -4,7 +4,7 @@ import BreadCrumb from '@/components/elements/breadcrumb';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
 import Tab from '@/components/tabs/tabs-admin-form-group';
 import {cn} from '@/utils/cn';
-import {ReactNode, Suspense, useState} from 'react';
+import {type ReactNode, Suspense, useState} from 'react';
 import DataTableDashboard from './data-table';
 import IconCertificate from "@/components/icon/icon-certificate";
 

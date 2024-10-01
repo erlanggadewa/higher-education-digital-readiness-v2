@@ -1,6 +1,7 @@
 'use client';
 
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
+import Switch from '@/components/elements/switch';
 import HighlightField from '@/components/highlight/highlight';
 import IconEye from '@/components/icon/icon-eye';
 import IconPencil from '@/components/icon/icon-pencil';
@@ -14,7 +15,10 @@ import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 import 'tippy.js/dist/tippy.css';
+import ModalEditSurvey from './modal-edit';
+import ModalTambahSurvey from './modal-tambah';
 
 function DataTableAdminQuestion({ year }: { year: string }) {
   const [data] = api.admin.formGroup.getFormGroupByYear.useSuspenseQuery(year);
@@ -22,9 +26,12 @@ function DataTableAdminQuestion({ year }: { year: string }) {
   const { mutate: handleUpdatePublished } = api.admin.formGroup.updatePublishedFormGroup.useMutation({
     onSuccess: () => utils.admin.formGroup.getFormGroupByYear.invalidate(year),
   });
+  const { mutate: removeFormGroup } = api.admin.formGroup.removeFormGroup.useMutation({
+    onSuccess: () => utils.admin.formGroup.getFormGroupByYear.invalidate(year),
+  });
   const rowData = data;
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
+  const cols: { accessor: string; title: string }[] = [
     { accessor: 'name', title: 'Pertanyaan' },
     { accessor: 'isPublished', title: 'Open' },
     { accessor: 'jumlah', title: 'Jumlah Survey' },
@@ -45,6 +52,9 @@ function DataTableAdminQuestion({ year }: { year: string }) {
   });
 
   const [hideCols, setHideCols] = useState<string[]>([]);
+  const [showModalTambah, setShowModalTambah] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [selectedId, setSelectedId] = useState<string>('');
 
   const showHideColumns = (col: string, _value: any) => {
     if (hideCols.includes(col)) {
@@ -86,10 +96,25 @@ function DataTableAdminQuestion({ year }: { year: string }) {
     setPage(1);
   }, [sortStatus]);
 
+  const handleRemove = async (id: string) => {
+    const status = await Swal.fire({
+      icon: 'warning',
+      title: 'Apakah yakin untuk menghapus?',
+      text: 'Anda tidak dapat mengurungkan tindakan ini',
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal',
+      padding: '2em',
+      customClass: { container: 'sweet-alerts' },
+    });
+    if (!status.isConfirmed) return;
+    removeFormGroup(id);
+  };
+
   return (
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <button type="button" className="btn border-primary bg-white text-primary shadow-none dark:bg-[#191e3a] dark:text-white-light">
+        <button onClick={() => setShowModalTambah(true)} type="button" className="btn border-primary bg-white text-primary shadow-none dark:bg-[#191e3a] dark:text-white-light">
           <IconPlus /> Tambah Survey
         </button>
 
@@ -127,21 +152,16 @@ function DataTableAdminQuestion({ year }: { year: string }) {
               title: 'Open',
               hidden: hideCols.includes('isPublished'),
               render: (record, index) => (
-                <label className="relative h-6 w-12">
-                  <input
-                    type="checkbox"
-                    onChange={(e) =>
-                      handleUpdatePublished({
-                        id: record.id,
-                        isPublished: e.target.checked,
-                      })
-                    }
-                    checked={record.isPublished}
-                    className="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
-                    id={`isPublished-${record.id}-${index}`}
-                  />
-                  <span className="block h-full rounded-full bg-[#ebedf2] before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-300 peer-checked:bg-primary peer-checked:before:left-7 dark:bg-dark dark:before:bg-white-dark dark:peer-checked:before:bg-white"></span>
-                </label>
+                <Switch
+                  id={`isPublished-${record.id}-${index}`}
+                  onChange={(value: boolean) =>
+                    handleUpdatePublished({
+                      id: record.id,
+                      isPublished: value,
+                    })
+                  }
+                  value={record.isPublished}
+                />
               ),
             },
             {
@@ -149,7 +169,7 @@ function DataTableAdminQuestion({ year }: { year: string }) {
               title: 'Jumlah Survey',
               sortable: true,
               hidden: hideCols.includes('jumlah'),
-              render: (record) => <HighlightField value={'' + record.variableOnFormGroup.length} search={search} />,
+              render: (record) => <HighlightField value={'' + record.variableOnFormGroup.filter((e) => e._count.question > 0).length} search={search} />,
             },
             {
               accessor: 'aksi',
@@ -159,15 +179,20 @@ function DataTableAdminQuestion({ year }: { year: string }) {
               render(record) {
                 return (
                   <div className="flex justify-center gap-2">
-                    <Link href={`form-group/${record.id}`} className="flex items-center justify-center">
-                      <Tippy content={`Edit ${record.name}`} theme="primary">
-                        <button type="button" className="rounded-lg bg-primary p-2 text-white">
-                          <IconPencil />
-                        </button>
-                      </Tippy>
-                    </Link>
+                    <Tippy content={`Edit ${record.name}`} theme="primary">
+                      <button
+                        onClick={() => {
+                          setSelectedId(record.id);
+                          setShowModalEdit(true);
+                        }}
+                        type="button"
+                        className="rounded-lg bg-primary p-2 text-white"
+                      >
+                        <IconPencil />
+                      </button>
+                    </Tippy>
                     <Tippy content={`Remove ${record.name}`} theme="danger">
-                      <button type="button" className="rounded-lg bg-danger p-2 text-white">
+                      <button onClick={() => handleRemove(record.id)} type="button" className="rounded-lg bg-danger p-2 text-white">
                         <IconTrash />
                       </button>
                     </Tippy>
@@ -196,6 +221,8 @@ function DataTableAdminQuestion({ year }: { year: string }) {
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
         />
       </div>
+      <ModalTambahSurvey year={year} setShowModal={setShowModalTambah} showModal={showModalTambah} />
+      {!!selectedId && <ModalEditSurvey setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId} />}
     </div>
   );
 }

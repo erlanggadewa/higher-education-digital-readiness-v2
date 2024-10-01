@@ -119,14 +119,10 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
               hidden: hideCols.includes('name'),
               render(record) {
                 return (
-                  <>
-                    <h5 className="font-bold">
-                      <HighlightField value={record.alias} search={search} />
-                    </h5>
-                    <p>
-                      <HighlightField value={record.name} search={search} />
-                    </p>
-                  </>
+                  <div className="flex items-center gap-2">
+                    <HighlightField value={record.name} search={search} />
+                    <span className="badge badge-outline-success rounded-full">{record.alias}</span>
+                  </div>
                 );
               },
             },
