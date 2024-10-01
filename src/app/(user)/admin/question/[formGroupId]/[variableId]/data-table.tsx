@@ -37,6 +37,7 @@ function DataTableAdminQuestion({data}: { data: GetQuestion }) {
             await Promise.all([
                 utils.admin.question.getQuestion.invalidate(),
                 utils.admin.formGroup.getFormGroupById.invalidate(data.formGroup?.id),
+                utils.admin.formGroup.getFormGroupByYear.invalidate(data.formGroup?.year),
             ])
             Swal.close();
             void Swal.fire({

@@ -94,20 +94,23 @@ export const adminQuestionRouter = createTRPCRouter({
             }))
         }))
         .mutation(async ({ctx, input}) => {
-            const variableFormGroup = await ctx.db.variableOnFormGroup.findFirst({
-                where: {
-                    formGroupId: input.formGroupId,
-                    variableId: input.variableId,
-                }
-            });
             return ctx.db.question.create({
                 data: {
                     question: input.question,
                     year: input.year,
                     variableOnForm: {
-                        connect: {
-                            id: variableFormGroup?.id,
-                        },
+                        connectOrCreate: {
+                            where: {
+                                formGroupId_variableId: {
+                                    formGroupId: input.formGroupId,
+                                    variableId: input.variableId,
+                                },
+                            },
+                            create: {
+                                formGroupId: input.formGroupId,
+                                variableId: input.variableId,
+                            }
+                        }
                     },
                     option: {
                         createMany: {

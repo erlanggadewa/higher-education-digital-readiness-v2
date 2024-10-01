@@ -11,7 +11,16 @@ export const adminFormGroupRouter = createTRPCRouter({
                     isActive: true,
                 },
                 include: {
-                    variableOnFormGroup: true,
+                    variableOnFormGroup: {
+                        include: {
+                            _count: {
+                                select: {
+                                    question: {where: {isActive: true}},
+                                },
+                            },
+                            variable: true,
+                        }
+                    },
                 }
             });
         }),

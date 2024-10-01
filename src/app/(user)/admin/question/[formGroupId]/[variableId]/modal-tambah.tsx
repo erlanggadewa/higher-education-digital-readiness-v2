@@ -47,6 +47,7 @@ function ModalTambahPertanyaan({setShowModal, showModal, year}: {
             await Promise.all([
                 utils.admin.question.getQuestion.invalidate(),
                 utils.admin.formGroup.getFormGroupById.invalidate(formGroupId),
+                utils.admin.formGroup.getFormGroupByYear.invalidate(year),
             ])
             Swal.close();
             void Swal.fire({

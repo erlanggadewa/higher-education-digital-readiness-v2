@@ -4,14 +4,14 @@ import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import IconEye from '@/components/icon/icon-eye';
 import IconPencil from '@/components/icon/icon-pencil';
 import IconTrash from '@/components/icon/icon-trash';
-import { type IRootState } from '@/store';
-import { api } from '@/trpc/react';
+import {type IRootState} from '@/store';
+import {api} from '@/trpc/react';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
-import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+import {DataTable, type DataTableSortStatus} from 'mantine-datatable';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
 import 'tippy.js/dist/tippy.css';
 import IconPlus from "@/components/icon/icon-plus";
 import HighlightField from "@/components/highlight/highlight";
@@ -20,21 +20,21 @@ import ModalEditSurvey from "./modal-edit";
 import Switch from "@/components/elements/switch";
 import Swal from "sweetalert2";
 
-function DataTableAdminQuestion({year}: {year: string}) {
+function DataTableAdminQuestion({year}: { year: string }) {
     const [data] = api.admin.formGroup.getFormGroupByYear.useSuspenseQuery(year);
     const utils = api.useUtils();
     const {mutate: handleUpdatePublished} = api.admin.formGroup.updatePublishedFormGroup.useMutation({
-         onSuccess: () =>  utils.admin.formGroup.getFormGroupByYear.invalidate(year),
+        onSuccess: () => utils.admin.formGroup.getFormGroupByYear.invalidate(year),
     })
     const {mutate: removeFormGroup} = api.admin.formGroup.removeFormGroup.useMutation({
-         onSuccess: () =>  utils.admin.formGroup.getFormGroupByYear.invalidate(year),
+        onSuccess: () => utils.admin.formGroup.getFormGroupByYear.invalidate(year),
     })
     const rowData = data;
 
     const cols: { accessor: string; title: string }[] = [
-        { accessor: 'name', title: 'Pertanyaan' },
-        { accessor: 'isPublished', title: 'Open' },
-        { accessor: 'jumlah', title: 'Jumlah Survey' },
+        {accessor: 'name', title: 'Pertanyaan'},
+        {accessor: 'isPublished', title: 'Open'},
+        {accessor: 'jumlah', title: 'Jumlah Survey'},
     ];
 
     // show/hide
@@ -155,19 +155,22 @@ function DataTableAdminQuestion({year}: {year: string}) {
                             accessor: 'isPublished',
                             title: 'Open',
                             hidden: hideCols.includes('isPublished'),
-                            render: (record,index) => <Switch
+                            render: (record, index) => <Switch
                                 id={`isPublished-${record.id}-${index}`}
                                 onChange={(value: boolean) => handleUpdatePublished({
-                                id: record.id,
-                                isPublished: value})}
-                                value={record.isPublished} />
+                                    id: record.id,
+                                    isPublished: value
+                                })}
+                                value={record.isPublished}/>
                         },
                         {
                             accessor: 'jumlah',
                             title: 'Jumlah Survey',
                             sortable: true,
                             hidden: hideCols.includes('jumlah'),
-                            render: record => <HighlightField value={""+record.variableOnFormGroup.length} search={search}/>
+                            render: record => <HighlightField
+                                value={"" + record.variableOnFormGroup.filter(e => e._count.question > 0).length}
+                                search={search}/>
                         },
                         {
                             accessor: 'aksi',
@@ -182,18 +185,20 @@ function DataTableAdminQuestion({year}: {year: string}) {
                                                 setSelectedId(record.id)
                                                 setShowModalEdit(true)
                                             }} type="button" className="bg-primary p-2 rounded-lg text-white">
-                                                <IconPencil />
+                                                <IconPencil/>
                                             </button>
                                         </Tippy>
                                         <Tippy content={`Remove ${record.name}`} theme="danger">
-                                            <button onClick={() => handleRemove(record.id)} type="button" className="bg-danger p-2 rounded-lg text-white">
-                                                <IconTrash />
+                                            <button onClick={() => handleRemove(record.id)} type="button"
+                                                    className="bg-danger p-2 rounded-lg text-white">
+                                                <IconTrash/>
                                             </button>
                                         </Tippy>
-                                        <Link href={`question/${record.id}`} className="flex items-center justify-center">
+                                        <Link href={`question/${record.id}`}
+                                              className="flex items-center justify-center">
                                             <Tippy content={`Detail ${record.name}`} theme="info">
                                                 <button type="button" className="bg-info p-2 rounded-lg text-white">
-                                                    <IconEye />
+                                                    <IconEye/>
                                                 </button>
                                             </Tippy>
                                         </Link>
@@ -212,11 +217,16 @@ function DataTableAdminQuestion({year}: {year: string}) {
                     sortStatus={sortStatus}
                     onSortStatusChange={setSortStatus}
                     minHeight={200}
-                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                    paginationText={({
+                                         from,
+                                         to,
+                                         totalRecords
+                                     }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
                 />
             </div>
             <ModalTambahSurvey year={year} setShowModal={setShowModalTambah} showModal={showModalTambah}/>
-            {!!selectedId && <ModalEditSurvey setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId}/>}
+            {!!selectedId &&
+                <ModalEditSurvey setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId}/>}
         </div>
     );
 }
