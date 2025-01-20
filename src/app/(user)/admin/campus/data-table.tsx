@@ -56,7 +56,7 @@ function DataTableAdminCampus() {
     },
   });
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [{ accessor: 'name', title: 'Nama Kampus' }];
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [{ accessor: 'name', title: 'Nama Kampus' }];
   const colsExported: { accessor: string; title: string }[] = [
     {
       accessor: 'name',

@@ -14,7 +14,7 @@ export const formatDate = (date: string | Date) => {
  * @param {number} [startYear=2023]
  * @returns {*}
  */
-export const generateYearOptions = (startYear = 2023): { value: string; label: string }[] => {
+export const generateYearOptions = (startYear = 2024): { value: string; label: string }[] => {
   const currentYear = new Date().getFullYear();
   return Array.from({ length: currentYear + 1 - startYear }, (_, i) => {
     const year = currentYear - i;

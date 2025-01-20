@@ -1,5 +1,5 @@
+import { cn } from '@/utils/cn';
 import { Highlight } from '@mantine/core';
-import {cn} from "@/utils/cn";
 
 function HighlightField({ value, search, className }: { value: string; search: string; className?: string }) {
   return (
@@ -10,7 +10,7 @@ function HighlightField({ value, search, className }: { value: string; search: s
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
       })}
-      className={cn("font-bold", className)}
+      className={cn(className)}
       highlight={search}
     >
       {value}

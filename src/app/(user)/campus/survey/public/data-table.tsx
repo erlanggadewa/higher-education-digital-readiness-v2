@@ -3,13 +3,12 @@ import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
 import HighlightField from '@/components/highlight/highlight';
 import IconCopy from '@/components/icon/icon-copy';
-import IconPencil from '@/components/icon/icon-pencil';
+import IconEye from '@/components/icon/icon-eye';
 import { type IRootState } from '@/store';
 import { cn } from '@/utils/cn';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useSelector } from 'react-redux';
@@ -33,18 +32,15 @@ function DataTablePublicFormGroup({
 
   const rowData = data;
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
     { accessor: 'name', title: 'Nama Survei' },
-    { accessor: 'description', title: 'Total Variabel' },
+    { accessor: 'description', title: 'Total Variabel', showDropdown: false },
     { accessor: 'role', title: 'Tipe Survei ' },
     { accessor: 'year', title: 'Tahun' },
     { accessor: 'linkSurvey', title: 'Link Survei', hiddenPrint: true },
   ];
 
   // * Codingan di bawah ini sudah oke, tidak perlu diganti-ganti
-
-  const router = useRouter();
-  console.log('🚀 ~ router:', router);
 
   // show/hide
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
@@ -144,21 +140,13 @@ function DataTablePublicFormGroup({
               render(record, _index) {
                 return (
                   <>
-                    <HighlightField search={search} value={record.name} />
+                    <HighlightField className="!font-bold" search={search} value={record.name} />
+                    <HighlightField search={search} value={record.description} />
                   </>
                 );
               },
             },
-            {
-              accessor: 'description',
-              title: 'Deskripsi Survei',
-              sortable: true,
-              textAlignment: 'center',
-              hidden: hideCols.includes('description'),
-              render(record) {
-                return <HighlightField search={search} value={record.description} />;
-              },
-            },
+
             {
               accessor: 'role',
               title: 'Tipe Survei',
@@ -187,7 +175,7 @@ function DataTablePublicFormGroup({
               textAlignment: 'center',
               hidden: hideCols.includes('linkSurvey'),
               render(record) {
-                return <HighlightField search={search} value={window.location.origin + '/' + record.urlPublicSurveyId} />;
+                return <HighlightField search={search} value={window.location.origin + '/public/' + record.urlPublicSurveyId} />;
               },
             },
 
@@ -198,15 +186,16 @@ function DataTablePublicFormGroup({
               sortable: false,
 
               render(record) {
+                console.log(record);
                 return (
                   <div className="flex items-center justify-center gap-2">
-                    <Tippy content={`Kerjakan Survei`} theme="primary">
+                    <Tippy content={`Lihat Survei`} theme="primary">
                       <button type="button" className="btn-sm btn btn-primary">
-                        <IconPencil className="" />
+                        <IconEye className="" />
                       </button>
                     </Tippy>
                     <CopyToClipboard
-                      text={window.location.origin + '/' + record.urlPublicSurveyId}
+                      text={window.location.origin + '/public/' + record.urlPublicSurveyId}
                       onCopy={async (text, result) => {
                         if (result) {
                           await Swal.mixin({

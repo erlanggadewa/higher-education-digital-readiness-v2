@@ -35,7 +35,7 @@ function ReviewerSelectedCampus({ params }: { params: { campusId: string; formGr
           <span className="badge bg-primary">Kampus</span>
         </div>
 
-        <div className="my-3">
+        <div className="mb-8 mt-3">
           <TabsCampusFormGroup setSelectedTab={setVariableId} tabs={variable} />
         </div>
         <Suspense fallback={<TableSkeletonComponent />}>

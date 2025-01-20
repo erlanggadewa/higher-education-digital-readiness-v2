@@ -1,11 +1,16 @@
-import { getServerAuthSession } from '@/server/auth';
-import { api } from '@/trpc/server';
-import FormSurvey from './form-survey';
+import LoadingModal from '@/components/loading/loading-modal';
+import { Suspense } from 'react';
+import CampusTakeSurvey from './campus-take-survey';
 
-async function CampusTakeSurvey({ params }: { params: { variableFormGroupId: string } }) {
-  const session = await getServerAuthSession();
-  const data = await api.campus.campusSurvey.getQuestionSurvey({ campusId: session?.user.id ?? '', variableOnFormGroupId: params.variableFormGroupId });
-
-  return <FormSurvey data={data} />;
+async function CampusTakeSurveyPage({ params }: { params: { variableFormGroupId: string } }) {
+  return (
+    <Suspense fallback={<LoadingModal />}>
+      <CampusTakeSurvey
+        params={{
+          variableFormGroupId: params.variableFormGroupId,
+        }}
+      />
+    </Suspense>
+  );
 }
-export default CampusTakeSurvey;
+export default CampusTakeSurveyPage;

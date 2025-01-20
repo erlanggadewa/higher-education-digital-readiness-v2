@@ -2,7 +2,7 @@
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
 import HighlightField from '@/components/highlight/highlight';
-import IconPencil from '@/components/icon/icon-pencil';
+import IconEye from '@/components/icon/icon-eye';
 import { type IRootState } from '@/store';
 import { cn } from '@/utils/cn';
 import Tippy from '@tippyjs/react';
@@ -33,11 +33,11 @@ function DataTableCampusFormGroup({
 
   const rowData = data;
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
     { accessor: 'formGroupName', title: 'Nama Survei' },
-    { accessor: 'totalVariable', title: 'Total Variabel' },
     { accessor: 'year', title: 'Tahun' },
     { accessor: 'takeTime', title: 'Waktu Pengerjaan' },
+    { accessor: 'totalVariable', title: 'Total Variabel' },
     { accessor: 'status.surveyStatus', title: 'Status Survei' },
     { accessor: 'status.reviewStatus', title: 'Status Review' },
   ];
@@ -142,7 +142,7 @@ function DataTableCampusFormGroup({
               render(record, _index) {
                 return (
                   <>
-                    <HighlightField search={search} value={record.formGroupName} />
+                    <HighlightField className="!font-bold" search={search} value={record.formGroupName} />
                     <HighlightField search={search} value={record.description} />
                   </>
                 );
@@ -235,7 +235,7 @@ function DataTableCampusFormGroup({
                   <Link href={`survey/form-group/${record.formGroupId}`} className="flex items-center justify-center">
                     <Tippy content={`Detail ${record.formGroupName}`} theme="primary">
                       <button type="button" className="btn-sm btn btn-primary">
-                        <IconPencil fill={true} className="" />
+                        <IconEye className="" />
                       </button>
                     </Tippy>
                   </Link>
