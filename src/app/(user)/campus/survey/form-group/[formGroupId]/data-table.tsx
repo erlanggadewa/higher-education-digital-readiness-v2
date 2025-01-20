@@ -38,7 +38,7 @@ function DataTableCampusSelectedFormGroup({
 
   const rowData = data.variable;
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
     { accessor: 'variableName', title: 'Nama Variabel' },
     { accessor: 'variableAlias', title: 'Alias Variabel' },
     { accessor: 'variableDescription', title: 'Deskripsi Variabel' },

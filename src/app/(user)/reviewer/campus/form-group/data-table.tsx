@@ -19,7 +19,7 @@ function DataTableReviewerFormGroupCampus({ year, selectedTab }: { year: string;
 
   const [rowData] = api.reviewer.dashboard.getFormGroup.useSuspenseQuery({ year });
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
     { accessor: 'formGroupName', title: 'Nama Survei' },
     { accessor: 'totalVariable', title: 'Total Variabel' },
     { accessor: 'status', title: 'Status Review' },

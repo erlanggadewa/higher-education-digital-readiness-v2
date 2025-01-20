@@ -18,7 +18,7 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
   const formGroup = data;
   const rowData = data.variable;
 
-  const cols: { accessor: string; title: string; hiddenPrint?: boolean }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
     { accessor: 'name', title: 'Variabel' },
     { accessor: 'totalQuestion', title: 'Jumlah Pertanyaan' },
     { accessor: 'updatedAt', title: 'Terakhir Modifikasi' },
