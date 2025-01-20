@@ -1,7 +1,8 @@
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc';
-import { campusRoot } from './routers/campus/root';
-import { reviewerRoot } from './routers/reviewer/root';
 import { adminRoot } from './routers/admin/root';
+import { campusRoot } from './routers/campus/root';
+import { publicRoot } from './routers/public/root';
+import { reviewerRoot } from './routers/reviewer/root';
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   admin: adminRoot,
   reviewer: reviewerRoot,
   campus: campusRoot,
+  public: publicRoot,
 });
 
 // export type definition of API
