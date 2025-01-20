@@ -1,35 +1,53 @@
 'use client';
-
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
 import ExportFileComponent from '@/components/export/export-file';
 import HighlightField from '@/components/highlight/highlight';
-import IconPencil from '@/components/icon/icon-pencil';
-import { type GetFormGroup } from '@/server/api/routers/admin/types/get-formgroup';
+import IconCopy from '@/components/icon/icon-copy';
+import IconEye from '@/components/icon/icon-eye';
 import { type IRootState } from '@/store';
+import { cn } from '@/utils/cn';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 import 'tippy.js/dist/tippy.css';
 
-function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
-  const formGroup = data;
-  const rowData = data.variable;
+function DataTablePublicFormGroup({
+  data,
+}: {
+  data: {
+    roleOnFormGroupId: string;
+    formGroupId: string;
+    name: string;
+    description: string;
+    role: string;
+    year: string;
+    urlPublicSurveyId: string | undefined;
+  }[];
+}) {
+  // * Ganti api yg di get saja dan value dari cols nya dan sesuaikan type dari TRowData dengan web ini : https://transform.tools/json-to-typescript
+
+  const rowData = data;
 
   const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
-    { accessor: 'name', title: 'Variabel' },
-    { accessor: 'totalQuestion', title: 'Jumlah Pertanyaan' },
-    { accessor: 'updatedAt', title: 'Terakhir Modifikasi' },
+    { accessor: 'name', title: 'Nama Survei' },
+    { accessor: 'description', title: 'Total Variabel', showDropdown: false },
+    { accessor: 'role', title: 'Tipe Survei ' },
+    { accessor: 'year', title: 'Tahun' },
+    { accessor: 'linkSurvey', title: 'Link Survei', hiddenPrint: true },
   ];
+
+  // * Codingan di bawah ini sudah oke, tidak perlu diganti-ganti
 
   // show/hide
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(10);
-  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'id'));
+  const [initialRecords, setInitialRecords] = useState(sortBy(rowData, 'name'));
   const [recordsData, setRecordsData] = useState(initialRecords);
 
   const [search, setSearch] = useState('');
@@ -63,15 +81,17 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
   }, [page, pageSize, initialRecords]);
 
   useEffect(() => {
-    if (!rowData) return;
     setInitialRecords(() => {
       return rowData.filter((item) => {
         // * Ubah dan custom untuk pencarian di sini
+        console.log(search.toLowerCase().split('/').reverse()[0]);
+
         return (
+          item.description.toLowerCase().includes(search.toLowerCase()) ||
           item.name.toLowerCase().includes(search.toLowerCase()) ||
-          item.totalQuestion.toString().includes(search.toLowerCase()) ||
-          item.alias.toLowerCase().includes(search.toLowerCase()) ||
-          item.updatedAt.toLocaleString().includes(search.toLowerCase())
+          item.year.toLowerCase().includes(search.toLowerCase()) ||
+          item.role.toLowerCase().includes(search.toLowerCase()) ||
+          item.urlPublicSurveyId?.toLowerCase().includes(search.toLowerCase().split('/').reverse()[0] ?? '')
         );
       });
     });
@@ -88,7 +108,7 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
   return (
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <ExportFileComponent fileName={formGroup.formGroupName} cols={cols} rowData={initialRecords} />
+        <ExportFileComponent cols={cols} rowData={initialRecords} />
 
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
           <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
@@ -99,7 +119,7 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
       </div>
       <div className="datatables">
         <DataTable
-          idAccessor="id"
+          idAccessor="roleOnFormGroupId"
           className="table-hover whitespace-nowrap rounded-md"
           records={recordsData}
           columns={[
@@ -114,48 +134,92 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
             },
             {
               accessor: 'name',
-              title: 'Variabel',
+              title: 'Nama Survei',
               sortable: true,
               hidden: hideCols.includes('name'),
-              render(record) {
+              render(record, _index) {
                 return (
-                  <div className="flex items-center gap-2">
-                    <HighlightField value={record.name} search={search} />
-                    <span className="badge badge-outline-success rounded-full">{record.alias}</span>
-                  </div>
+                  <>
+                    <HighlightField className="!font-bold" search={search} value={record.name} />
+                    <HighlightField search={search} value={record.description} />
+                  </>
                 );
               },
             },
+
             {
-              accessor: 'totalQuestion',
-              title: 'Jumlah Pertanyaan',
+              accessor: 'role',
+              title: 'Tipe Survei',
               sortable: true,
               textAlignment: 'center',
-              hidden: hideCols.includes('totalQuestion'),
-              render: (record) => <HighlightField value={'' + record.totalQuestion} search={search} />,
+              hidden: hideCols.includes('role'),
+              render(record) {
+                return <span className={cn('badge', 'bg-primary capitalize dark:bg-primary-old')}>{record.role}</span>;
+              },
             },
             {
-              accessor: 'updatedAt',
-              title: 'Terakhir Modifikasi',
+              accessor: 'year',
+              title: 'Tahun',
               sortable: true,
               textAlignment: 'center',
-              hidden: hideCols.includes('updatedAt'),
-              render: (record) => <HighlightField search={search} value={record.updatedAt.toLocaleString()} />,
+              hidden: hideCols.includes('year'),
+              render(record) {
+                return <HighlightField search={search} value={record.year} />;
+              },
             },
+
+            {
+              accessor: 'linkSurvey',
+              title: 'Link Survei',
+              sortable: true,
+              textAlignment: 'center',
+              hidden: hideCols.includes('linkSurvey'),
+              render(record) {
+                return <HighlightField search={search} value={window.location.origin + '/public/' + record.urlPublicSurveyId} />;
+              },
+            },
+
             {
               accessor: 'aksi',
               title: 'Aksi',
               textAlignment: 'center',
               sortable: false,
+
               render(record) {
+                console.log(record);
                 return (
-                  <Link href={`/admin/question/${formGroup.formGroupId}/${record.id}`} className="flex items-center justify-center">
-                    <Tippy content={`Edit pertanyaan ${record.name}`} theme="primary">
-                      <button type="button" className="rounded-lg bg-primary p-2 text-white">
-                        <IconPencil />
+                  <div className="flex items-center justify-center gap-2">
+                    <Tippy content={`Lihat Survei`} theme="primary">
+                      <button type="button" className="btn-sm btn btn-primary">
+                        <IconEye className="" />
                       </button>
                     </Tippy>
-                  </Link>
+                    <CopyToClipboard
+                      text={window.location.origin + '/public/' + record.urlPublicSurveyId}
+                      onCopy={async (text, result) => {
+                        if (result) {
+                          await Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                          }).fire({
+                            icon: 'success',
+                            title: 'Berhasil menyalin URL survei',
+                            padding: '10px 20px',
+                          });
+                        }
+                      }}
+                    >
+                      <div>
+                        <Tippy content={`Salin Url Survei`} theme="info">
+                          <button type="button" className="btn-sm btn btn-info">
+                            <IconCopy className="" />
+                          </button>
+                        </Tippy>
+                      </div>
+                    </CopyToClipboard>
+                  </div>
                 );
               },
             },
@@ -177,4 +241,4 @@ function DataTableAdminVariable({ data }: { data: GetFormGroup }) {
   );
 }
 
-export default DataTableAdminVariable;
+export default DataTablePublicFormGroup;

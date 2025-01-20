@@ -1,13 +1,13 @@
 import LoadingModal from '@/components/loading/loading-modal';
 import { Suspense } from 'react';
-import Campus from './campus';
+import CampusPublicSurvey from './campus-public-survey';
 
-async function CampusPage() {
+async function CampusPublicSurveyPage() {
   return (
     <Suspense fallback={<LoadingModal />}>
-      <Campus />
+      <CampusPublicSurvey />;
     </Suspense>
   );
 }
 
-export default CampusPage;
+export default CampusPublicSurveyPage;

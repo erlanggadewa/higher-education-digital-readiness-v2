@@ -14,7 +14,7 @@ function DataTableReviewerSelectedCampus({ campusUserId, variableId, formGroupId
   const [data] = api.reviewer.campus.getSelectedSurveyCampusReview.useSuspenseQuery({ campusUserId, formGroupId, variableId });
   const rowData = data.question;
 
-  const cols: { accessor: string; title: string }[] = [
+  const cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[] = [
     { accessor: 'question', title: 'Pertanyaan' },
     { accessor: 'option', title: 'Jawaban' },
     { accessor: 'answer.reviewComment', title: 'Keterangan' },

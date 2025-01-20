@@ -9,7 +9,7 @@ function DropdownHideColumn({
   showHideColumns,
 }: {
   isRtl: boolean;
-  cols: { accessor: string; title: string }[];
+  cols: { accessor: string; title: string; hiddenPrint?: boolean; showDropdown?: boolean }[];
   hideCols: any;
   setHideCols: (e: any) => void;
   showHideColumns: (accessor: any, target: any) => void;
@@ -29,6 +29,7 @@ function DropdownHideColumn({
         >
           <ul className="min-w-min">
             {cols.map((col, i) => {
+              if (col.showDropdown === false) return null;
               return (
                 <li
                   key={i}
