@@ -1,20 +1,63 @@
 'use client';
 
 import DropdownHideColumn from '@/components/dropdown/dropdown-column';
+import QuestionOption from '@/components/elements/question-option';
 import ExportFileComponent from '@/components/export/export-file';
 import HighlightField from '@/components/highlight/highlight';
 import IconPencil from '@/components/icon/icon-pencil';
+import IconTrash from '@/components/icon/icon-trash';
 import { type GetQuestion } from '@/server/api/routers/admin/types/get-question';
 import { type IRootState } from '@/store';
+import { api } from '@/trpc/react';
 import Tippy from '@tippyjs/react';
 import sortBy from 'lodash/sortBy';
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 import 'tippy.js/dist/tippy.css';
+import ModalEditPertanyaan from './modal-edit';
 
 function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
   const rowData = data.question;
+
+  const utils = api.useUtils();
+  const { mutate: removeQuestion } = api.admin.question.removeQuestion.useMutation({
+    onMutate() {
+      void Swal.fire({
+        title: 'Mohon Tunggu!',
+        text: 'Sedang menghapus variabel',
+        didOpen: () => Swal.showLoading(),
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        customClass: { container: 'sweet-alerts' },
+      });
+    },
+    async onSuccess() {
+      await Promise.all([
+        utils.admin.question.getQuestion.invalidate(),
+        utils.admin.formGroup.getFormGroupById.invalidate(data.formGroup?.id),
+        utils.admin.formGroup.getFormGroupByYear.invalidate(data.formGroup?.year),
+      ]);
+      Swal.close();
+      void Swal.fire({
+        title: 'Berhasil!',
+        text: 'Variabel berhasil dihapus',
+        icon: 'success',
+        customClass: { container: 'sweet-alerts' },
+      });
+    },
+    onError() {
+      Swal.close();
+      void Swal.fire({
+        title: 'Gagal!',
+        text: 'Variabel gagal dihapus',
+        icon: 'error',
+        customClass: { container: 'sweet-alerts' },
+      });
+    },
+  });
+
   const cols: { accessor: string; title: string }[] = [
     { accessor: 'question', title: 'Pertanyaan' },
     { accessor: 'option', title: 'Opsi dan Bobot Jawaban' },
@@ -39,6 +82,8 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
   });
 
   const [hideCols, setHideCols] = useState<string[]>([]);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [selectedId, setSelectedId] = useState<string>('');
 
   const showHideColumns = (col: string, _value: any) => {
     if (hideCols.includes(col)) {
@@ -80,10 +125,25 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
     setPage(1);
   }, [sortStatus]);
 
+  const handleRemove = async (id: string) => {
+    const status = await Swal.fire({
+      icon: 'warning',
+      title: 'Apakah yakin untuk menghapus?',
+      text: 'Anda tidak dapat mengurungkan tindakan ini',
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal',
+      padding: '2em',
+      customClass: { container: 'sweet-alerts' },
+    });
+    if (!status.isConfirmed) return;
+    removeQuestion(id);
+  };
+
   return (
     <div>
       <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <ExportFileComponent cols={colsExport} rowData={initialRecords} />
+        <ExportFileComponent fileName={`Daftar Pertanyaan ${data.variable?.alias} (${data.variable?.name})`} cols={colsExport} rowData={initialRecords} />
 
         <div className="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
           <DropdownHideColumn isRtl={isRtl} cols={cols} hideCols={hideCols} setHideCols={setHideCols} showHideColumns={showHideColumns} />
@@ -122,18 +182,7 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
               sortable: true,
               textAlignment: 'center',
               hidden: hideCols.includes('option'),
-              render: (record) =>
-                record.option.map((item, index) => (
-                  <div key={`option-${index}`} className="flex items-center gap-2">
-                    <span className="badge h-full min-w-16 bg-primary py-2 text-center dark:bg-primary-old">{item.point} Poin</span>
-                    <div className="flex w-full">
-                      <div className="flex items-center justify-center border border-white-light bg-[#f1f2f3] px-3 font-semibold dark:border-[#17263c] dark:bg-[#1b2e4b] ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0">
-                        <input type="radio" value={item.id} id={item.id} name="revisionOptionId" className="form-radio border-white-light text-blue-500 dark:border-white-dark ltr:mr-0 rtl:ml-0" />
-                      </div>
-                      <input type="text" className="form-input disabled:pointer-events-none ltr:rounded-l-none rtl:rounded-r-none" readOnly value={item.value} />
-                    </div>
-                  </div>
-                )),
+              render: (record) => record.option.map((item, index) => <QuestionOption key={`option-${index}`} value={item.value} point={item.point} />),
             },
             {
               accessor: 'aksi',
@@ -142,14 +191,25 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
               sortable: false,
               render(record) {
                 return (
-                  // <Link href={`/admin/question/${formGroup.formGroupId}/${record.id}`}
-                  //       className="flex items-center justify-center">
-                  <Tippy content={`Edit survey ${record.year}`} theme="primary">
-                    <button type="button" className="rounded-lg bg-primary p-2 text-white">
-                      <IconPencil />
-                    </button>
-                  </Tippy>
-                  // </Link>
+                  <div className="flex justify-center gap-2">
+                    <Tippy content={`Edit pertanyaan ${record.question}`} theme="primary">
+                      <button
+                        onClick={() => {
+                          setSelectedId(record.id);
+                          setShowModalEdit(true);
+                        }}
+                        type="button"
+                        className="rounded-lg bg-primary p-2 text-white"
+                      >
+                        <IconPencil />
+                      </button>
+                    </Tippy>
+                    <Tippy content={`Remove pertanyaan ${record.question}`} theme="danger">
+                      <button onClick={() => handleRemove(record.id)} type="button" className="rounded-lg bg-danger p-2 text-white">
+                        <IconTrash />
+                      </button>
+                    </Tippy>
+                  </div>
                 );
               },
             },
@@ -167,6 +227,7 @@ function DataTableAdminQuestion({ data }: { data: GetQuestion }) {
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
         />
       </div>
+      {selectedId && <ModalEditPertanyaan setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId} />}
     </div>
   );
 }
