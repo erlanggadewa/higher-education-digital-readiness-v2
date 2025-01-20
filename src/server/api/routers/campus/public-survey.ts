@@ -58,6 +58,14 @@ export const publicSurveyRouter = createTRPCRouter({
         ),
       );
 
+      // * Delete urlPublicSurvey yang tidak ada di listUrlPublicSurvey untuk  menghindari data yang tidak terpakai
+      await ctx.db.urlPublicSurvey.deleteMany({
+        where: {
+          id: { notIn: listUrlPublicSurvey.map((el) => el.id) },
+          campusId: input.campusId,
+        },
+      });
+
       const result = data.map((item) => {
         return {
           roleOnFormGroupId: item.id,
