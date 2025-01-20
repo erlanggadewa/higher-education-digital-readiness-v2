@@ -24,9 +24,10 @@ const CardDashboard = ({ icon, count, label, color }: { icon: ReactNode; count: 
 
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('');
+  console.log(selectedTab);
   return (
     <>
-      <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary" />
+      <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary dark:bg-primary-old" />
       <div className="flex justify-between">
         <div>
           <h1 className="mb-2 text-2xl font-bold text-white-light">Dashboard</h1>

@@ -87,7 +87,7 @@ const LevelPage = () => {
 
     return (
         <>
-            <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary"/>
+            <div className="absolute left-0 top-0 z-[-10] h-36 w-full bg-primary dark:bg-primary-old"/>
             <div className="flex justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white-light">Level</h1>
@@ -116,7 +116,7 @@ const LevelPage = () => {
                             }}
                             breakpoints={{
                                 1024: {
-                                    slidesPerView: 4,
+                                    slidesPerView: 5,
                                     spaceBetween: 30,
                                 },
                                 768: {
@@ -136,7 +136,7 @@ const LevelPage = () => {
                                 return (
                                     <SwiperSlide key={i}>
                                         <div
-                                            className={cn("w-full shadow max-w-[19rem] rounded border border-white-light bg-white dark:border-[#1b2e4b] dark:bg-[#191e3a] border-b-4", `border-b-${colors[i % (colors.length)]}`)}>
+                                            className={cn("w-full shadow max-w-[15rem] rounded border border-white-light bg-white dark:border-[#1b2e4b] dark:bg-[#191e3a] border-b-4", `border-b-${colors[i % (colors.length)]}`)}>
                                             <div
                                                 className="px-6 py-4 flex items-center justify-between flex-col h-72 text-center">
                                             <span
