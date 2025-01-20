@@ -33,23 +33,32 @@ export const adminFormGroupRouter = createTRPCRouter({
                     isActive: true,
                 },
             });
-            const variable = await ctx.db.variable.findMany({
-                include: {
-                    variableOnFormGroup: {
-                        where: {
-                            formGroupId: formGroup?.id
-                        },
-                        include: {
-                            _count: {
-                                select: {
-                                    question: {where: {isActive: true}},
-                                },
+            const [role, variable] = await Promise.all([
+                ctx.db.roleOnFormGroup.findMany({
+                    where: {
+                        formGroupId: formGroup?.id,
+                    },
+                    include: {
+                        roleUser: true,
+                    },
+                }),
+                ctx.db.variable.findMany({
+                    include: {
+                        variableOnFormGroup: {
+                            where: {
+                                formGroupId: formGroup?.id
                             },
-                            variable: true,
+                            include: {
+                                _count: {
+                                    select: {
+                                        question: {where: {isActive: true}},
+                                    },
+                                },
+                                variable: true,
+                            }
                         }
                     }
-                }
-            })
+                })])
             return {
                 formGroupId: formGroup?.id,
                 formGroupName: formGroup?.name,
@@ -60,6 +69,7 @@ export const adminFormGroupRouter = createTRPCRouter({
                     ...e,
                     totalQuestion: e.variableOnFormGroup.reduce((acc, obj) => acc + obj._count?.question, 0)
                 })),
+                role: role.map(e => e.roleUser),
             };
         }),
     updatePublishedFormGroup: protectedProcedure
@@ -83,6 +93,7 @@ export const adminFormGroupRouter = createTRPCRouter({
             description: z.string().min(1),
             isPublished: z.boolean(),
             year: z.string().min(4),
+            role: z.array(z.string()).min(1),
         }))
         .mutation(async ({ctx, input}) => {
             return ctx.db.formGroup.create({
@@ -92,6 +103,15 @@ export const adminFormGroupRouter = createTRPCRouter({
                     isPublished: input.isPublished,
                     isActive: true,
                     year: input.year,
+                    roleOnFormGroup: {
+                        create: input.role.map((e) => ({
+                            roleUser: {
+                                connect: {
+                                    role: e,
+                                },
+                            },
+                        })),
+                    }
                 },
             });
         }),
@@ -101,6 +121,7 @@ export const adminFormGroupRouter = createTRPCRouter({
             name: z.string().min(1),
             description: z.string().min(1),
             isPublished: z.boolean(),
+            role: z.array(z.string()).min(1),
         }))
         .mutation(async ({ctx, input}) => {
             return ctx.db.formGroup.update({
@@ -111,6 +132,18 @@ export const adminFormGroupRouter = createTRPCRouter({
                     name: input.name,
                     description: input.description,
                     isPublished: input.isPublished,
+                    roleOnFormGroup: {
+                        deleteMany: {
+                            formGroupId: input.id,
+                        },
+                        create: input.role.map((e) => ({
+                            roleUser: {
+                                connect: {
+                                    role: e,
+                                },
+                            },
+                        })),
+                    }
                 },
             });
         }),

@@ -3,25 +3,32 @@ import {api} from '@/trpc/react';
 import {Dialog, Transition} from '@headlessui/react';
 import {useForm, type SubmitHandler, Controller} from 'react-hook-form';
 import Swal from 'sweetalert2';
-import {Fragment, useEffect} from 'react';
+import {Fragment, useEffect, useMemo} from 'react';
 import {ErrorMessage} from "@hookform/error-message";
 import DefaultAlertComponent from "@/components/alert/elements-alerts-default";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "@/utils/id-zod";
 import Switch from "@/components/elements/switch";
+import Select from 'react-select';
+import {type GetRole} from "@/server/api/routers/admin/types/get-role";
 
 const schema = z.object({
     name: z.string().min(1, 'Wajib diisi'),
     description: z.string().min(1, 'Wajib diisi'),
     isPublished: z.boolean().default(false),
+    role: z.array(z.object({
+        value: z.string(),
+        label: z.string(),
+    })).nonempty('Wajib diisi'),
 });
 
 type Schema = z.infer<typeof schema>
 
-function ModalTambahSurvey({setShowModal, showModal, year}: {
+function ModalTambahSurvey({setShowModal, showModal, year, listRole}: {
     setShowModal: (value: boolean) => void
     showModal: boolean
     year: string
+    listRole: GetRole[]
 }) {
     const utils = api.useUtils();
 
@@ -49,6 +56,8 @@ function ModalTambahSurvey({setShowModal, showModal, year}: {
         },
     })
 
+    const roles = useMemo(()=> listRole.map((e) => ({value: e.role, label: e.name})), [listRole])
+
     const {
         register,
         control,
@@ -64,7 +73,7 @@ function ModalTambahSurvey({setShowModal, showModal, year}: {
     }, [showModal]);
 
     const onSubmit: SubmitHandler<Schema> = async (payload) => {
-        createFormGroup({...payload, year})
+        createFormGroup({...payload, year, role: payload.role.map((e) => e.value)});
     };
 
     return (
@@ -97,7 +106,7 @@ function ModalTambahSurvey({setShowModal, showModal, year}: {
                                 </div>
 
                                 <div className="p-5">
-                                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
                                         <div>
                                             <label htmlFor="nama">Nama Survey<span
                                                 className="text-danger">*</span></label>
@@ -120,6 +129,16 @@ function ModalTambahSurvey({setShowModal, showModal, year}: {
                                                           render={({message}) => <DefaultAlertComponent
                                                               type="warning" message={message}/>}/>
                                         </div>
+                                        <div>
+                                            <label htmlFor="role">Role<span
+                                                className="text-danger">*</span></label>
+                                            <Controller control={control} name="role" render={({field:{onChange}}) =>
+                                                <Select className="mb-2" onChange={(value) => onChange(value)} placeholder="Pilih Role" options={roles} isMulti isSearchable={false} menuPosition="fixed"/>
+                                            }/>
+                                            <ErrorMessage errors={errors} name="role"
+                                                          render={({message}) => <DefaultAlertComponent
+                                                              type="warning" message={message}/>}/>
+                                        </div>
                                         <div className="flex">
                                             <Controller
                                                 control={control}
@@ -127,7 +146,7 @@ function ModalTambahSurvey({setShowModal, showModal, year}: {
                                                 render={({field: {onChange, value}}) => <Switch
                                                     onChange={(value) => onChange(value)} value={value}/>}
                                             />
-                                            <span className="ml-2 text-gray-500">*Buka survey saat anda telah membuat list pertanyaan pada Survey ini nanti</span>
+                                            <label htmlFor="isPublished" className="ml-2 text-gray-500">*Buka survey saat anda telah membuat list pertanyaan pada Survey ini nanti</label>
                                         </div>
                                         <button type="submit" className="btn btn-primary">
                                             Tambah

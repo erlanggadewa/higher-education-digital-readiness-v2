@@ -22,6 +22,7 @@ import Swal from "sweetalert2";
 
 function DataTableAdminQuestion({year}: { year: string }) {
     const [data] = api.admin.formGroup.getFormGroupByYear.useSuspenseQuery(year);
+    const [listRole] = api.admin.user.getUserRole.useSuspenseQuery();
     const utils = api.useUtils();
     const {mutate: handleUpdatePublished} = api.admin.formGroup.updatePublishedFormGroup.useMutation({
         onSuccess: () => utils.admin.formGroup.getFormGroupByYear.invalidate(year),
@@ -146,7 +147,7 @@ function DataTableAdminQuestion({year}: { year: string }) {
                         },
                         {
                             accessor: 'name',
-                            title: 'Pertanyaan',
+                            title: 'Nama Survei',
                             sortable: true,
                             hidden: hideCols.includes('name'),
                             render: (record) => <HighlightField value={record.name} search={search}/>,
@@ -165,7 +166,7 @@ function DataTableAdminQuestion({year}: { year: string }) {
                         },
                         {
                             accessor: 'jumlah',
-                            title: 'Jumlah Survey',
+                            title: 'Jumlah Survei',
                             sortable: true,
                             hidden: hideCols.includes('jumlah'),
                             render: record => <HighlightField
@@ -224,9 +225,9 @@ function DataTableAdminQuestion({year}: { year: string }) {
                                      }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
                 />
             </div>
-            <ModalTambahSurvey year={year} setShowModal={setShowModalTambah} showModal={showModalTambah}/>
+            <ModalTambahSurvey year={year} setShowModal={setShowModalTambah} showModal={showModalTambah} listRole={listRole}/>
             {!!selectedId &&
-                <ModalEditSurvey setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId}/>}
+                <ModalEditSurvey setShowModal={setShowModalEdit} showModal={showModalEdit} id={selectedId} listRole={listRole}/>}
         </div>
     );
 }
