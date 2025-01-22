@@ -7,19 +7,15 @@
     "seed": "tsx db/seed.ts",
     "schema": "db/prisma/schema.prisma"
   },
-  "zenstack": {
-    "schema": "db/schema.zmodel"
-  },
   "scripts": {
     "build": "next build",
-    "db:generate": "zenstack generate && prisma migrate dev && prisma generate",
     "db:deploy": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "dev": "next dev --turbo",
     "lint": "next lint",
     "start": "next start",
-    "postinstall": "zenstack generate && prisma generate"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.6.0",
@@ -34,7 +30,9 @@
     "@hookform/resolvers": "^3.9.0",
     "@mantine/core": "^5.10.5",
     "@mantine/hooks": "^5.10.5",
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^6.2.1",
+    "@prisma/extension-accelerate": "^1.2.1",
+    "@prisma/extension-optimize": "^1.1.4",
     "@reduxjs/toolkit": "^1.9.7",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^5.51.23",
@@ -43,7 +41,6 @@
     "@trpc/react-query": "^11.0.0-rc.477",
     "@trpc/server": "^11.0.0-rc.477",
     "@x1mrdonut1x/nouislider-react": "^3.4.3",
-    "@zenstackhq/runtime": "^2.5.1",
     "apexcharts": "^3.52.0",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
@@ -115,12 +112,11 @@
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
-    "prisma": "^5.19.1",
+    "prisma": "^6.2.1",
     "tailwindcss": "^3.4.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.17.0",
-    "typescript": "^5.5.4",
-    "zenstack": "^2.4.1"
+    "typescript": "^5.5.4"
   },
   "ct3aMetadata": {
     "initVersion": "7.36.1"
@@ -132,7 +128,6 @@
     "esbuild",
     "prisma",
     "sharp",
-    "swiper",
-    "zenstack"
+    "swiper"
   ]
 }
