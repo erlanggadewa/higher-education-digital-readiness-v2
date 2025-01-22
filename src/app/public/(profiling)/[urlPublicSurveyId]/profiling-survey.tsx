@@ -36,9 +36,9 @@ const ProfilingPublicSurvey = () => {
     ),
   });
 
-  console.log('🚀 ~ ProfilingPublicSurvey ~ dirtyFields:', dirtyFields);
   const onSubmit = handleSubmit(async (data) => {
     setIsLoading(true);
+    console.log('🚀 ~ onSubmit ~ data:', data);
     // const result = await signIn('credentials', {
     //   username: data.username,
     //   password: data.password,

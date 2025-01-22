@@ -2,60 +2,58 @@ import { type $Enums } from '@prisma/client';
 
 export type GetQuestionCampusSurvey = {
   campusSurveyLog: {
-    id: string;
-    campusId: string;
-    variableOnFormGroupId: string;
     status: $Enums.SurveyLogStatus;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
+    campusId: string;
+    variableOnFormGroupId: string;
   }[];
   question: ({
     campusAnswer: {
       id: string;
+      createdAt: Date;
+      updatedAt: Date;
+      campusId: string;
+      year: string;
       questionId: string;
       optionId: string;
       revisionOptionId: string;
-      campusId: string;
-      year: string;
       answerStatus: $Enums.AnswerStatus;
       reviewComment: string | null;
       reviewDate: Date | null;
-      createdAt: Date;
-      updatedAt: Date;
     }[];
     option: {
+      value: string;
       id: string;
       questionId: string;
-      value: string;
       point: number;
     }[];
   } & {
     id: string;
-    question: string;
-    year: string;
     isActive: boolean;
+    year: string;
     variableOnFormGroupId: string;
-    createdAt: Date;
-    updatedAt: Date;
+    question: string;
   })[];
   formGroup: {
-    id: string;
     name: string;
-    description: string;
+    id: string;
     isActive: boolean;
-    isPublished: boolean;
     year: string;
+    description: string;
+    isPublished: boolean;
   };
   variable: {
-    id: string;
-    alias: string;
     name: string;
+    id: string;
     description: string;
+    alias: string;
   };
 } & {
   id: string;
-  variableId: string;
-  formGroupId: string;
   createdAt: Date;
   updatedAt: Date;
+  formGroupId: string;
+  variableId: string;
 };
