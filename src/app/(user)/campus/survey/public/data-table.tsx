@@ -84,7 +84,6 @@ function DataTablePublicFormGroup({
     setInitialRecords(() => {
       return rowData.filter((item) => {
         // * Ubah dan custom untuk pencarian di sini
-        console.log(search.toLowerCase().split('/').reverse()[0]);
 
         return (
           item.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -186,7 +185,6 @@ function DataTablePublicFormGroup({
               sortable: false,
 
               render(record) {
-                console.log(record);
                 return (
                   <div className="flex items-center justify-center gap-2">
                     <Tippy content={`Lihat Survei`} theme="primary">
