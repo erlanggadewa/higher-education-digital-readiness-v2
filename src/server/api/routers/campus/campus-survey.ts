@@ -195,9 +195,7 @@ export const campusSurveyRouter = createTRPCRouter({
           },
         },
       });
-      console.log('🚀 data ~ File: campus-survey.ts');
-      console.dir(data, { depth: null });
-      console.log('🔚 data ~ File: campus-survey.ts');
+
       return data;
     }),
 
