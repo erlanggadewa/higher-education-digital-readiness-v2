@@ -3,7 +3,7 @@ import { getServerSession, type DefaultSession, type NextAuthOptions } from 'nex
 import { type Adapter } from 'next-auth/adapters';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { db, purePrisma } from '@/server/db';
+import { db } from '@/server/db';
 import { HelperClass } from '@/utils/helper-class';
 
 /**
@@ -83,13 +83,13 @@ export const authOptions: NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
+        username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
 
-        const user = await purePrisma.campusUser.findUnique({
+        const user = await db.campusUser.findUnique({
           where: { email: credentials?.username },
           include: {
             roleUser: { select: { name: true } },

@@ -5,7 +5,8 @@ import { api } from '@/trpc/server';
 import { Suspense } from 'react';
 import DataTableReviewerSelectedFormGroupCampus from './data-table';
 
-async function ReviewerSelectedFormGroupCampusPage({ params }: { params: { formGroupId: string } }) {
+async function ReviewerSelectedFormGroupCampusPage(props: { params: Promise<{ formGroupId: string }> }) {
+  const params = await props.params;
   const rowData = await api.reviewer.dashboard.getSelectedFormGroup({ formGroupId: params.formGroupId });
 
   return (

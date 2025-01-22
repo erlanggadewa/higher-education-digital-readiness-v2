@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ProfilingPublicSurvey from './profiling-survey';
 
-function PublicCampusPage({ params }: { params: { urlPublicSurveyId: string } }) {
+async function PublicCampusPage(props: { params: Promise<{ urlPublicSurveyId: string }> }) {
+  const params = await props.params;
   console.log('🚀 ~ PublicCampusPage ~ params:', params);
   return (
     <div className="relative flex h-screen w-full flex-col justify-between overflow-hidden backdrop-blur-lg dark:bg-black/50 lg:flex-row lg:gap-10 xl:gap-0">

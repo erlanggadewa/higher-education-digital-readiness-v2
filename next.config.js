@@ -6,15 +6,10 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  reactStrictMode: true,
-  swcMinify: true,
+
   eslint: {
     ignoreDuringBuilds: true,
   },
-  compiler: {
-    // Enables the styled-components SWC transform
-    styledComponents: true
-  }
 };
 
 export default config;
