@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "license": "Apache-2.0",
   "prisma": {
     "seed": "tsx db/seed.ts",
     "schema": "db/prisma/schema.prisma"
@@ -13,7 +12,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbo",
     "lint": "next lint",
     "start": "next start",
     "postinstall": "prisma generate"
@@ -55,15 +54,15 @@
     "lucide-react": "^0.408.0",
     "mantine-datatable": "^1.8.8",
     "moment": "^2.30.1",
-    "next": "15.1.6",
+    "next": "^14.2.5",
     "next-auth": "^4.24.7",
-    "react": "19.0.0",
+    "react": "^18.3.1",
     "react-animate-height": "^3.2.3",
     "react-apexcharts": "^1.4.1",
     "react-click-away-listener": "^2.2.3",
     "react-copy-to-clipboard": "^5.1.0",
     "react-countup": "^6.5.3",
-    "react-dom": "19.0.0",
+    "react-dom": "^18.3.1",
     "react-flatpickr": "^3.10.13",
     "react-hook-form": "^7.52.2",
     "react-images-uploading": "^3.1.7",
@@ -97,9 +96,9 @@
     "@types/lodash": "^4.17.7",
     "@types/moment": "^2.13.0",
     "@types/node": "^20.14.15",
-    "@types/react": "19.0.7",
+    "@types/react": "^18.3.3",
     "@types/react-copy-to-clipboard": "^5.0.7",
-    "@types/react-dom": "19.0.3",
+    "@types/react-dom": "^18.3.0",
     "@types/react-flatpickr": "^3.8.11",
     "@types/react-redux": "^7.1.33",
     "@types/react-text-mask": "^5.4.14",
@@ -109,7 +108,7 @@
     "@typescript-eslint/parser": "^7.18.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
-    "eslint-config-next": "15.1.6",
+    "eslint-config-next": "^14.2.5",
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
@@ -130,9 +129,5 @@
     "prisma",
     "sharp",
     "swiper"
-  ],
-  "resolutions": {
-    "@types/react": "19.0.7",
-    "@types/react-dom": "19.0.3"
-  }
+  ]
 }

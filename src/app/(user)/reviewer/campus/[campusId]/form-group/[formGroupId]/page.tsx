@@ -3,11 +3,10 @@ import IconDatabase from '@/components/icon/icon-database';
 import TableSkeletonComponent from '@/components/loading/table-skeleton';
 import TabsCampusFormGroup from '@/components/tabs/tabs-campus-form-group';
 import { api } from '@/trpc/react';
-import { Suspense, useState, use } from 'react';
+import { Suspense, useState } from 'react';
 import DataTableReviewerSelectedCampus from './data-table';
 
-function ReviewerSelectedCampus(props: { params: Promise<{ campusId: string; formGroupId: string }> }) {
-  const params = use(props.params);
+function ReviewerSelectedCampus({ params }: { params: { campusId: string; formGroupId: string } }) {
   const [variable] = api.reviewer.campus.getMappedVariableOnFormGroup.useSuspenseQuery({ formGroupId: params.formGroupId });
 
   const [variableId, setVariableId] = useState(variable[0]!.id);
