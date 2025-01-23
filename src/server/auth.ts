@@ -3,7 +3,7 @@ import { getServerSession, type DefaultSession, type NextAuthOptions } from 'nex
 import { type Adapter } from 'next-auth/adapters';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { db, purePrisma } from '@/server/db';
+import { db } from '@/server/db';
 import { HelperClass } from '@/utils/helper-class';
 
 /**
@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
 
-        const user = await purePrisma.campusUser.findUnique({
+        const user = await db.campusUser.findUnique({
           where: { email: credentials?.username },
           include: {
             roleUser: { select: { name: true } },
