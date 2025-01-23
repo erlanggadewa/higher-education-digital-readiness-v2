@@ -1,19 +1,9 @@
 import { type $Enums } from '@prisma/client';
 
 export type GetQuestionCampusSurvey = {
-  campusSurveyLog: {
-    status: $Enums.SurveyLogStatus;
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    campusId: string;
-    variableOnFormGroupId: string;
-  }[];
   question: ({
     campusAnswer: {
       id: string;
-      createdAt: Date;
-      updatedAt: Date;
       campusId: string;
       year: string;
       questionId: string;
@@ -30,18 +20,18 @@ export type GetQuestionCampusSurvey = {
       point: number;
     }[];
   } & {
+    question: string;
     id: string;
-    isActive: boolean;
     year: string;
     variableOnFormGroupId: string;
-    question: string;
+    isActive: boolean;
   })[];
   formGroup: {
     name: string;
     id: string;
-    isActive: boolean;
-    year: string;
     description: string;
+    year: string;
+    isActive: boolean;
     isPublished: boolean;
   };
   variable: {
@@ -50,10 +40,18 @@ export type GetQuestionCampusSurvey = {
     description: string;
     alias: string;
   };
+  campusSurveyLog: {
+    status: $Enums.SurveyLogStatus;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    campusId: string;
+    variableOnFormGroupId: string;
+  }[];
 } & {
   id: string;
   createdAt: Date;
   updatedAt: Date;
-  formGroupId: string;
   variableId: string;
+  formGroupId: string;
 };
