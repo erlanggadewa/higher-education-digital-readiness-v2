@@ -203,8 +203,8 @@ function DataTablePublicFormGroup({
                             timer: 3000,
                           }).fire({
                             icon: 'success',
-                            title: 'Berhasil menyalin URL survei',
                             padding: '10px 20px',
+                            text: 'Url survei berhasil disalin',
                           });
                         }
                       }}
