@@ -4,6 +4,7 @@ import IconEmail from '@/components/icon/icon-email';
 import IconIdentity from '@/components/icon/icon-identity';
 import IconName from '@/components/icon/icon-name';
 import LoadingDotComponent from '@/components/loading/loading-dot';
+import { api } from '@/trpc/react';
 import { cn } from '@/utils/cn';
 import { z } from '@/utils/id-zod';
 import { ErrorMessage } from '@hookform/error-message';
@@ -11,9 +12,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const ProfilingPublicSurvey = () => {
+const ProfilingPublicSurvey = ({ urlPublicSurveyId }: { urlPublicSurveyId: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<{ isError: boolean; msg: string }>({ isError: false, msg: '' });
+
+  const createPublicUser = api.public.publicSurvey.createUserPublic.useMutation({
+    onMutate() {
+      setIsLoading(true);
+    },
+    onSettled() {
+      setIsLoading(false);
+    },
+  });
 
   const {
     register,
@@ -21,6 +31,7 @@ const ProfilingPublicSurvey = () => {
     formState: { errors, dirtyFields },
   } = useForm({
     values: {
+      urlPublicSurveyId,
       email: '',
       identifyNumber: '',
       name: '',
@@ -28,6 +39,7 @@ const ProfilingPublicSurvey = () => {
     },
     resolver: zodResolver(
       z.object({
+        urlPublicSurveyId: z.string().min(1),
         name: z.string().min(1, { message: 'Nama tidak boleh kosong' }),
         identifyNumber: z.string().min(1, { message: 'NIDN / NIP / No. Pegawai tidak boleh kosong' }),
         email: z.string().email().min(1, { message: 'Email tidak boleh kosong' }),
@@ -37,16 +49,8 @@ const ProfilingPublicSurvey = () => {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    setIsLoading(true);
     console.log('🚀 ~ onSubmit ~ data:', data);
-    // const result = await signIn('credentials', {
-    //   username: data.username,
-    //   password: data.password,
-    //   redirect: false,
-    // });
-    // setIsLoading(false);
-    // if (!result?.ok) return setErrorMsg({ isError: true, msg: String(result?.error) });
-    // setErrorMsg({ isError: false, msg: String(result?.status) });
+    createPublicUser.mutate(data);
     // return window.location.replace('/');
   });
 

@@ -42,7 +42,7 @@ function PublicCampusPage({ params }: { params: { urlPublicSurveyId: string } })
             </div>
           </div>
           <p className="my-8 text-center text-base font-bold leading-normal dark:text-white">Masukan identitas anda untuk mengakses survei</p>
-          <ProfilingPublicSurvey />
+          <ProfilingPublicSurvey urlPublicSurveyId={params.urlPublicSurveyId} />
         </div>
 
         <p className="absolute bottom-6 w-full text-center dark:text-white">© {new Date().getFullYear()} Higher Education Digital Readiness</p>

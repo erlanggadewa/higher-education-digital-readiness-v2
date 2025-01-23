@@ -69,4 +69,28 @@ export const publicSurveyRouter = createTRPCRouter({
 
       return [];
     }),
+
+  createUserPublic: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        email: z.string().min(1).email(),
+        identifyNumber: z.string().min(1),
+        urlPublicSurveyId: z.string().min(1).cuid(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userData = await ctx.db.urlPublicSurvey.findUniqueOrThrow({ where: { id: input.urlPublicSurveyId } });
+      const result = await ctx.db.publicUser.create({
+        data: {
+          name: input.name,
+          email: input.email,
+          identifyNumber: input.identifyNumber,
+          role: userData.role,
+          campusId: userData.campusId,
+          year: userData.year,
+        },
+      });
+      return result;
+    }),
 });
