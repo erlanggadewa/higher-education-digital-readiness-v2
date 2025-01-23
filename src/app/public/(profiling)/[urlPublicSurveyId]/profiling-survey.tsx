@@ -14,7 +14,6 @@ import { useForm } from 'react-hook-form';
 
 const ProfilingPublicSurvey = ({ urlPublicSurveyId }: { urlPublicSurveyId: string }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<{ isError: boolean; msg: string }>({ isError: false, msg: '' });
 
   const createPublicUser = api.public.publicSurvey.createUserPublic.useMutation({
     onMutate() {
