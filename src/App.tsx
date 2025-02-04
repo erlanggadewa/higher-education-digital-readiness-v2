@@ -1,11 +1,11 @@
 /* eslint-disable */
 
 'use client';
-import Loading from '@/components/layouts/loading';
 import { type IRootState } from '@/store';
 import { toggleAnimation, toggleLayout, toggleMenu, toggleNavbar, toggleRTL, toggleSemidark, toggleTheme } from '@/store/themeConfigSlice';
 import { type PropsWithChildren, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import LoadingFullScreen from './components/loading/loading-full-screen';
 
 function App({ children }: PropsWithChildren) {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
@@ -32,7 +32,7 @@ function App({ children }: PropsWithChildren) {
         themeConfig.rtlClass
       } main-section relative font-nunito text-sm font-normal antialiased`}
     >
-      {isLoading ? <Loading /> : children}
+      {isLoading ? <LoadingFullScreen /> : children}
     </div>
   );
 }
